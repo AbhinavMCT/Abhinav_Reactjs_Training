@@ -8,7 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "sonar": "sonar-scanner"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.100.10",
@@ -39,10 +42,14 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
     "jsdom": "^29.1.1",
+    "sonar-scanner": "^3.1.0",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12",
