@@ -1,9 +1,9 @@
 import "@testing-library/jest-dom";
 
-import { TextEncoder, TextDecoder } from "util";
+import { TextEncoder, TextDecoder } from "node:util";
 
-global.TextEncoder = TextEncoder;
+globalThis.TextEncoder = TextEncoder;
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-global.TextDecoder = TextDecoder;
+globalThis.TextDecoder = TextDecoder;
