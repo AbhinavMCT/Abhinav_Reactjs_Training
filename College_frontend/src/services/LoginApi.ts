@@ -1,7 +1,7 @@
 import axios from "axios";
-import type { LoginCredentials, LoginResponse } from "../types/datatypes.tsx";
+import type { LoginCredentials, LoginResponse } from "../types/Datatypes.ts";
 
-const API_URL = "http://localhost:3001";
+const API_URL = import.meta.env.VITE_BackEndURL;
 const LOGIN_ENDPOINT = "/auth/login";
 
 export const loginUser = async(creadentials: LoginCredentials) => {

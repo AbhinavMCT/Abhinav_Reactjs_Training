@@ -1,0 +1,99 @@
+.course-name-cell {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.modal-overlay-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.2s ease forwards;
+}
+
+.modal-card-surface {
+  background: #ffffff;
+  padding: 36px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  animation: modalSlideUp 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.modal-card-surface h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.modal-form-override {
+  padding: 0 !important;
+  gap: 16px !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.modal-action-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 14px;
+}
+
+.btn-secondary-cancel {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+  margin-top: 0 !important;
+}
+
+.btn-secondary-cancel:hover {
+  background: #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+.btn-primary-submit {
+  background: #2563eb !important;
+  margin-top: 0 !important;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from { 
+    transform: translateY(24px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}

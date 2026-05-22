@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
-import Login from "../../pages/login/login.tsx";
-import { loginUser } from "../../api/loginApi.tsx";
+import Login from "../../pages/Login.tsx";
+import { loginUser } from "../../services/LoginApi.tsx";
 
 jest.mock("../../api/loginApi", () => ({
   loginUser: jest.fn(),

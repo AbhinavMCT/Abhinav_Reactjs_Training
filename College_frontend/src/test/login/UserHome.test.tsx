@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import UserHome from "../../pages/student/userHome.tsx";
+import UserHome from "../../pages/student/StudentHome.tsx";
 
 describe("UserHome Component", () => {
   test("renders welcome message", () => {
