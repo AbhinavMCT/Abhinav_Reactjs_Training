@@ -3,14 +3,10 @@ import { Link } from "react-router-dom";
 import { getAllSubjectStaff, deleteSubjectStaff } from "../../services/SubjectStaffApi.ts";
 import { SubjectStaffPayload } from '../../types/Datatypes.ts';
 
-interface AllocatedStaffSubject extends SubjectStaffPayload {
-    id?: number;
-    staff_name?: string;
-    subject_name?: string;
-}
+
 
 const AllocateSubjectStaff = () => {
-    const [allocations, setAllocations] = useState<AllocatedStaffSubject[]>([]);
+    const [allocations, setAllocations] = useState<SubjectStaffPayload[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -42,7 +38,6 @@ const AllocateSubjectStaff = () => {
         if (!confirmDelete) return;
         try {
             await deleteSubjectStaff(id);
-
             setAllocations((prev) => prev.filter((data) => data.id !== id));
             alert("Deleted successfully");
         } catch (error) {
@@ -75,12 +70,13 @@ const AllocateSubjectStaff = () => {
                         <tbody>
                             {allocations.length > 0 ? (
                                 allocations.map((data, index) => {
-                                    const rowKey = `alloc-${data.id || index}`;
+                                    const recordId = data.id !== undefined ? data.id : index;
+                                    
                                     return (
-                                        <tr key={rowKey}>
+                                        <tr key={`alloc-row-${recordId}`}>
                                             <td>{data.id ?? "N/A"}</td>
-                                            <td>{data.staff_name ?? `Staff #${data.staff_id}`}</td>
-                                            <td>{data.subject_name ?? `Subject #${data.subject_id}`}</td>
+                                            <td>{data.staff_name ?? `Staff ID: ${data.staff_id}`}</td>
+                                            <td>{data.subject_name ?? `Subject ID: ${data.subject_id}`}</td>
                                             <td className='action-button'>
                                                 <Link to={`/subjectstaff/edit/${data.id}`} className='edit-btn'>
                                                     Edit
@@ -91,7 +87,7 @@ const AllocateSubjectStaff = () => {
                                                         if (data.id !== undefined) {
                                                             handleDelete(data.id);
                                                         } else {
-                                                            alert("Cannot delete an item lacking a unique primary record key database ID.");
+                                                            alert("Cannot delete an item lacking a unique database record key.");
                                                         }
                                                     }}
                                                 >
@@ -103,7 +99,11 @@ const AllocateSubjectStaff = () => {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan={4} style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                    <td 
+                                        colSpan={4} 
+                                        style={{ textAlign: 'center', padding: '24px', color: '#666', fontStyle: 'italic' }}
+                                    >
+                                        No staff allocations found. Click "+ Allocate New" to create one.
                                     </td>
                                 </tr>
                             )}

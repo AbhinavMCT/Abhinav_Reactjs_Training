@@ -5,6 +5,7 @@ const API_URL = import.meta.env.VITE_BackEndURL;
 const SUBJECT_STAFF_ENDPOINT = API_URL + "/subject-staff/";
 
 const getAuthHeaders = () => ({
+  "content-type": "application/json",
   Authorization: `Bearer ${localStorage.getItem("access")}`,
 });
 
@@ -15,7 +16,7 @@ export const getAllSubjectStaff = async () => {
 };
 
 export const getSubjectStaffById = async (id: number) => {
-  return axios.get(`${SUBJECT_STAFF_ENDPOINT}get-subjectstaffby/${id}`, {
+  return axios.get(`${SUBJECT_STAFF_ENDPOINT}get-subjectstaff/${id}`, {
     headers: getAuthHeaders(),
   });
 };

@@ -119,3 +119,13 @@ export interface SubjectStaffPayload {
   subject_name?: string;
   staff_name?: string;
 }
+
+export interface SubjectItem {
+  id: number;
+  name: string; 
+}
+
+export interface StaffItem {
+  id: number;
+  name: string; 
+}

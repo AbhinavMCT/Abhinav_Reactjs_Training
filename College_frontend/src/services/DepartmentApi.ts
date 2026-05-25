@@ -6,6 +6,7 @@ const DEPARTMENT_ENDPOINT = API_URL + "/department/";
 
 const getHeaders = () => ({
   headers: {
+    "content-type": "application/json",
     Authorization: `Bearer ${localStorage.getItem("access")}`,
   },
 });

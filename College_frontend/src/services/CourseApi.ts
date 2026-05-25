@@ -5,9 +5,12 @@ const COURSE_ENDPOINT = API_URL + "/course/";
 
 const getHeaders = () => ({
   headers: {
+    "content-type": "application/json",
     Authorization: `Bearer ${localStorage.getItem("access")}`,
   },
 });
+
+
 
 export const getAllCourses = () => axios.get(`${COURSE_ENDPOINT}get-course`, getHeaders());
 export const getCourseById = (id: number) => axios.get(`${COURSE_ENDPOINT}get-courseby/${id}`, getHeaders());

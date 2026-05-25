@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
 
-import {
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import {
-  getSubjectById,
-  updateSubject,
-} from "../../services/SubjectApi.ts";
+import { getSubjectById, updateSubject } from "../../services/SubjectApi.ts";
 
 import { SubjectPayload } from "../../types/Datatypes.ts";
 
@@ -17,20 +11,18 @@ const EditSubject = () => {
 
   const navigate = useNavigate();
 
-  const [formData, setFormData] =
-    useState<SubjectPayload>({
-      name: "",
-      type: "",
-      course_id: 0,
-    });
+  const [formData, setFormData] = useState<SubjectPayload>({
+    name: "",
+    type: "",
+    course_id: 0,
+  });
 
   useEffect(() => {
     const loadSubject = async () => {
       try {
         if (!id) return;
 
-        const response =
-          await getSubjectById(Number(id));
+        const response = await getSubjectById(Number(id));
 
         setFormData(response.data[0]);
       } catch (error) {
@@ -42,31 +34,22 @@ const EditSubject = () => {
   }, [id]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setFormData({
       ...formData,
       [e.target.name]:
-        e.target.name === "course_id"
-          ? Number(e.target.value)
-          : e.target.value,
+        e.target.name === "course_id" ? Number(e.target.value) : e.target.value,
     });
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
       if (!id) return;
 
-      await updateSubject(
-        Number(id),
-        formData
-      );
+      await updateSubject(Number(id), formData);
 
       alert("Subject updated successfully");
 
@@ -79,10 +62,7 @@ const EditSubject = () => {
 
   return (
     <div className="register-container">
-      <form
-        className="student-form"
-        onSubmit={handleSubmit}
-      >
+      <form className="student-form" onSubmit={handleSubmit}>
         <h2>Edit Subject</h2>
 
         <input
@@ -100,21 +80,13 @@ const EditSubject = () => {
           onChange={handleChange}
           required
         >
-          <option value="">
-            Select Subject Type
-          </option>
+          <option value="">Select Subject Type</option>
 
-          <option value="Core">
-            Core
-          </option>
+          <option value="Core">Core</option>
 
-          <option value="Elective">
-            Elective
-          </option>
+          <option value="Elective">Elective</option>
 
-          <option value="Lab">
-            Lab
-          </option>
+          <option value="Lab">Lab</option>
         </select>
 
         <input
@@ -126,9 +98,7 @@ const EditSubject = () => {
           required
         />
 
-        <button type="submit">
-          Update Subject
-        </button>
+        <button type="submit">Update Subject</button>
       </form>
     </div>
   );

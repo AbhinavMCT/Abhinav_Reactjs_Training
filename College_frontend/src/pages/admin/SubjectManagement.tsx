@@ -5,32 +5,21 @@ import { SubjectPayload } from "../../types/Datatypes.ts";
 
 import "../../styles/subject/SubjectManagement.css";
 
-interface SubjectWithCourse extends SubjectPayload {
-  course_name?: string;
-}
+
 
 const SubjectManagement = () => {
-  const [subjects, setSubjects] = useState<SubjectWithCourse[]>([]);
+  const [subjects, setSubjects] = useState<SubjectPayload[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
   const loadSubjects = async () => {
     try {
-      const response = await getAllSubjects();
+      const res = await getAllSubjects();
 
-      console.log("Axios Response Payload:", response.data);
+      setSubjects(res.data);
 
-      if (Array.isArray(response.data)) {
-        setSubjects(response.data);
-      } else if (response.data && Array.isArray(response.data.data)) {
-        setSubjects(response.data.data);
-      } else if (response.data && Array.isArray(response.data.subjects)) {
-        setSubjects(response.data.subjects);
-      } else {
-        setSubjects([]);
-      }
     } catch (error) {
-      console.error("Failed to load subjects:", error);
+      console.error("Failed to load Data", error);
       setSubjects([]);
     } finally {
       setLoading(false);
@@ -81,7 +70,6 @@ const SubjectManagement = () => {
                 <th>ID</th>
                 <th>Subject Name</th>
                 <th>Classification Type</th>
-                <th>Course ID</th>
                 <th>Course Name</th>
                 <th>Actions</th>
               </tr>
@@ -90,16 +78,15 @@ const SubjectManagement = () => {
             <tbody>
               {Array.isArray(subjects) && subjects.length > 0 ? (
                 subjects.map((subject, index) => {
-                  const rowKey = `subject-${subject.id}-${index}`;
+                  const recordId = subject.id !== undefined ? subject.id : index;
 
                   return (
-                    <tr key={rowKey}>
-                      <td>{subject.id ?? "N/A"}</td>
-                      <td>{subject.name ?? "N/A"}</td>
-                      <td>{subject.type ?? "N/A"}</td>
+                    <tr key={`rowKey-${recordId}`}>
+                      <td>{subject?.id ?? "N/A"}</td>
+                      <td>{subject?.name ?? "N/A"}</td>
+                      <td>{subject?.type ?? "N/A"}</td>
                       
-                      <td>{subject.course_id ?? "N/A"}</td>
-                      <td>{subject.course_name ?? "N/A"}</td>
+                      <td>{subject?.course_name ?? `course_id: ${subject.course_id}`}</td>
 
                       <td className="action-buttons">
                         <Link

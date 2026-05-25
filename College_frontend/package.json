@@ -9,8 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "coverage": "jest --coverage",
     "sonar": "sonar-scanner"
   },
   "dependencies": {
@@ -41,6 +40,7 @@
     "@typescript-eslint/parser": "^8.59.3",
     "@vitejs/plugin-react": "^6.0.1",
     "babel-plugin-react-compiler": "^1.0.0",
+    "babel-plugin-transform-import-meta": "^2.3.3",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",

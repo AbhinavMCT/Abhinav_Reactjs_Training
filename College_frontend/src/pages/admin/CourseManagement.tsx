@@ -80,7 +80,6 @@ const CourseManagement = () => {
 
                 <th>Course Name</th>
 
-                <th>Department ID</th>
 
                 <th>Department Name</th>
 
@@ -99,7 +98,6 @@ const CourseManagement = () => {
 
                       <td>{course.name ?? "N/A"}</td>
 
-                      <td>{course.dep_id ?? "N/A"}</td>
 
                       <td>{course.department_name ?? "N/A"}</td>
 

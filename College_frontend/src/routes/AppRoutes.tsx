@@ -22,6 +22,7 @@ import DepartmentManagement from "../pages/admin/DepartmentManagement.tsx";
 import EditDepartment from "../pages/department/EditDepartment.tsx";
 import AddSubjectStaff from "../pages/subjectstaff/Addsubjectstaff.tsx";
 import AllocateSubjectStaff from "../pages/admin/Allocatesubjectstaff.tsx";
+import Editsubjectstaff from "../pages/subjectstaff/Editsubjectstaff.tsx";
 
 function AppRoutes() {
   return (
@@ -63,6 +64,7 @@ function AppRoutes() {
       {/* Subject-Staff Allocate Routes */}
       <Route path="/subjectstaff/add" element={<AddSubjectStaff />} />
       <Route path="/subject-staff" element={<AllocateSubjectStaff />} />
+      <Route path="/subjectstaff/edit/:id" element={<Editsubjectstaff />} />
     </>
   );
 }
