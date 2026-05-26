@@ -127,12 +127,10 @@
 
 .delete-btn {
   color: #ef4444;
-  background-color: #fef2f2;
 }
 
 .delete-btn:hover {
   color: #ffffff;
-  background-color: #ef4444;
 }
 
 .fallback-empty,

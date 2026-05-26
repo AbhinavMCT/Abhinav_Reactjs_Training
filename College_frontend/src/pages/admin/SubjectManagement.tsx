@@ -30,7 +30,7 @@ const SubjectManagement = () => {
 }, []);
 
   const handleDelete = async (id: number) => {
-    const confirmDelete = window.confirm(
+    const confirmDelete = globalThis.confirm(
       "Are you sure you want to delete this subject permanently?",
     );
 
@@ -77,11 +77,12 @@ const SubjectManagement = () => {
 
             <tbody>
               {Array.isArray(subjects) && subjects.length > 0 ? (
-                subjects.map((subject, index) => {
-                  const recordId = subject.id !== undefined ? subject.id : index;
+                subjects.map((subject) => {
+                  const recordId =
+  subject.id ?? `subject-${subject.course_id}-${subject.name}`;
 
                   return (
-                    <tr key={`rowKey-${recordId}`}>
+                    <tr key={recordId}>
                       <td>{subject?.id ?? "N/A"}</td>
                       <td>{subject?.name ?? "N/A"}</td>
                       <td>{subject?.type ?? "N/A"}</td>

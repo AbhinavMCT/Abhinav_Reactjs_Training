@@ -87,12 +87,12 @@ const ViewStudent = () => {
             <div className="profile-grid">
 
               <div className="profile-item">
-                <label>Gender</label>
+                <p className="profile-label">Gender</p>
                 <span>{profile.gender}</span>
               </div>
 
               <div className="profile-item">
-                <label>Date of Birth</label>
+                <p className="profile-label">Date of Birth</p>
                 <span>{profile.DOB}</span>
               </div>
 
@@ -108,22 +108,22 @@ const ViewStudent = () => {
             <div className="profile-grid">
 
               <div className="profile-item">
-                <label>City</label>
+                <p className="profile-label">City</p>
                 <span>{profile.address.city}</span>
               </div>
 
               <div className="profile-item">
-                <label>District</label>
+                <p className="profile-label">District</p>
                 <span>{profile.address.district}</span>
               </div>
 
               <div className="profile-item">
-                <label>State</label>
+                <p className="profile-label">State</p>
                 <span>{profile.address.state}</span>
               </div>
 
               <div className="profile-item">
-                <label>Pin</label>
+                <p className="profile-label">Pin</p>
                 <span>{profile.address.pin}</span>
               </div>
 

@@ -1,24 +1,25 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import AllocateSubjectStaff from "../pages/admin/Allocatesubjectstaff.tsx";
 import EditSubjectStaff from "../pages/subjectstaff/Editsubjectstaff.tsx";
 import AddSubjectStaff from "../pages/subjectstaff/Addsubjectstaff.tsx";
 
-jest.mock("../services/SubjectStaffApi.ts", () => ({
-  getAllSubjectStaff: jest.fn(),
-  deleteSubjectStaff: jest.fn(),
-  getSubjectStaffById: jest.fn(),
-  updateSubjectStaff: jest.fn(),
-  createSubjectStaff: jest.fn(),
+vi.mock("../services/SubjectStaffApi.ts", () => ({
+  getAllSubjectStaff: vi.fn(),
+  deleteSubjectStaff: vi.fn(),
+  getSubjectStaffById: vi.fn(),
+  updateSubjectStaff: vi.fn(),
+  createSubjectStaff: vi.fn(),
 }));
 
-jest.mock("../services/SubjectApi.ts", () => ({
-  getAllSubjects: jest.fn(),
+vi.mock("../services/SubjectApi.ts", () => ({
+  getAllSubjects: vi.fn(),
 }));
 
-jest.mock("../services/StaffApi.ts", () => ({
-  getAllStaff: jest.fn(),
+vi.mock("../services/StaffApi.ts", () => ({
+  getAllStaff: vi.fn(),
 }));
 
 import {
@@ -32,27 +33,29 @@ import {
 import { getAllSubjects } from "../services/SubjectApi.ts";
 import { getAllStaff } from "../services/StaffApi.ts";
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockNavigate,
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<
+    typeof import("react-router-dom")
+  >("react-router-dom");
+
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe("Subject Staff Allocation Management System", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    window.alert = jest.fn();
+    globalThis.alert = vi.fn();
 
-    window.confirm = jest.fn();
+    globalThis.confirm = vi.fn();
 
     localStorage.clear();
   });
-
-  // =========================================================
-  // Allocate Subject Staff Component
-  // =========================================================
 
   describe("AllocateSubjectStaff Component", () => {
     const mockAllocations = [
@@ -73,9 +76,9 @@ describe("Subject Staff Allocation Management System", () => {
     ];
 
     it("renders loading state and displays allocations", async () => {
-      (getAllSubjectStaff as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjectStaff).mockResolvedValue({
         data: mockAllocations,
-      });
+      } as never);
 
       render(
         <MemoryRouter initialEntries={["/subject-staff"]}>
@@ -106,9 +109,9 @@ describe("Subject Staff Allocation Management System", () => {
     });
 
     it("shows empty message when no allocations exist", async () => {
-      (getAllSubjectStaff as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjectStaff).mockResolvedValue({
         data: [],
-      });
+      } as never);
 
       render(
         <MemoryRouter initialEntries={["/subject-staff"]}>
@@ -129,13 +132,15 @@ describe("Subject Staff Allocation Management System", () => {
     });
 
     it("deletes allocation successfully", async () => {
-      (getAllSubjectStaff as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjectStaff).mockResolvedValue({
         data: mockAllocations,
-      });
+      } as never);
 
-      (deleteSubjectStaff as jest.Mock).mockResolvedValue({});
+      vi.mocked(deleteSubjectStaff).mockResolvedValue(
+        {} as never
+      );
 
-      (window.confirm as jest.Mock).mockReturnValue(true);
+      vi.mocked(globalThis.confirm).mockReturnValue(true);
 
       render(
         <MemoryRouter initialEntries={["/subject-staff"]}>
@@ -158,25 +163,25 @@ describe("Subject Staff Allocation Management System", () => {
 
       fireEvent.click(deleteButtons[0]);
 
-      expect(window.confirm).toHaveBeenCalledWith(
+      expect(globalThis.confirm).toHaveBeenCalledWith(
         "Are you sure you want to delete this allocation assignment?"
       );
 
       await waitFor(() => {
         expect(deleteSubjectStaff).toHaveBeenCalledWith(1);
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Deleted successfully"
         );
       });
     });
 
     it("does not delete allocation when confirmation is cancelled", async () => {
-      (getAllSubjectStaff as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjectStaff).mockResolvedValue({
         data: mockAllocations,
-      });
+      } as never);
 
-      (window.confirm as jest.Mock).mockReturnValue(false);
+      vi.mocked(globalThis.confirm).mockReturnValue(false);
 
       render(
         <MemoryRouter initialEntries={["/subject-staff"]}>
@@ -205,10 +210,6 @@ describe("Subject Staff Allocation Management System", () => {
     });
   });
 
-  // =========================================================
-  // Add Subject Staff Component
-  // =========================================================
-
   describe("AddSubjectStaff Component", () => {
     const mockSubjects = [
       { id: 1, name: "Physics" },
@@ -221,15 +222,17 @@ describe("Subject Staff Allocation Management System", () => {
     ];
 
     it("loads dropdown values and submits form successfully", async () => {
-      (getAllSubjects as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjects).mockResolvedValue({
         data: mockSubjects,
-      });
+      } as never);
 
-      (getAllStaff as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllStaff).mockResolvedValue({
         data: mockStaff,
-      });
+      } as never);
 
-      (createSubjectStaff as jest.Mock).mockResolvedValue({});
+      vi.mocked(createSubjectStaff).mockResolvedValue(
+        {} as never
+      );
 
       render(
         <MemoryRouter initialEntries={["/subjectstaff/add"]}>
@@ -289,10 +292,6 @@ describe("Subject Staff Allocation Management System", () => {
     });
   });
 
-  // =========================================================
-  // Edit Subject Staff Component
-  // =========================================================
-
   describe("EditSubjectStaff Component", () => {
     const mockExistingAllocation = [
       {
@@ -313,19 +312,21 @@ describe("Subject Staff Allocation Management System", () => {
     ];
 
     it("pre-populates form and updates allocation successfully", async () => {
-      (getSubjectStaffById as jest.Mock).mockResolvedValue({
+      vi.mocked(getSubjectStaffById).mockResolvedValue({
         data: mockExistingAllocation,
-      });
+      } as never);
 
-      (getAllSubjects as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjects).mockResolvedValue({
         data: mockSubjects,
-      });
+      } as never);
 
-      (getAllStaff as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllStaff).mockResolvedValue({
         data: mockStaff,
-      });
+      } as never);
 
-      (updateSubjectStaff as jest.Mock).mockResolvedValue({});
+      vi.mocked(updateSubjectStaff).mockResolvedValue(
+        {} as never
+      );
 
       render(
         <MemoryRouter initialEntries={["/subjectstaff/edit/5"]}>
@@ -375,7 +376,7 @@ describe("Subject Staff Allocation Management System", () => {
           staff_id: 10,
         });
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Updated Successfully"
         );
 

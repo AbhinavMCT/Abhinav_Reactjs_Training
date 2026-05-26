@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../../styles/student/studentManagement.css";
 import { RegisterPayload } from "../../types/Datatypes.ts";
@@ -26,7 +26,7 @@ const StaffManagement = () => {
     }, []);
   
     const handleDelete = async (id: number) => {
-      if (!window.confirm("Are you sure you want to delete this staff member?")) {
+      if (!globalThis.confirm("Are you sure you want to delete this staff member?")) {
         return;
       }
       try {

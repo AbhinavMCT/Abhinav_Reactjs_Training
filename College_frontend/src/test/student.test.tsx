@@ -1,20 +1,20 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import StudentManagement from "../pages/admin/StudentManagement.tsx";
 import RegisterStudent from "../pages/student/RegisterStudent.tsx";
 import EditStudent from "../pages/admin/EditStudent.tsx";
 import EditProfile from "../pages/student/EditStudentProfile.tsx";
 import ViewStudent from "../pages/student/ViewStudentProfile.tsx";
 
-jest.mock("../services/StudentApi.ts", () => ({
-  getAllStudents: jest.fn(),
-  deleteStudent: jest.fn(),
-  registerStudent: jest.fn(),
-  getStudentById: jest.fn(),
-  updateStudents: jest.fn(),
-  getProfile: jest.fn(),
-  updateProfile: jest.fn(),
+vi.mock("../services/StudentApi.ts", () => ({
+  getAllStudents: vi.fn(),
+  deleteStudent: vi.fn(),
+  registerStudent: vi.fn(),
+  getStudentById: vi.fn(),
+  updateStudents: vi.fn(),
+  getProfile: vi.fn(),
+  updateProfile: vi.fn(),
 }));
 
 import {
@@ -27,23 +27,27 @@ import {
   updateProfile,
 } from "../services/StudentApi.ts";
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockNavigate,
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<
+    typeof import("react-router-dom")
+  >("react-router-dom");
+
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe("Student Module Test Cases", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    window.alert = jest.fn();
+    globalThis.alert = vi.fn();
 
-    window.confirm = jest.fn();
+    globalThis.confirm = vi.fn();
   });
-
-
 
   describe("StudentManagement Component", () => {
     const mockStudents = [
@@ -67,9 +71,9 @@ describe("Student Module Test Cases", () => {
     ];
 
     test("renders student data", async () => {
-      (getAllStudents as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllStudents).mockResolvedValue({
         data: mockStudents,
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -93,13 +97,15 @@ describe("Student Module Test Cases", () => {
     });
 
     test("deletes student successfully", async () => {
-      (getAllStudents as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllStudents).mockResolvedValue({
         data: mockStudents,
-      });
+      } as never);
 
-      (deleteStudent as jest.Mock).mockResolvedValue({});
+      vi.mocked(deleteStudent).mockResolvedValue(
+        {} as never
+      );
 
-      (window.confirm as jest.Mock).mockReturnValue(true);
+      vi.mocked(globalThis.confirm).mockReturnValue(true);
 
       render(
         <MemoryRouter>
@@ -123,11 +129,11 @@ describe("Student Module Test Cases", () => {
     });
 
     test("cancels delete when confirmation rejected", async () => {
-      (getAllStudents as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllStudents).mockResolvedValue({
         data: mockStudents,
-      });
+      } as never);
 
-      (window.confirm as jest.Mock).mockReturnValue(false);
+      vi.mocked(globalThis.confirm).mockReturnValue(false);
 
       render(
         <MemoryRouter>
@@ -149,15 +155,13 @@ describe("Student Module Test Cases", () => {
     });
   });
 
-
-
   describe("RegisterStudent Component", () => {
     test("registers student successfully", async () => {
-      (registerStudent as jest.Mock).mockResolvedValue({
+      vi.mocked(registerStudent).mockResolvedValue({
         data: {
           message: "Student Registered Successfully",
         },
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -255,14 +259,12 @@ describe("Student Module Test Cases", () => {
       await waitFor(() => {
         expect(registerStudent).toHaveBeenCalled();
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Student Registered Successfully"
         );
       });
     });
   });
-
-
 
   describe("ViewStudent Component", () => {
     const mockProfile = {
@@ -281,9 +283,9 @@ describe("Student Module Test Cases", () => {
     };
 
     test("renders profile data", async () => {
-      (getProfile as jest.Mock).mockResolvedValue({
+      vi.mocked(getProfile).mockResolvedValue({
         data: mockProfile,
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -306,8 +308,6 @@ describe("Student Module Test Cases", () => {
       });
     });
   });
-
-
 
   describe("EditProfile Component", () => {
     const mockProfile = {
@@ -332,15 +332,15 @@ describe("Student Module Test Cases", () => {
     };
 
     test("loads profile and updates successfully", async () => {
-      (getProfile as jest.Mock).mockResolvedValue({
+      vi.mocked(getProfile).mockResolvedValue({
         data: mockProfile,
-      });
+      } as never);
 
-      (updateProfile as jest.Mock).mockResolvedValue({
+      vi.mocked(updateProfile).mockResolvedValue({
         data: {
           message: "Profile Updated Successfully",
         },
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -368,7 +368,7 @@ describe("Student Module Test Cases", () => {
       await waitFor(() => {
         expect(updateProfile).toHaveBeenCalled();
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Profile Updated Successfully"
         );
 
@@ -378,8 +378,6 @@ describe("Student Module Test Cases", () => {
       });
     });
   });
-
-  
 
   describe("EditStudent Component", () => {
     const mockStudent = {
@@ -404,15 +402,15 @@ describe("Student Module Test Cases", () => {
     };
 
     test("loads student and updates successfully", async () => {
-      (getStudentById as jest.Mock).mockResolvedValue({
+      vi.mocked(getStudentById).mockResolvedValue({
         data: mockStudent,
-      });
+      } as never);
 
-      (updateStudents as jest.Mock).mockResolvedValue({
+      vi.mocked(updateStudents).mockResolvedValue({
         data: {
           message: "Student Updated Successfully",
         },
-      });
+      } as never);
 
       render(
         <MemoryRouter initialEntries={["/student/edit/1"]}>
@@ -445,7 +443,7 @@ describe("Student Module Test Cases", () => {
       await waitFor(() => {
         expect(updateStudents).toHaveBeenCalled();
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Student Updated Successfully"
         );
 

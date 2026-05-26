@@ -57,7 +57,7 @@ const AddSubjectStaff = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -79,7 +79,7 @@ const AddSubjectStaff = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Select Subject</label>
+            <label htmlFor="subject_id">Select Subject</label>
             <select
               name="subject_id"
               value={formData.subject_id}
@@ -97,7 +97,7 @@ const AddSubjectStaff = () => {
           </div>
 
           <div className="form-group">
-            <label>Select Staff Member</label>
+            <label htmlFor="staff_id">Select Staff Member</label>
             <select
               name="staff_id"
               value={formData.staff_id}

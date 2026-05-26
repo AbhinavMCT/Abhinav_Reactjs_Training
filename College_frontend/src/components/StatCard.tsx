@@ -5,7 +5,10 @@ interface Props {
   value: string;
 }
 
-function StatCard({ title, value }: Props) {
+function StatCard({
+  title,
+  value,
+}: Readonly<Props>) {
   return (
     <div className="stat-card">
       <h3>{title}</h3>

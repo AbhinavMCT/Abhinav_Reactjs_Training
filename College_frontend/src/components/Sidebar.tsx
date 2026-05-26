@@ -27,8 +27,8 @@ const Sidebar = ({
       <h2>{role} Panel</h2>
 
       <ul>
-        {menuItems.map((item, index) => (
-          <li key={index}>
+        {menuItems.map((item) => (
+          <li key={item.path}>
             <NavLink
               to={item.path}
               className="nav-link"

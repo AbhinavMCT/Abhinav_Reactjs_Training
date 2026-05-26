@@ -1,20 +1,20 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import SubjectManagement from "../pages/admin/SubjectManagement.tsx";
 import AddSubject from "../pages/subjects/AddSubject.tsx";
 import EditSubject from "../pages/subjects/EditSubject.tsx";
 
-jest.mock("../services/SubjectApi.ts", () => ({
-  getAllSubjects: jest.fn(),
-  deleteSubject: jest.fn(),
-  createSubject: jest.fn(),
-  getSubjectById: jest.fn(),
-  updateSubject: jest.fn(),
+vi.mock("../services/SubjectApi.ts", () => ({
+  getAllSubjects: vi.fn(),
+  deleteSubject: vi.fn(),
+  createSubject: vi.fn(),
+  getSubjectById: vi.fn(),
+  updateSubject: vi.fn(),
 }));
 
-jest.mock("../services/CourseApi.ts", () => ({
-  getAllCourses: jest.fn(),
+vi.mock("../services/CourseApi.ts", () => ({
+  getAllCourses: vi.fn(),
 }));
 
 import {
@@ -27,20 +27,26 @@ import {
 
 import { getAllCourses } from "../services/CourseApi.ts";
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockNavigate,
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<
+    typeof import("react-router-dom")
+  >("react-router-dom");
+
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe("Subject Module Test Cases", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    window.alert = jest.fn();
+    globalThis.alert = vi.fn();
 
-    window.confirm = jest.fn();
+    globalThis.confirm = vi.fn();
   });
 
   describe("SubjectManagement Component", () => {
@@ -55,9 +61,9 @@ describe("Subject Module Test Cases", () => {
     ];
 
     test("renders subject data", async () => {
-      (getAllSubjects as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjects).mockResolvedValue({
         data: mockSubjects,
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -81,9 +87,9 @@ describe("Subject Module Test Cases", () => {
     });
 
     test("shows no subjects found message", async () => {
-      (getAllSubjects as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjects).mockResolvedValue({
         data: [],
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -99,13 +105,15 @@ describe("Subject Module Test Cases", () => {
     });
 
     test("deletes subject successfully", async () => {
-      (getAllSubjects as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjects).mockResolvedValue({
         data: mockSubjects,
-      });
+      } as never);
 
-      (deleteSubject as jest.Mock).mockResolvedValue({});
+      vi.mocked(deleteSubject).mockResolvedValue(
+        {} as never
+      );
 
-      (window.confirm as jest.Mock).mockReturnValue(true);
+      vi.mocked(globalThis.confirm).mockReturnValue(true);
 
       render(
         <MemoryRouter>
@@ -128,20 +136,22 @@ describe("Subject Module Test Cases", () => {
       await waitFor(() => {
         expect(deleteSubject).toHaveBeenCalledWith(1);
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Subject deleted successfully"
         );
       });
     });
 
     test("shows delete failure alert", async () => {
-      (getAllSubjects as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjects).mockResolvedValue({
         data: mockSubjects,
-      });
+      } as never);
 
-      (deleteSubject as jest.Mock).mockRejectedValue(new Error("Failed"));
+      vi.mocked(deleteSubject).mockRejectedValue(
+        new Error("Failed")
+      );
 
-      (window.confirm as jest.Mock).mockReturnValue(true);
+      vi.mocked(globalThis.confirm).mockReturnValue(true);
 
       render(
         <MemoryRouter>
@@ -162,18 +172,18 @@ describe("Subject Module Test Cases", () => {
       fireEvent.click(deleteButton);
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Failed to delete subject"
         );
       });
     });
 
     test("cancels delete when confirmation rejected", async () => {
-      (getAllSubjects as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllSubjects).mockResolvedValue({
         data: mockSubjects,
-      });
+      } as never);
 
-      (window.confirm as jest.Mock).mockReturnValue(false);
+      vi.mocked(globalThis.confirm).mockReturnValue(false);
 
       render(
         <MemoryRouter>
@@ -210,11 +220,13 @@ describe("Subject Module Test Cases", () => {
     ];
 
     test("creates subject successfully", async () => {
-      (getAllCourses as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllCourses).mockResolvedValue({
         data: mockCourses,
-      });
+      } as never);
 
-      (createSubject as jest.Mock).mockResolvedValue({});
+      vi.mocked(createSubject).mockResolvedValue(
+        {} as never
+      );
 
       render(
         <MemoryRouter>
@@ -269,7 +281,7 @@ describe("Subject Module Test Cases", () => {
           course_id: 1,
         });
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Subject created successfully"
         );
 
@@ -280,9 +292,9 @@ describe("Subject Module Test Cases", () => {
     });
 
     test("shows validation alert when course not selected", async () => {
-      (getAllCourses as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllCourses).mockResolvedValue({
         data: mockCourses,
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -317,13 +329,6 @@ describe("Subject Module Test Cases", () => {
         },
       });
 
-      fireEvent.change(selects[1], {
-        target: {
-          value: "",
-          name: "course_id",
-        },
-      });
-
       fireEvent.submit(
         screen.getByRole("button", {
           name: /create subject/i,
@@ -331,7 +336,7 @@ describe("Subject Module Test Cases", () => {
       );
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Please select a valid course allocation."
         );
       });
@@ -349,11 +354,13 @@ describe("Subject Module Test Cases", () => {
     ];
 
     test("loads subject and updates successfully", async () => {
-      (getSubjectById as jest.Mock).mockResolvedValue({
+      vi.mocked(getSubjectById).mockResolvedValue({
         data: mockSubject,
-      });
+      } as never);
 
-      (updateSubject as jest.Mock).mockResolvedValue({});
+      vi.mocked(updateSubject).mockResolvedValue(
+        {} as never
+      );
 
       render(
         <MemoryRouter initialEntries={["/subject/edit/1"]}>
@@ -396,7 +403,7 @@ describe("Subject Module Test Cases", () => {
           course_id: 10,
         });
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Subject updated successfully"
         );
 
@@ -407,11 +414,11 @@ describe("Subject Module Test Cases", () => {
     });
 
     test("shows update failure alert", async () => {
-      (getSubjectById as jest.Mock).mockResolvedValue({
+      vi.mocked(getSubjectById).mockResolvedValue({
         data: mockSubject,
-      });
+      } as never);
 
-      (updateSubject as jest.Mock).mockRejectedValue(
+      vi.mocked(updateSubject).mockRejectedValue(
         new Error("Failed")
       );
 
@@ -439,7 +446,7 @@ describe("Subject Module Test Cases", () => {
       );
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Failed to update subject"
         );
       });

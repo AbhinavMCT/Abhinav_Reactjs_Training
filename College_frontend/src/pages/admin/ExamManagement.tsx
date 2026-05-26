@@ -35,7 +35,7 @@ const ExamManagement = () => {
 }, []);
 
   const handleDelete = async (id: number) => {
-    const confirmDelete = window.confirm(
+    const confirmDelete = globalThis.confirm(
       "Are you sure you want to delete this exam?"
     );
 

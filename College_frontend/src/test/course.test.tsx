@@ -1,17 +1,17 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import CourseManagement from "../pages/admin/CourseManagement.tsx";
 import AddCourse from "../pages/course/AddCourse.tsx";
 import EditCourse from "../pages/course/EditCourse.tsx";
 
-jest.mock("../services/CourseApi.ts", () => ({
-  getAllCourses: jest.fn(),
-  deleteCourse: jest.fn(),
-  createCourse: jest.fn(),
-  getCourseById: jest.fn(),
-  updateCourse: jest.fn(),
-  getAllDepartments: jest.fn(),
+vi.mock("../services/CourseApi.ts", () => ({
+  getAllCourses: vi.fn(),
+  deleteCourse: vi.fn(),
+  createCourse: vi.fn(),
+  getCourseById: vi.fn(),
+  updateCourse: vi.fn(),
+  getAllDepartments: vi.fn(),
 }));
 
 import {
@@ -23,23 +23,27 @@ import {
   getAllDepartments,
 } from "../services/CourseApi.ts";
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useNavigate: () => mockNavigate,
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual<
+    typeof import("react-router-dom")
+  >("react-router-dom");
+
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe("Course Module Test Cases", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    window.alert = jest.fn();
+    globalThis.alert = vi.fn();
 
-    window.confirm = jest.fn();
+    globalThis.confirm = vi.fn();
   });
-
-
 
   describe("CourseManagement Component", () => {
     const mockCourses = [
@@ -52,9 +56,9 @@ describe("Course Module Test Cases", () => {
     ];
 
     test("renders course data", async () => {
-      (getAllCourses as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllCourses).mockResolvedValue({
         data: mockCourses,
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -76,9 +80,9 @@ describe("Course Module Test Cases", () => {
     });
 
     test("shows no courses found message", async () => {
-      (getAllCourses as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllCourses).mockResolvedValue({
         data: [],
-      });
+      } as never);
 
       render(
         <MemoryRouter>
@@ -94,13 +98,15 @@ describe("Course Module Test Cases", () => {
     });
 
     test("deletes course successfully", async () => {
-      (getAllCourses as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllCourses).mockResolvedValue({
         data: mockCourses,
-      });
+      } as never);
 
-      (deleteCourse as jest.Mock).mockResolvedValue({});
+      vi.mocked(deleteCourse).mockResolvedValue(
+        {} as never
+      );
 
-      (window.confirm as jest.Mock).mockReturnValue(true);
+      vi.mocked(globalThis.confirm).mockReturnValue(true);
 
       render(
         <MemoryRouter>
@@ -121,20 +127,22 @@ describe("Course Module Test Cases", () => {
       await waitFor(() => {
         expect(deleteCourse).toHaveBeenCalledWith(1);
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Course deleted successfully"
         );
       });
     });
 
     test("shows delete failure alert", async () => {
-      (getAllCourses as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllCourses).mockResolvedValue({
         data: mockCourses,
-      });
+      } as never);
 
-      (deleteCourse as jest.Mock).mockRejectedValue({});
+      vi.mocked(deleteCourse).mockRejectedValue(
+        new Error("Failed")
+      );
 
-      (window.confirm as jest.Mock).mockReturnValue(true);
+      vi.mocked(globalThis.confirm).mockReturnValue(true);
 
       render(
         <MemoryRouter>
@@ -153,18 +161,18 @@ describe("Course Module Test Cases", () => {
       fireEvent.click(deleteButton);
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Failed to delete course"
         );
       });
     });
 
     test("cancels delete when confirmation rejected", async () => {
-      (getAllCourses as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllCourses).mockResolvedValue({
         data: mockCourses,
-      });
+      } as never);
 
-      (window.confirm as jest.Mock).mockReturnValue(false);
+      vi.mocked(globalThis.confirm).mockReturnValue(false);
 
       render(
         <MemoryRouter>
@@ -186,8 +194,6 @@ describe("Course Module Test Cases", () => {
     });
   });
 
-
-
   describe("AddCourse Component", () => {
     const mockDepartments = [
       {
@@ -201,11 +207,13 @@ describe("Course Module Test Cases", () => {
     ];
 
     test("creates course successfully", async () => {
-      (getAllDepartments as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllDepartments).mockResolvedValue({
         data: mockDepartments,
-      });
+      } as never);
 
-      (createCourse as jest.Mock).mockResolvedValue({});
+      vi.mocked(createCourse).mockResolvedValue(
+        {} as never
+      );
 
       render(
         <MemoryRouter>
@@ -254,7 +262,7 @@ describe("Course Module Test Cases", () => {
           dep_id: 1,
         });
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Course created successfully"
         );
 
@@ -265,11 +273,13 @@ describe("Course Module Test Cases", () => {
     });
 
     test("shows create failure alert", async () => {
-      (getAllDepartments as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllDepartments).mockResolvedValue({
         data: mockDepartments,
-      });
+      } as never);
 
-      (createCourse as jest.Mock).mockRejectedValue({});
+      vi.mocked(createCourse).mockRejectedValue(
+        new Error("Failed")
+      );
 
       render(
         <MemoryRouter>
@@ -311,13 +321,12 @@ describe("Course Module Test Cases", () => {
       );
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Failed to create course"
         );
       });
     });
   });
-
 
   describe("EditCourse Component", () => {
     const mockDepartments = [
@@ -340,15 +349,17 @@ describe("Course Module Test Cases", () => {
     ];
 
     test("loads course and updates successfully", async () => {
-      (getCourseById as jest.Mock).mockResolvedValue({
+      vi.mocked(getCourseById).mockResolvedValue({
         data: mockCourse,
-      });
+      } as never);
 
-      (getAllDepartments as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllDepartments).mockResolvedValue({
         data: mockDepartments,
-      });
+      } as never);
 
-      (updateCourse as jest.Mock).mockResolvedValue({});
+      vi.mocked(updateCourse).mockResolvedValue(
+        {} as never
+      );
 
       render(
         <MemoryRouter initialEntries={["/course/edit/1"]}>
@@ -390,7 +401,7 @@ describe("Course Module Test Cases", () => {
           dep_id: 1,
         });
 
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Course updated successfully"
         );
 
@@ -401,15 +412,17 @@ describe("Course Module Test Cases", () => {
     });
 
     test("shows update failure alert", async () => {
-      (getCourseById as jest.Mock).mockResolvedValue({
+      vi.mocked(getCourseById).mockResolvedValue({
         data: mockCourse,
-      });
+      } as never);
 
-      (getAllDepartments as jest.Mock).mockResolvedValue({
+      vi.mocked(getAllDepartments).mockResolvedValue({
         data: mockDepartments,
-      });
+      } as never);
 
-      (updateCourse as jest.Mock).mockRejectedValue({});
+      vi.mocked(updateCourse).mockRejectedValue(
+        new Error("Failed")
+      );
 
       render(
         <MemoryRouter initialEntries={["/course/edit/1"]}>
@@ -435,7 +448,7 @@ describe("Course Module Test Cases", () => {
       );
 
       await waitFor(() => {
-        expect(window.alert).toHaveBeenCalledWith(
+        expect(globalThis.alert).toHaveBeenCalledWith(
           "Failed to update course"
         );
       });

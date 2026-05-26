@@ -66,7 +66,7 @@ const EditExam = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formData.course_id === 0) {
       alert("Please assign a valid course.");

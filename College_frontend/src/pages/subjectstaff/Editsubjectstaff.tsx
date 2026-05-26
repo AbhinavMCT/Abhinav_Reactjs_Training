@@ -80,7 +80,7 @@ const EditSubjectStaff = () => {
   };
 
   const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>,
+    e: React.SubmitEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
 

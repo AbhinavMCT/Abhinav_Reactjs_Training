@@ -29,7 +29,7 @@ const StudentManagement = () => {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this student?")) {
+    if (!globalThis.confirm("Are you sure you want to delete this student?")) {
       return;
     }
     try {

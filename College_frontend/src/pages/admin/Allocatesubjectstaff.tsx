@@ -31,7 +31,7 @@ const AllocateSubjectStaff = () => {
     }, []);
 
     const handleDelete = async (id: number) => {
-        const confirmDelete = window.confirm(
+        const confirmDelete = globalThis.confirm(
             "Are you sure you want to delete this allocation assignment?"
         );
 
@@ -69,11 +69,11 @@ const AllocateSubjectStaff = () => {
                         </thead>
                         <tbody>
                             {allocations.length > 0 ? (
-                                allocations.map((data, index) => {
-                                    const recordId = data.id !== undefined ? data.id : index;
+                                allocations.map((data) => {
+                                    const recordId = data.id ?? `fallback-${data.staff_id}-${data.subject_id}`;
                                     
                                     return (
-                                        <tr key={`alloc-row-${recordId}`}>
+                                        <tr key={recordId}>
                                             <td>{data.id ?? "N/A"}</td>
                                             <td>{data.staff_name ?? `Staff ID: ${data.staff_id}`}</td>
                                             <td>{data.subject_name ?? `Subject ID: ${data.subject_id}`}</td>
@@ -84,7 +84,7 @@ const AllocateSubjectStaff = () => {
                                                 <button 
                                                     className='delete-btn' 
                                                     onClick={() => {
-                                                        if (data.id !== undefined) {
+                                                        if (data.id) {
                                                             handleDelete(data.id);
                                                         } else {
                                                             alert("Cannot delete an item lacking a unique database record key.");
