@@ -24,19 +24,16 @@ const EditExam = () => {
     course_id: 0,
   });
 
-  // 🛠️ Combined data fetching into an optimal async workflow to resolve linting warnings
   useEffect(() => {
     const loadInitData = async () => {
       try {
         if (!id) return;
         
-        // Fetch exam records and course arrays concurrently for better performance
         const [examRes, courseRes] = await Promise.all([
           getExamById(Number(id)),
           getAllCourses()
         ]);
 
-        // Safely pull the first item from the row array payload
         if (examRes.data && examRes.data.length > 0) {
           setFormData(examRes.data[0]);
         }
@@ -53,7 +50,6 @@ const EditExam = () => {
     loadInitData();
   }, [id]);
 
-  // 🛠️ Fixed: Extended the parameter type definition to accept HTMLSelectElement
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -114,7 +110,6 @@ const EditExam = () => {
         <input
           type="date"
           name="exam_date"
-          // 🛠️ Fixed: Added a solid string fallback to keep input controlled at all times
           value={formData.exam_date ? formData.exam_date.split("T")[0] : ""}
           onChange={handleChange}
           required

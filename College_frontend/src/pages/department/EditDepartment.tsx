@@ -83,8 +83,7 @@ const EditDepartment = () => {
           <option value="Arts">Arts</option>
           <option value="Commerce">Commerce</option>
         </select>
-      </div> {/* 🛠️ Fixed: Removed the loose, duplicated stray </div> that was crashing your layout compiler */}
-
+      </div> 
       <div>
         <label htmlFor="office_location">Office Location:</label>
         <input

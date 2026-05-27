@@ -23,48 +23,263 @@ import EditDepartment from "../pages/department/EditDepartment.tsx";
 import AddSubjectStaff from "../pages/subjectstaff/Addsubjectstaff.tsx";
 import AllocateSubjectStaff from "../pages/admin/Allocatesubjectstaff.tsx";
 import Editsubjectstaff from "../pages/subjectstaff/Editsubjectstaff.tsx";
+import ViewActivityLog from "../pages/admin/ActivityLog.tsx";
+import ProtectedRoute from "./ProtectedRoute.tsx";
 
 function AppRoutes() {
   return (
     <>
       {/* Student Routes */}
-      <Route path="/student-management" element={<StudentManagement />} />
-      <Route path="/student/profile" element={<ViewStudent />} />
-      <Route path="/student/register" element={<RegisterStudent />} />
-      <Route path="/student/edit/:id" element={<EditStudent />} />
-      <Route path="/student/edit-profile" element={<EditProfile />} />
 
-      {/* Staff Routes */}
-      <Route path="/staff-management" element={<StaffManagement />} />
-      <Route path="/staff/register" element={<RegisterStaff />} />
-      <Route path="/staff/edit/:id" element={<EditStaff />} />
-      <Route path="/staff/edit-profile" element={<EditProfile />} />
-      <Route path="/staff/profile" element={<ViewStaff />} />
+      {/* ================= STUDENT ROUTES ================= */}
 
-      {/* Exam Routes */}
-      <Route path="/exam-management" element={<ExamManagement />} />
-      <Route path="/exam/add" element={<AddExam />} />
-      <Route path="/exam/edit/:id" element={<EditExam />} />
+      <Route
+        path="/student-management"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
+            <StudentManagement />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Subject Routes */}
-      <Route path="/subject-management" element={<SubjectManagement />} />
-      <Route path="/subject/add" element={<AddSubject />} />
-      <Route path="/subject/edit/:id" element={<EditSubject />} />
+      <Route
+        path="/student/profile"
+        element={
+          <ProtectedRoute allowedRoles={["student"]}>
+            <ViewStudent />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Course Routes */}
-      <Route path="/course-management" element={<CourseManagement />} />
-      <Route path="/course/add" element={<AddCourse />} />
-      <Route path="/course/edit/:id" element={<EditCourse />} />
+      <Route
+        path="/student/register"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
+            <RegisterStudent />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Department Routes */}
-      <Route path="/department-management" element={<DepartmentManagement />} />
-      <Route path="/departments/add" element={<AddDepartment />} />
-      <Route path="/department/edit/:id" element={<EditDepartment />} />
+      <Route
+        path="/student/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
+            <EditStudent />
+          </ProtectedRoute>
+        }
+      />
 
-      {/* Subject-Staff Allocate Routes */}
-      <Route path="/subjectstaff/add" element={<AddSubjectStaff />} />
-      <Route path="/subject-staff" element={<AllocateSubjectStaff />} />
-      <Route path="/subjectstaff/edit/:id" element={<Editsubjectstaff />} />
+      <Route
+        path="/student/edit-profile"
+        element={
+          <ProtectedRoute allowedRoles={["student"]}>
+            <EditProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= STAFF ROUTES ================= */}
+
+      <Route
+        path="/staff-management"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <StaffManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/staff/register"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <RegisterStaff />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/staff/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <EditStaff />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/staff/edit-profile"
+        element={
+          <ProtectedRoute allowedRoles={["staff"]}>
+            <EditProfile />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/staff/profile"
+        element={
+          <ProtectedRoute allowedRoles={["staff"]}>
+            <ViewStaff />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= EXAM ROUTES ================= */}
+
+      <Route
+        path="/exam-management"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
+            <ExamManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/exam/add"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
+            <AddExam />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/exam/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
+            <EditExam />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= SUBJECT ROUTES ================= */}
+
+      <Route
+        path="/subject-management"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <SubjectManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/subject/add"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AddSubject />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/subject/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <EditSubject />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= COURSE ROUTES ================= */}
+
+      <Route
+        path="/course-management"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <CourseManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/course/add"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AddCourse />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/course/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <EditCourse />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= DEPARTMENT ROUTES ================= */}
+
+      <Route
+        path="/department-management"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <DepartmentManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/departments/add"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AddDepartment />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/department/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <EditDepartment />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= SUBJECT STAFF ROUTES ================= */}
+
+      <Route
+        path="/subjectstaff/add"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AddSubjectStaff />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/subject-staff"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <AllocateSubjectStaff />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/subjectstaff/edit/:id"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <Editsubjectstaff />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= ACTIVITY LOG ================= */}
+
+      <Route
+        path="/activity-log"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <ViewActivityLog />
+          </ProtectedRoute>
+        }
+      />
     </>
   );
 }

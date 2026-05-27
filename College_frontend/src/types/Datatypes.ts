@@ -129,3 +129,10 @@ export interface StaffItem {
   id: number;
   name: string; 
 }
+
+export interface ActivityLog{
+  id?: number;
+  role: string;
+  action: string;
+  table_name: string;
+}

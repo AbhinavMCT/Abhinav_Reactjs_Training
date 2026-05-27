@@ -7,7 +7,6 @@ import "../../styles/student/editStudent.css";
 const EditProfile = () => {
   const navigate = useNavigate();
   
-  // 1. Explicitly initialize address_id to safeguard against 'undefined'
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
     email: "",
@@ -35,7 +34,6 @@ const EditProfile = () => {
     const fetchProfile = async () => {
       try {
         const res = await getProfile();
-        // Make sure the incoming payload structure maps correctly to your state fields
         setFormData(res.data);
       } catch (error) {
         console.error("Error fetching profile:", error);

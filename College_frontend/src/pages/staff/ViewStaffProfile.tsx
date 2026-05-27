@@ -43,7 +43,6 @@ const ViewStaff = () => {
 
         <div className="student-profile-card">
 
-          {/* Top Banner */}
           <div className="profile-banner">
 
             <div className="profile-left">
@@ -100,7 +99,6 @@ const ViewStaff = () => {
 
           </div>
 
-          {/* Address Information */}
           <div className="profile-section">
 
             <h3>Address Details</h3>

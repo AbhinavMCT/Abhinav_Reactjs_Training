@@ -28,6 +28,7 @@ export const getStudentById = async (id: number) => {
 };
 
 export const deleteStudent = async (id: number) => {
+    console.log(`${LOGIN_ENDPOINT}/delete-student/${id}`);
     return await axios.delete(LOGIN_ENDPOINT + `delete-student/${id}`,getHeaders());
 };
 

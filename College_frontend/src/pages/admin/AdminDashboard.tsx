@@ -12,6 +12,7 @@ const AdminDashboard = () => {
     { name: "Course Management", path: "/course-management" },
     {name: "Department Management", path: "/department-management" },
     {name: "Allocate Subject to Staff", path: "/subject-staff"},
+    {name: "Activity logs", path: "/actity-log"},
     
   ];
 

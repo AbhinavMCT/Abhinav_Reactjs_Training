@@ -23,7 +23,7 @@ const StudentDashboard = () => {
       menuItems={menuItems}
     >
 
-      {/* Welcome Section */}
+     
       <div className="student-welcome-card">
 
         <div>

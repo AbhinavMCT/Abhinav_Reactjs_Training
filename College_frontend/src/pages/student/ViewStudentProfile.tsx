@@ -43,7 +43,6 @@ const ViewStudent = () => {
 
         <div className="student-profile-card">
 
-          {/* Top Banner */}
           <div className="profile-banner">
 
             <div className="profile-left">
@@ -79,7 +78,6 @@ const ViewStudent = () => {
 
           </div>
 
-          {/* Personal Information */}
           <div className="profile-section">
 
             <h3>Personal Information</h3>
@@ -100,7 +98,6 @@ const ViewStudent = () => {
 
           </div>
 
-          {/* Address Information */}
           <div className="profile-section">
 
             <h3>Address Details</h3>
