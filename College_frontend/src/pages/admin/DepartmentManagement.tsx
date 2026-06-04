@@ -4,10 +4,16 @@ import { Department } from "../../types/Datatypes.ts";
 import { Link } from "react-router-dom";
 
 import "../../styles/department/DepartmentManagement.css";
+import { toast } from "react-toastify";
+import ConfirmModal from "../../components/ConfirmModal.tsx";
 
 const DepartmentManagement = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+   const [openModal, setOpenModal] = useState(false);
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -27,25 +33,28 @@ const DepartmentManagement = () => {
     fetchDepartments();
   }, []);
 
-  const handleDelete = async (id: number | undefined) => {
-    if (id === undefined) return;
+  const handleDelete =  (id: number) => {
+    setSelectedId(id);
+    setOpenModal(true);
+  };
 
-    const confirmDelete = globalThis.confirm(
-      "Are you sure you want to delete?"
-    );
+  const confirmDelete = async() =>{
+    if(!selectedId) return;
 
-    if (!confirmDelete) return;
+    try{
+      await deleteDepartment(selectedId);
+      toast.success("Deleted SuccessFully");
 
-    try {
-      await deleteDepartment(id);
-
-      alert("Department deleted successfully");
-
-      setDepartments((prev) =>
-        prev.filter((dept) => dept.id !== id)
+      setDepartments((prev)=>
+        prev.filter((dep)=>{
+          return dep.id !== selectedId
+        })
       );
-    } catch (error) {
-      console.error("Error deleting department:", error);
+    }catch(error){
+      console.error("Error in Deleting", error);
+    }finally{
+      setSelectedId(null);
+      setOpenModal(false);
     }
   };
 
@@ -109,9 +118,13 @@ const DepartmentManagement = () => {
                       </Link>
 
                       <button
-                        onClick={() =>
-                          handleDelete(department.id)
-                        }
+                        onClick={() =>{
+                          if(department.id){
+                            handleDelete(department.id);
+                          }
+                        }}
+                        
+                          
                         className="btn-action-delete"
                       >
                         Delete
@@ -133,6 +146,16 @@ const DepartmentManagement = () => {
           </tbody>
         </table>
       </div>
+      <ConfirmModal
+        isOpen={openModal}
+        title="Delete Student"
+        message="Are you sure you want to delete this student?"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setOpenModal(false);
+          setSelectedId(null);
+        }}
+      />
     </div>
   );
 };

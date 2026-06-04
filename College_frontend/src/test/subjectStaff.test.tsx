@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import AllocateSubjectStaff from "../pages/admin/Allocatesubjectstaff.tsx";
-import EditSubjectStaff from "../pages/subjectstaff/Editsubjectstaff.tsx";
+import EditSubjectStaff from "../pages/subjectstaff/SubjectStaffAllocationPage.tsx";
 import AddSubjectStaff from "../pages/subjectstaff/Addsubjectstaff.tsx";
 
 vi.mock("../services/SubjectStaffApi.ts", () => ({

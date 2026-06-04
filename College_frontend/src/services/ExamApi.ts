@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ExamPayload } from "../types/Datatypes.ts";
+import { Exam } from "../types/Datatypes.ts";
 
 const API_URL = import.meta.env.VITE_BackEndURL;
 const EXAM_ENDPOINT = API_URL + "/exam/";
@@ -19,14 +19,15 @@ export const getExamById = async (id: number) => {
   return axios.get(`${EXAM_ENDPOINT}get-exambyid/${id}`, getHeaders());
 };
 
-export const createExam = async (data: ExamPayload) => {
+export const createExam = async (data: Exam) => {
   return axios.post(`${EXAM_ENDPOINT}add-exam`, data, getHeaders());
 };
 
-export const updateExam = async (id: number, data: ExamPayload) => {
+export const updateExam = async (id: number, data: Exam) => {
   return axios.put(`${EXAM_ENDPOINT}edit-exam/${id}`, data, getHeaders());
 };
 
 export const deleteExam = async (id: number) => {
   return axios.delete(`${EXAM_ENDPOINT}delete-exam/${id}`, getHeaders());
 };
+

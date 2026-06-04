@@ -1,102 +1,90 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-  getAllSubjectStaff,
-  deleteSubjectStaff,
-} from "../../services/SubjectStaffApi.ts";
-import { SubjectStaffPayload } from "../../types/Datatypes.ts";
-import ConfirmModal from "../../components/ConfirmModal.tsx";
+import {useState, useEffect} from "react";
+import {StudentCourse,} from "../../types/Datatypes.ts";
+import {getStudentCourse, deleteStudentCourse} from "../../services/StudentCourseApi.ts";
 import { toast } from "react-toastify";
+import ConfirmModal from "../../components/ConfirmModal.tsx";
+import { Link } from "react-router-dom";
 
-const AllocateSubjectStaff = () => {
-  const [allocations, setAllocations] = useState<SubjectStaffPayload[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+const AllocateStudentCourse = () =>{
+    const[allocation, setAllocation] = useState<StudentCourse[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
-  const [openModal, setOpenModal] = useState(false);
+    const [openModal, setOpenModal] = useState(false);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  useEffect(() => {
-    const loadAllocated = async () => {
-      try {
-        const res = await getAllSubjectStaff();
-        if (res && Array.isArray(res.data)) {
-          setAllocations(res.data);
-        } else {
-          setAllocations([]);
+  useEffect(()=>{
+    const fetchAllocated = async()=>{
+        try{
+            const res = await getStudentCourse();
+        setAllocation(res.data);
+        }catch(error){
+            console.error("Error Fetching Data", error);
+        }finally{
+            setLoading(false);
         }
-      } catch (error) {
-        console.error("Failed to load Data", error);
-        setAllocations([]);
-      } finally {
-        setLoading(false);
-      }
     };
-    loadAllocated();
-  }, []);
+    fetchAllocated();
+  },[]);
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: number)=>{
     setSelectedId(id);
-
     setOpenModal(true);
   };
 
-  const confirmDelete = async () => {
-    if (!selectedId) return;
-
-    try {
-      await deleteSubjectStaff(selectedId);
-      toast.success("Deleted SuccessFully");
-
-      setAllocations((prev) =>
-        prev.filter((allocation) => allocation.id !== selectedId),
-      );
-    } catch (error) {
-      console.error("Error deleting allocation:", error);
-    } finally {
-      setOpenModal(false);
-
-      setSelectedId(null);
+  const confirmDelete = async()=>{
+    if(!selectedId) return;
+    try{
+        await deleteStudentCourse(selectedId);
+    toast.success("Deleted SuccessFully");
+    setAllocation((prev)=>
+        prev.filter((allocation) => allocation.id !== selectedId)
+    );
+    }catch(error){
+        console.error("Error deleting allocation", error);
+    }finally{
+        setOpenModal(false);
+        setSelectedId(null);
     }
   };
 
-  return (
+  return(
     <div className="student-management-container">
       <div className="management-header">
-        <h2>Subject to Staff Allocation Management</h2>
-        <Link to="/subjectstaff/add" className="create-btn">
+        <h2>Student-Course Allocation Management</h2>
+        <Link to="/studentcourse/add" className="create-btn">
           + Allocate New
         </Link>
       </div>
       <div className="table-container">
         {loading ? (
-          <p>Loading Allocated Staff and Subject matrices...</p>
+          <p>Loading Allocated Student-Course matrices...</p>
         ) : (
           <table>
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Staff Name</th>
-                <th>Subject Name</th>
+                <th>Student Name</th>
+                <th>Course Name</th>
                 <th>Action Rows</th>
               </tr>
             </thead>
             <tbody>
-              {allocations.length > 0 ? (
-                allocations.map((data) => {
+              {allocation.length > 0 ? (
+                allocation.map((data) => {
                   const recordId =
-                    data.id ?? `fallback-${data.staff_id}-${data.subject_id}`;
+                    data.id ?? `fallback-${data.student_id}-${data.course_id}`;
 
                   return (
                     <tr key={recordId}>
                       <td>{data.id ?? "N/A"}</td>
-                      <td>{data.staff_name ?? `Staff ID: ${data.staff_id}`}</td>
+                      <td>{data.student_name ?? `Student ID: ${data.student_id}`}</td>
                       <td>
-                        {data.subject_name ?? `Subject ID: ${data.subject_id}`}
+                        {data.course_name ?? `Course ID: ${data.course_id}`}
                       </td>
                       <td className="action-button">
                         <Link
-                          to={`/subjectstaff/edit/${data.id}`}
+                          to={`/studentcourse/edit/${data.id}`}
                           className="edit-btn"
                         >
                           Edit
@@ -130,7 +118,7 @@ const AllocateSubjectStaff = () => {
                       fontStyle: "italic",
                     }}
                   >
-                    No staff allocations found. Click "+ Allocate New" to create
+                    No student-course allocations found. Click "+ Allocate New" to create
                     one.
                   </td>
                 </tr>
@@ -141,8 +129,8 @@ const AllocateSubjectStaff = () => {
       </div>
       <ConfirmModal
         isOpen={openModal}
-        title="Delete Student"
-        message="Are you sure you want to delete this student?"
+        title="Delete Student-Course Allocation"
+        message="Are you sure you want to delete this allocation?"
         onConfirm={confirmDelete}
         onCancel={() => {
           setOpenModal(false);
@@ -151,7 +139,7 @@ const AllocateSubjectStaff = () => {
         }}
       />
     </div>
-  );
+  )
 };
 
-export default AllocateSubjectStaff;
+export default AllocateStudentCourse;

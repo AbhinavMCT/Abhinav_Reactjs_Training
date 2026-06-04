@@ -1,52 +1,38 @@
 import { useEffect, useState } from "react";
-import { FaUserEdit, FaEnvelope, FaPhoneAlt } from "react-icons/fa";
+import { FaEnvelope, FaPhoneAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-import { getProfile } from "../../services/StaffApi.ts";
+import { getstaffProfile } from "../../services/StaffApi.ts";
 import { ProfileData } from "../../types/Datatypes.ts";
 
 import "../../styles/student/viewStudent.css";
-import { Link } from "react-router-dom";
 
 const ViewStaff = () => {
-
-  const [profile, setProfile] =
-    useState<ProfileData | null>(null);
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<ProfileData | null>(null);
 
   useEffect(() => {
-
     const fetchProfile = async () => {
-
       try {
-
-        const res = await getProfile();
-
-        setProfile(res.data);
-
+        const res = await getstaffProfile();
+        setProfile({
+          ...res.data,
+          DOB: res.data.DOB ? res.data.DOB.split("T")[0] : "",
+        });
       } catch (error) {
-
-        console.error(
-          "Error fetching profile:",
-          error
-        );
-
+        console.error("Error fetching profile:", error);
       }
     };
 
     fetchProfile();
-
   }, []);
 
   return (
     <div className="student-profile-container">
-
       {profile ? (
-
         <div className="student-profile-card">
-
           <div className="profile-banner">
-
             <div className="profile-left">
-
               <div className="profile-image">
                 <img
                   src="https://cdn-icons-png.flaticon.com/512/3135/3135810.png"
@@ -55,7 +41,6 @@ const ViewStaff = () => {
               </div>
 
               <div className="profile-main-info">
-
                 <h2>{profile.name}</h2>
 
                 <p>
@@ -67,24 +52,24 @@ const ViewStaff = () => {
                   <FaPhoneAlt className="mini-icon" />
                   {profile.contact}
                 </p>
-
               </div>
-
             </div>
 
-            <Link to="/staff/edit-profile" className="edit-btn">
-              <FaUserEdit /> Edit Profile
-            </Link>
-
+            <button
+  onClick={() => {
+    console.log("Navigating...");
+    navigate("/staff/edit-profile");
+  }}
+  className="edit-btn"
+>
+  Edit Profile
+</button>
           </div>
 
-          
           <div className="profile-section">
-
             <h3>Personal Information</h3>
 
             <div className="profile-grid">
-
               <div className="profile-item">
                 <p className="profile-label">Gender</p>
                 <span>{profile.gender}</span>
@@ -94,17 +79,13 @@ const ViewStaff = () => {
                 <p className="profile-label">Date of Birth</p>
                 <span>{profile.DOB}</span>
               </div>
-
             </div>
-
           </div>
 
           <div className="profile-section">
-
             <h3>Address Details</h3>
 
             <div className="profile-grid">
-
               <div className="profile-item">
                 <p className="profile-label">City</p>
                 <span>{profile.address.city}</span>
@@ -124,21 +105,12 @@ const ViewStaff = () => {
                 <p className="profile-label">Pin</p>
                 <span>{profile.address.pin}</span>
               </div>
-
             </div>
-
           </div>
-
         </div>
-
       ) : (
-
-        <div className="loading">
-          Loading Profile...
-        </div>
-
+        <div className="loading">Loading Profile...</div>
       )}
-
     </div>
   );
 };

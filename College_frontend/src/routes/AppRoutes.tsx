@@ -1,285 +1,232 @@
 import { Route } from "react-router-dom";
-import StudentManagement from "../pages/admin/StudentManagement.tsx";
-import StaffManagement from "../pages/admin/StaffManagement.tsx";
-import ViewStudent from "../pages/student/ViewStudentProfile.tsx";
-import RegisterStudent from "../pages/student/RegisterStudent.tsx";
-import EditStudent from "../pages/admin/EditStudent.tsx";
-import EditProfile from "../pages/student/EditStudentProfile.tsx";
-import RegisterStaff from "../pages/staff/RegisterStaff.tsx";
-import EditStaff from "../pages/admin/EditStaff.tsx";
-import ViewStaff from "../pages/staff/ViewStaffProfile.tsx";
-import EditExam from "../pages/exam/EditExam.tsx";
-import AddExam from "../pages/exam/AddExam.tsx";
-import ExamManagement from "../pages/admin/ExamManagement.tsx";
-import EditSubject from "../pages/subjects/EditSubject.tsx";
-import AddSubject from "../pages/subjects/AddSubject.tsx";
-import SubjectManagement from "../pages/admin/SubjectManagement.tsx";
-import EditCourse from "../pages/course/EditCourse.tsx";
-import AddCourse from "../pages/course/AddCourse.tsx";
-import CourseManagement from "../pages/admin/CourseManagement.tsx";
-import AddDepartment from "../pages/department/AddDepartment.tsx";
-import DepartmentManagement from "../pages/admin/DepartmentManagement.tsx";
-import EditDepartment from "../pages/department/EditDepartment.tsx";
-import AddSubjectStaff from "../pages/subjectstaff/Addsubjectstaff.tsx";
-import AllocateSubjectStaff from "../pages/admin/Allocatesubjectstaff.tsx";
-import Editsubjectstaff from "../pages/subjectstaff/Editsubjectstaff.tsx";
-import ViewActivityLog from "../pages/admin/ActivityLog.tsx";
+
 import ProtectedRoute from "./ProtectedRoute.tsx";
+import RegisterUser from "../pages/RegisterUser.tsx";
+
+
+import StudentManagement from "../pages/admin/StudentManagement.tsx";
+import ViewStudent from "../pages/student/ViewStudentProfile.tsx";
+import EditStudentPage from "../pages/student/EditStudentPage.tsx";
+
+import StaffManagement from "../pages/admin/StaffManagement.tsx";
+import ViewStaff from "../pages/staff/ViewStaffProfile.tsx";
+import EditStaffProfile from "../pages/staff/EditStaffPage.tsx";
+
+import ExamManagement from "../pages/admin/ExamManagement.tsx";
+import Exampage from "../pages/exam/Exampage.tsx";
+
+import SubjectManagement from "../pages/admin/SubjectManagement.tsx";
+import SubjectPage from "../pages/subjects/Subjectpage.tsx";
+
+import CourseManagement from "../pages/admin/CourseManagement.tsx";
+import Coursepage from "../pages/course/Coursepage.tsx";
+
+import DepartmentManagement from "../pages/admin/DepartmentManagement.tsx";
+import DepartmentPage from "../pages/department/DepartmentPage.tsx";
+
+import AllocateSubjectStaff from "../pages/admin/Allocatesubjectstaff.tsx";
+import AllocationPage from "../pages/subjectstaff/SubjectStaffAllocationPage.tsx";
+
+import ViewActivityLog from "../pages/admin/ActivityLog.tsx";
+import AllocateStudentCourse from "../pages/admin/Allocatestudentcourse.tsx";
+import StudentCoursePage from "../pages/studentcourse/StudentCoursePage.tsx";
+
+const routes = [
+
+  {
+    path: "/staff/register",
+    element: <RegisterUser />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/student/register",
+    element: <RegisterUser />,
+    roles: ["Admin","staff"],
+  },
+
+  {
+    path: "/student-management",
+    element: <StudentManagement />,
+    roles: ["Admin", "staff"],
+  },
+
+
+
+  {
+    path: "/student/edit/:id",
+    element: <EditStudentPage />,
+    roles: ["Admin", "staff"],
+  },
+
+  {
+    path: "/student/profile",
+    element: <ViewStudent />,
+    roles: ["student"],
+  },
+
+  {
+    path: "/student/edit-profile",
+    element: <EditStudentPage />,
+    roles: ["student"],
+  },
+
+  {
+    path: "/staff-management",
+    element: <StaffManagement />,
+    roles: ["Admin"],
+  },
+
+  
+
+  {
+    path: "/staff/edit/:id",
+    element: <EditStaffProfile />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/staff/profile",
+    element: <ViewStaff />,
+    roles: ["staff"],
+  },
+
+  {
+    path: "/staff/edit-profile",
+    element: <EditStaffProfile />,
+    roles: ["staff"],
+  },
+
+  {
+    path: "/exam-management",
+    element: <ExamManagement />,
+    roles: ["Admin", "staff"],
+  },
+
+  {
+    path: "/exam/add",
+    element: <Exampage />,
+    roles: ["Admin", "staff"],
+  },
+
+  {
+    path: "/exam/edit/:id",
+    element: <Exampage />,
+    roles: ["Admin", "staff"],
+  },
+
+  {
+    path: "/subject-management",
+    element: <SubjectManagement />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/subject/add",
+    element: <SubjectPage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/subject/edit/:id",
+    element: <SubjectPage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/course-management",
+    element: <CourseManagement />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/course/add",
+    element: <Coursepage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/course/edit/:id",
+    element: <Coursepage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/department-management",
+    element: <DepartmentManagement />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/departments/add",
+    element: <DepartmentPage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/departments/edit/:id",
+    element: <DepartmentPage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/subject-staff",
+    element: <AllocateSubjectStaff />,
+    roles: ["Admin"],
+  },
+
+
+  {
+    path: "/subjectstaff/add",
+    element: <AllocationPage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/subjectstaff/edit/:id",
+    element: <AllocationPage />,
+    roles: ["Admin"],
+  },
+
+  {
+    path: "/student-course",
+    element: <AllocateStudentCourse />,
+    roles: ["Admin", "staff"],
+  },
+
+  {
+    path: "/studentcourse/add",
+    element: <StudentCoursePage />,
+    roles: ["Admin", "staff"]
+  },
+
+  {
+    path: "/studentcourse/edit",
+    element: <StudentCoursePage />,
+    roles: ["Admin", "staff"]
+  },
+
+  {
+    path: "/activity-log",
+    element: <ViewActivityLog />,
+    roles: ["Admin"],
+  },
+];
 
 function AppRoutes() {
   return (
     <>
-      {/* Student Routes */}
-
-      {/* ================= STUDENT ROUTES ================= */}
-
-      <Route
-        path="/student-management"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
-            <StudentManagement />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/student/profile"
-        element={
-          <ProtectedRoute allowedRoles={["student"]}>
-            <ViewStudent />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/student/register"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
-            <RegisterStudent />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/student/edit/:id"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
-            <EditStudent />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/student/edit-profile"
-        element={
-          <ProtectedRoute allowedRoles={["student"]}>
-            <EditProfile />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= STAFF ROUTES ================= */}
-
-      <Route
-        path="/staff-management"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <StaffManagement />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/staff/register"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <RegisterStaff />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/staff/edit/:id"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <EditStaff />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/staff/edit-profile"
-        element={
-          <ProtectedRoute allowedRoles={["staff"]}>
-            <EditProfile />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/staff/profile"
-        element={
-          <ProtectedRoute allowedRoles={["staff"]}>
-            <ViewStaff />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= EXAM ROUTES ================= */}
-
-      <Route
-        path="/exam-management"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
-            <ExamManagement />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/exam/add"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
-            <AddExam />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/exam/edit/:id"
-        element={
-          <ProtectedRoute allowedRoles={["Admin", "staff"]}>
-            <EditExam />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= SUBJECT ROUTES ================= */}
-
-      <Route
-        path="/subject-management"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <SubjectManagement />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/subject/add"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <AddSubject />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/subject/edit/:id"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <EditSubject />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= COURSE ROUTES ================= */}
-
-      <Route
-        path="/course-management"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <CourseManagement />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/course/add"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <AddCourse />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/course/edit/:id"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <EditCourse />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= DEPARTMENT ROUTES ================= */}
-
-      <Route
-        path="/department-management"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <DepartmentManagement />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/departments/add"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <AddDepartment />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/department/edit/:id"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <EditDepartment />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= SUBJECT STAFF ROUTES ================= */}
-
-      <Route
-        path="/subjectstaff/add"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <AddSubjectStaff />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/subject-staff"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <AllocateSubjectStaff />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/subjectstaff/edit/:id"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <Editsubjectstaff />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ================= ACTIVITY LOG ================= */}
-
-      <Route
-        path="/activity-log"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <ViewActivityLog />
-          </ProtectedRoute>
-        }
-      />
+      {routes.map((route) => (
+        <Route
+          key={route.path}
+          path={route.path}
+          element={
+            <ProtectedRoute allowedRoles={route.roles}>
+              {route.element}
+            </ProtectedRoute>
+          }
+        />
+      ))}
     </>
   );
 }

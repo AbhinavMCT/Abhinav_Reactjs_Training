@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import CourseManagement from "../pages/admin/CourseManagement.tsx";
-import AddCourse from "../pages/course/AddCourse.tsx";
+import AddCourse from "../pages/course/Coursepage.tsx";
 import EditCourse from "../pages/course/EditCourse.tsx";
 
 vi.mock("../services/CourseApi.ts", () => ({

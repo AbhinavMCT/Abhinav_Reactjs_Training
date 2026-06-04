@@ -4,7 +4,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import StudentManagement from "../pages/admin/StudentManagement.tsx";
 import RegisterStudent from "../pages/student/RegisterStudent.tsx";
 import EditStudent from "../pages/admin/EditStudent.tsx";
-import EditProfile from "../pages/student/EditStudentProfile.tsx";
+import EditProfile from "../pages/student/EditStudentPage.tsx";
 import ViewStudent from "../pages/student/ViewStudentProfile.tsx";
 
 vi.mock("../services/StudentApi.ts", () => ({

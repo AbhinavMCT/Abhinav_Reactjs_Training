@@ -75,12 +75,13 @@ export interface UpdateProfilePayload {
   };
 }
 
-export interface ExamPayload {
+export interface Exam {
   id?: number;
   name: string;
   semester: number;
   exam_date: string;
   course_id: number;
+  course_name?: string;
 }
 
 export interface SubjectPayload {
@@ -89,6 +90,10 @@ export interface SubjectPayload {
   type: string;
   course_id: number;
   course_name?: string;
+}
+export interface CourseOption {
+  id: number;
+  name: string;
 }
 
 export interface CoursePayload {
@@ -135,4 +140,22 @@ export interface ActivityLog{
   role: string;
   action: string;
   table_name: string;
+}
+
+export interface StudentCourse{
+  id: number;
+  student_id: number;
+  course_id: number;
+  student_name?: string;
+  course_name?: string;
+}
+
+export interface Studentlist{
+  id: number;
+  name: string;
+}
+
+export interface Courselist{
+  id: number;
+  name: string;
 }

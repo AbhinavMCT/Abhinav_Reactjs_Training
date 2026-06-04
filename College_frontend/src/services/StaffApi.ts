@@ -11,9 +11,8 @@ const getHeaders = () => ({
   },
 });
 
-export const getProfile = async() => {
-    console.log(localStorage.getItem("access"));
-    return await axios.get(LOGIN_ENDPOINT + "profile",getHeaders());
+export const getstaffProfile = async() => {
+    return await axios.get(LOGIN_ENDPOINT + "staffprofile",getHeaders());
 };
 
 export const registerStaff = async (formData: RegisterPayload) => {

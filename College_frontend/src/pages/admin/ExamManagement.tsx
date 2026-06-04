@@ -7,14 +7,20 @@ import {
   deleteExam,
 } from "../../services/ExamApi.ts";
 
-import { ExamPayload } from "../../types/Datatypes.ts";
+import { Exam } from "../../types/Datatypes.ts";
 
 import "../../styles/student/studentManagement.css";
+import ConfirmModal from "../../components/ConfirmModal.tsx";
+import { toast } from "react-toastify";
 
 const ExamManagement = () => {
-  const [exams, setExams] = useState<ExamPayload[]>([]);
+  const [exams, setExams] = useState<Exam[]>([]);
 
   const [loading, setLoading] = useState(true);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
   const loadExams = async () => {
@@ -34,21 +40,26 @@ const ExamManagement = () => {
   loadExams();
 }, []);
 
-  const handleDelete = async (id: number) => {
-    const confirmDelete = globalThis.confirm(
-      "Are you sure you want to delete this exam?"
-    );
+  const handleDelete = (id: number) => {
+    setSelectedId(id);
+    setOpenModal(true);
+  };
 
-    if (!confirmDelete) return;
-
-    try {
-      await deleteExam(id);
-
-      setExams((prev) =>
-        prev.filter((exam) => exam.id !== id)
+  const confirmDelete = async()=>{
+    if (selectedId === null) return;
+    try{
+      await deleteExam(selectedId);
+      toast.success("Deleted SuccessFully");
+      setExams((prev)=>
+        prev.filter((exam)=>{
+          return exam.id !== selectedId
+        })
       );
-    } catch (error) {
-      console.error(error);
+    }catch(error){
+      console.error("Error Deleting Exams", error);
+    }finally{
+      setSelectedId(null);
+      setOpenModal(false)
     }
   };
 
@@ -75,14 +86,14 @@ const ExamManagement = () => {
                 <th>Name</th>
                 <th>Semester</th>
                 <th>Exam Date</th>
-                <th>Course ID</th>
+                <th>Course Name</th>
                 <th>Actions</th>
               </tr>
             </thead>
 
             <tbody>
-                {Array.isArray(exams) &&
-              exams.map((exam, index) => {
+                
+              {exams.map((exam, index) => {
                 const rowKey = `exam-${exam.id}-${index}`;
 
                 return (
@@ -97,7 +108,7 @@ const ExamManagement = () => {
                       ).toLocaleDateString()}
                     </td>
 
-                    <td>{exam.course_id}</td>
+                    <td>{exam.course_name}</td>
 
                     <td className="action-buttons">
                       <Link
@@ -125,6 +136,17 @@ const ExamManagement = () => {
           </table>
         )}
       </div>
+      <ConfirmModal
+        isOpen={openModal}
+        title="Delete Exam"
+        message="Are you sure you want to delete this exam?"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setOpenModal(false);
+
+          setSelectedId(null);
+        }}
+      />
     </div>
   );
 };

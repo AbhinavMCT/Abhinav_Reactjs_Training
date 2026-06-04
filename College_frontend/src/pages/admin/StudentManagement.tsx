@@ -6,9 +6,15 @@ import { getAllStudents, deleteStudent } from "../../services/StudentApi.ts";
 
 import "../../styles/student/studentManagement.css";
 import { RegisterPayload } from "../../types/Datatypes.ts";
+import ConfirmModal from "../../components/ConfirmModal.tsx";
+import { toast } from "react-toastify";
 
 const StudentManagement = () => {
   const [students, setStudents] = useState<RegisterPayload[]>([]);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -28,20 +34,30 @@ const StudentManagement = () => {
     loadStudents();
   }, []);
 
-  const handleDelete = async (id: number) => {
-    if (!globalThis.confirm("Are you sure you want to delete this student?")) {
-      return;
-    }
+  const handleDelete = (id: number) => {
+    setSelectedId(id);
+
+    setOpenModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedId) return;
     try {
-      await deleteStudent(id);
-      setStudents(
-        students.filter((student) => {
+      await deleteStudent(selectedId);
+      toast.success("Deleted SuccessFully");
+      setStudents((prevStudents) =>
+        prevStudents.filter((student) => {
           const studentInfo = student?.userData || student;
-          return studentInfo?.id !== id;
+
+          return studentInfo?.id !== selectedId;
         }),
       );
     } catch (error) {
       console.error("Error deleting student:", error);
+    } finally {
+      setOpenModal(false);
+
+      setSelectedId(null);
     }
   };
 
@@ -49,10 +65,14 @@ const StudentManagement = () => {
     <div className="student-management-container">
       <div className="management-header">
         <h2>Student Management</h2>
+        <div className="buttons">
+          <Link to="/student-course" className="create-btn">+ Allocate Course</Link>
 
         <Link to="/student/register" className="create-btn">
           + Create Student
         </Link>
+        </div>
+        
       </div>
 
       <div className="table-container">
@@ -62,6 +82,7 @@ const StudentManagement = () => {
           <table>
             <thead>
               <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Contact</th>
@@ -84,6 +105,7 @@ const StudentManagement = () => {
 
                 return (
                   <tr key={rowKey}>
+                    <td>{studentInfo?.id}</td>
                     <td>{studentInfo?.name ?? "N/A"}</td>
                     <td>{studentInfo?.email ?? "N/A"}</td>
                     <td>{studentInfo?.contact ?? "N/A"}</td>
@@ -122,6 +144,17 @@ const StudentManagement = () => {
           </table>
         )}
       </div>
+      <ConfirmModal
+        isOpen={openModal}
+        title="Delete Student"
+        message="Are you sure you want to delete this student?"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setOpenModal(false);
+
+          setSelectedId(null);
+        }}
+      />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 
 import DepartmentManagement from "../pages/admin/DepartmentManagement.tsx";
-import AddDepartment from "../pages/department/AddDepartment.tsx";
+import AddDepartment from "../pages/department/DepartmentPage.tsx";
 import EditDepartment from "../pages/department/EditDepartment.tsx";
 
 vi.mock("../services/DepartmentApi.ts", () => ({

@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import ExamManagement from "../pages/admin/ExamManagement.tsx";
-import AddExam from "../pages/exam/AddExam.tsx";
+import AddExam from "../pages/exam/Exampage.tsx";
 import EditExam from "../pages/exam/EditExam.tsx";
 
 vi.mock("../services/ExamApi.ts", () => ({

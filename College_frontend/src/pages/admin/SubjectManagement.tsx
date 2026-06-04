@@ -4,12 +4,17 @@ import { getAllSubjects, deleteSubject } from "../../services/SubjectApi.ts";
 import { SubjectPayload } from "../../types/Datatypes.ts";
 
 import "../../styles/subject/SubjectManagement.css";
+import ConfirmModal from "../../components/ConfirmModal.tsx";
+import { toast } from "react-toastify";
 
 
 
 const SubjectManagement = () => {
   const [subjects, setSubjects] = useState<SubjectPayload[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+    const [openModal, setOpenModal] = useState(false);
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
   const loadSubjects = async () => {
@@ -30,23 +35,25 @@ const SubjectManagement = () => {
 }, []);
 
   const handleDelete = async (id: number) => {
-    const confirmDelete = globalThis.confirm(
-      "Are you sure you want to delete this subject permanently?",
-    );
+    setSelectedId(id);
+    setOpenModal(true);
+  };
 
-    if (!confirmDelete) return;
-
-    try {
-      await deleteSubject(id);
-
-      setSubjects((prevSubjects) =>
-        prevSubjects.filter((subject) => subject.id !== id),
+  const confirmDelete = async() =>{
+    if(!selectedId) return;
+    try{
+      await deleteSubject(selectedId);
+      toast.success("Deleted SuccessFully");
+      setSubjects((prev)=>
+        prev.filter((subject)=>{
+          return subject.id !== selectedId
+        })
       );
-
-      alert("Subject deleted successfully");
-    } catch (error) {
-      console.error("Delete operation failure:", error);
-      alert("Failed to delete subject");
+    }catch(error){
+      console.error("Error in deleting Subject", error)
+    }finally{
+      setSelectedId(null);
+      setOpenModal(false);
     }
   };
 
@@ -127,6 +134,17 @@ const SubjectManagement = () => {
           </table>
         )}
       </div>
+      <ConfirmModal
+        isOpen={openModal}
+        title="Delete Student"
+        message="Are you sure you want to delete this student?"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setOpenModal(false);
+
+          setSelectedId(null);
+        }}
+      />
     </div>
   );
 };

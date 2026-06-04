@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import SubjectManagement from "../pages/admin/SubjectManagement.tsx";
-import AddSubject from "../pages/subjects/AddSubject.tsx";
+import AddSubject from "../pages/subjects/Subjectpage.tsx";
 import EditSubject from "../pages/subjects/EditSubject.tsx";
 
 vi.mock("../services/SubjectApi.ts", () => ({

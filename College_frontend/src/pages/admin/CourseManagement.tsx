@@ -5,13 +5,16 @@ import { Link } from "react-router-dom";
 import { getAllCourses, deleteCourse } from "../../services/CourseApi.ts";
 
 import { CoursePayload } from "../../types/Datatypes.ts";
-
-
+import ConfirmModal from "../../components/ConfirmModal.tsx";
 
 const CourseManagement = () => {
   const [courses, setCourses] = useState<CoursePayload[]>([]);
 
   const [loading, setLoading] = useState(true);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
   useEffect(() => {
     const loadCourses = async () => {
@@ -37,25 +40,25 @@ const CourseManagement = () => {
     loadCourses();
   }, []);
 
-  const handleDelete = async (id: number) => {
-    const confirmDelete = globalThis.confirm(
-      "Are you sure you want to delete this course?",
-    );
+  const handleDelete = (id: number) => {
+    setSelectedId(id);
 
-    if (!confirmDelete) return;
+    setOpenModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedId) return;
 
     try {
-      await deleteCourse(id);
+      await deleteCourse(selectedId);
 
-      setCourses((prevCourses) =>
-        prevCourses.filter((course) => course.id !== id),
-      );
-
-      alert("Course deleted successfully");
+      setCourses((prev) => prev.filter((course) => course.id !== selectedId));
     } catch (error) {
       console.error("Error deleting course:", error);
+    } finally {
+      setOpenModal(false);
 
-      alert("Failed to delete course");
+      setSelectedId(null);
     }
   };
 
@@ -80,7 +83,6 @@ const CourseManagement = () => {
 
                 <th>Course Name</th>
 
-
                 <th>Department Name</th>
 
                 <th>Actions</th>
@@ -97,7 +99,6 @@ const CourseManagement = () => {
                       <td>{course.id ?? "N/A"}</td>
 
                       <td>{course.name ?? "N/A"}</td>
-
 
                       <td>{course.department_name ?? "N/A"}</td>
 
@@ -140,6 +141,17 @@ const CourseManagement = () => {
           </table>
         )}
       </div>
+      <ConfirmModal
+        isOpen={openModal}
+        title="Delete Student"
+        message="Are you sure you want to delete this student?"
+        onConfirm={confirmDelete}
+        onCancel={() => {
+          setOpenModal(false);
+
+          setSelectedId(null);
+        }}
+      />
     </div>
   );
 };

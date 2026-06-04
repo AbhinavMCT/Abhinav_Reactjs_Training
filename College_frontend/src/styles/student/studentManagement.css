@@ -26,7 +26,10 @@
   color: #1e293b;
 }
 
-/* Create Button */
+.buttons{
+  gap: 20px;
+  display: flex;
+}
 
 .create-btn {
   background: linear-gradient(

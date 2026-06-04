@@ -23,7 +23,7 @@ const Login = () => {
         }));
     };
 
-    async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    const handleSubmit = async(e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (loading) return; 
         setLoading(true);
@@ -36,7 +36,7 @@ const Login = () => {
             const decoded = decodeToken(token);
 
             if (decoded.role === "Admin") {
-                navigate("/admin-home");
+                navigate("/admin-home", { replace: true });
             } else if (decoded.role === "staff") {
                 navigate("/staff-home");
             } else if(decoded.role === "student") {
