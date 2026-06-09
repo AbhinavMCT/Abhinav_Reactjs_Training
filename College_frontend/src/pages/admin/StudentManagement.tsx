@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getAllStudents, deleteStudent } from "../../services/StudentApi.ts";
 
 import "../../styles/student/studentManagement.css";
-import { RegisterPayload, StudentList } from "../../types/Datatypes.ts";
+import { StudentList } from "../../types/Datatypes.ts";
 import ConfirmModal from "../../components/ConfirmModal.tsx";
 import { toast } from "react-toastify";
 import DeleteButton from "../../components/DeleteButton.tsx";

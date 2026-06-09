@@ -19,20 +19,13 @@ const Pagination = ({
 }: Props) => {
   return (
     <div className="pagination-container">
-      <div className="pagination-info">
-        Total Records: {totalRecords}
-      </div>
+      <div className="pagination-info">Total Records: {totalRecords}</div>
 
       <div className="pagination">
         <label>
-          Rows:
-          <select
+          Rows:<select
             value={limit}
-            onChange={(e) =>
-              onLimitChange(
-                Number(e.target.value)
-              )
-            }
+            onChange={(e) => onLimitChange(Number(e.target.value))}
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
@@ -42,39 +35,23 @@ const Pagination = ({
           </select>
         </label>
 
-        <button
-          disabled={page === 1}
-          onClick={() =>
-            onPageChange(page - 1)
-          }
-        >
+        <button disabled={page === 1} onClick={() => onPageChange(page - 1)}>
           Previous
         </button>
 
-        {Array.from(
-          { length: totalPages },
-          (_, index) => (
-            <button
-              key={index + 1}
-              className={
-                page === index + 1
-                  ? "active"
-                  : ""
-              }
-              onClick={() =>
-                onPageChange(index + 1)
-              }
-            >
-              {index + 1}
-            </button>
-          )
-        )}
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            className={page === index + 1 ? "active" : ""}
+            onClick={() => onPageChange(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
 
         <button
           disabled={page === totalPages}
-          onClick={() =>
-            onPageChange(page + 1)
-          }
+          onClick={() => onPageChange(page + 1)}
         >
           Next
         </button>

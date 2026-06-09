@@ -17,7 +17,7 @@ type coursePageProps = {
   isEditMode: boolean;
 };
 
-const AddCourse = ({ id, navigate, isEditMode }: coursePageProps) => {
+const AddCourse = ({ id, navigate }: coursePageProps) => {
   
 
   const [departments, setDepartments] = useState<DepartmentOption[]>([]);
