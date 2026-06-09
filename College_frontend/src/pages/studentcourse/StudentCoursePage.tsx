@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import { StudentCourse, Studentlist, Courselist } from "../../types/Datatypes.ts";
-import {
-  updateStudentCourse,
-  createStudentCourse,
-  getStudentcoursebyId,
-} from "../../services/StudentCourseApi.ts";
+import {updateStudentCourse,createStudentCourse,getStudentcoursebyId} from "../../services/StudentCourseApi.ts";
 import { getAllCourses } from "../../services/CourseApi.ts";
 import { getAllStudents } from "../../services/StudentApi.ts";
 import { useNavigate } from "react-router-dom";
@@ -13,7 +9,7 @@ import StudentCourseForm from "../../components/StudentCourseForm.tsx";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-type DepartmentPageProps = {
+type studentCoursePageProps = {
   id?: string;
   navigate: ReturnType<typeof useNavigate>;
   isEditMode: boolean;
@@ -23,7 +19,7 @@ const StudentCoursePage = ({
   id,
   navigate,
   isEditMode
-}: DepartmentPageProps) => {
+}: studentCoursePageProps) => {
 
   const [formData, setFormData] = useState<StudentCourse>({
     id: 0,
@@ -38,14 +34,14 @@ const StudentCoursePage = ({
   const loadData = async () => {
     try {
       const [studentData, courseData] = await Promise.all([
-        getAllStudents(),
-        getAllCourses(),
+        getAllStudents(1, 10),
+        getAllCourses(10, 1),
       ]);
 
       setStudents(
-        Array.isArray(studentData.data)
-          ? studentData.data
-          : JSON.parse(studentData.data)
+        Array.isArray(studentData.data.students)
+          ? studentData.data.students
+          : JSON.parse(studentData.data.students)
       );
 
       setCourses(
@@ -56,7 +52,7 @@ const StudentCoursePage = ({
 
       if (id) {
         const allocData = await getStudentcoursebyId(Number(id));
-        setFormData(allocData.data);
+        setFormData(allocData.data[0]);
       }
     } catch (error) {
       console.error(error);

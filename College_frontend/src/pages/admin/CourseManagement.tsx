@@ -6,6 +6,11 @@ import { getAllCourses, deleteCourse } from "../../services/CourseApi.ts";
 
 import { CoursePayload } from "../../types/Datatypes.ts";
 import ConfirmModal from "../../components/ConfirmModal.tsx";
+import DeleteButton from "../../components/DeleteButton.tsx";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
+import CommonTable, { Column } from "../../components/ViewComponent.tsx";
+import Pagination from "../../components/Pagination.tsx";
+import CommonSearch from "../../components/CommonSearch.tsx";
 
 const CourseManagement = () => {
   const [courses, setCourses] = useState<CoursePayload[]>([]);
@@ -16,18 +21,21 @@ const CourseManagement = () => {
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [limit, setLimit] = useState(0);
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const response = await getAllCourses();
+        const response = await getAllCourses(limit, page, search);
 
-        console.log(response.data);
+        setTotalPages(response.data.totalPages);
+        setTotalRecords(response.data.totalRecords);
 
-        if (Array.isArray(response.data)) {
-          setCourses(response.data);
-        } else {
-          setCourses([]);
-        }
+        setCourses(response.data.course);
       } catch (error) {
         console.error("Failed to load courses:", error);
 
@@ -38,7 +46,7 @@ const CourseManagement = () => {
     };
 
     loadCourses();
-  }, []);
+  }, [page, limit, search]);
 
   const handleDelete = (id: number) => {
     setSelectedId(id);
@@ -62,89 +70,76 @@ const CourseManagement = () => {
     }
   };
 
+  const columns: Column<CoursePayload>[] = [
+    {
+      title: "ID",
+      key: "id",
+    },
+    {
+      title: "Course Name",
+      key: "name",
+    },
+    {
+      title: "Department Name",
+      key: "department_name",
+    },
+    {
+      title: "Actions",
+      key: "id",
+      render: (value) => (
+        <div className="action-buttons">
+          <Link to={`/course/edit/${value}`} className="edit-btn">
+            Edit
+          </Link>
+
+          <DeleteButton id={Number(value)} onDelete={handleDelete} />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="student-management-container">
       <div className="management-header">
         <h2>Course Management</h2>
-
+        <Breadcrumbs />
         <Link to="/course/add" className="create-btn">
           + Create Course
         </Link>
+        <div className="table-actions">
+          <CommonSearch
+            search={search}
+            setSearch={setSearch}
+            placeholder="Search Course..."
+          />
+        </div>
       </div>
 
       <div className="table-container">
         {loading ? (
           <p>Loading courses...</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-
-                <th>Course Name</th>
-
-                <th>Department Name</th>
-
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {Array.isArray(courses) && courses.length > 0 ? (
-                courses.map((course, index) => {
-                  const rowKey = `course-${course.id}-${index}`;
-
-                  return (
-                    <tr key={rowKey}>
-                      <td>{course.id ?? "N/A"}</td>
-
-                      <td>{course.name ?? "N/A"}</td>
-
-                      <td>{course.department_name ?? "N/A"}</td>
-
-                      <td className="action-buttons">
-                        <Link
-                          to={`/course/edit/${course.id}`}
-                          className="edit-btn"
-                        >
-                          Edit
-                        </Link>
-
-                        <button
-                          className="delete-btn"
-                          onClick={() => {
-                            if (course.id) {
-                              handleDelete(course.id);
-                            }
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={5}
-                    style={{
-                      textAlign: "center",
-                      padding: "20px",
-                    }}
-                  >
-                    No courses found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <CommonTable data={courses} columns={columns} />
         )}
       </div>
+      <div className="pagination-controls">
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalRecords={totalRecords}
+          limit={limit}
+          onPageChange={setPage}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+        />
+      </div>
+
       <ConfirmModal
         isOpen={openModal}
-        title="Delete Student"
-        message="Are you sure you want to delete this student?"
+        title="Delete Course"
+        message="Are you sure you want to delete this course?"
         onConfirm={confirmDelete}
         onCancel={() => {
           setOpenModal(false);

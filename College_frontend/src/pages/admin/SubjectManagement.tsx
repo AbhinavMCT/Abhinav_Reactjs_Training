@@ -6,138 +6,141 @@ import { SubjectPayload } from "../../types/Datatypes.ts";
 import "../../styles/subject/SubjectManagement.css";
 import ConfirmModal from "../../components/ConfirmModal.tsx";
 import { toast } from "react-toastify";
-
-
+import DeleteButton from "../../components/DeleteButton.tsx";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
+import Pagination from "../../components/Pagination.tsx";
+import CommonTable, { Column } from "../../components/ViewComponent.tsx";
+import CommonSearch from "../../components/CommonSearch.tsx";
 
 const SubjectManagement = () => {
   const [subjects, setSubjects] = useState<SubjectPayload[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-    const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [limit, setLimit] = useState(0);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-  const loadSubjects = async () => {
-    try {
-      const res = await getAllSubjects();
+    const loadSubjects = async () => {
+      try {
+        const res = await getAllSubjects(limit, page, search);
 
-      setSubjects(res.data);
+        setTotalPages(res.data.totalPages);
+        setSubjects(res.data.subject);
+        console.log(res);
+        setTotalRecords(res.data.totalRecords);
+      } catch (error) {
+        console.error("Failed to load Data", error);
+        setSubjects([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    } catch (error) {
-      console.error("Failed to load Data", error);
-      setSubjects([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  loadSubjects();
-}, []);
+    loadSubjects();
+  }, [page, limit, search]);
 
   const handleDelete = async (id: number) => {
     setSelectedId(id);
     setOpenModal(true);
   };
 
-  const confirmDelete = async() =>{
-    if(!selectedId) return;
-    try{
+  const confirmDelete = async () => {
+    if (!selectedId) return;
+    try {
       await deleteSubject(selectedId);
       toast.success("Deleted SuccessFully");
-      setSubjects((prev)=>
-        prev.filter((subject)=>{
-          return subject.id !== selectedId
-        })
+      setSubjects((prev) =>
+        prev.filter((subject) => {
+          return subject.id !== selectedId;
+        }),
       );
-    }catch(error){
-      console.error("Error in deleting Subject", error)
-    }finally{
+    } catch (error) {
+      console.error("Error in deleting Subject", error);
+    } finally {
       setSelectedId(null);
       setOpenModal(false);
     }
   };
 
+  const columns: Column<SubjectPayload>[] = [
+    {
+      title: "ID",
+      key: "id",
+    },
+    {
+      title: "Name",
+      key: "name",
+    },
+    {
+      title: "Type",
+      key: "type",
+    },
+    {
+      title: "Course_name",
+      key: "course_name",
+    },
+    {
+      title: "Actions",
+      key: "id",
+      render: (value) => (
+        <div className="action-buttons">
+          <Link to={`/subject/edit/${value}`} className="edit-btn">
+            Edit
+          </Link>
+
+          <DeleteButton id={Number(value)} onDelete={handleDelete} />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="student-management-container">
       <div className="management-header">
         <h2>Subject Management</h2>
+        <Breadcrumbs />
 
         <Link to="/subject/add" className="create-btn">
           + Create Subject
         </Link>
+        <div className="table-actions">
+          <CommonSearch
+            search={search}
+            setSearch={setSearch}
+            placeholder="Search Subject..."
+          />
+        </div>
       </div>
 
       <div className="table-container">
         {loading ? (
           <p>Loading subjects...</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Subject Name</th>
-                <th>Classification Type</th>
-                <th>Course Name</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {Array.isArray(subjects) && subjects.length > 0 ? (
-                subjects.map((subject) => {
-                  const recordId =
-  subject.id ?? `subject-${subject.course_id}-${subject.name}`;
-
-                  return (
-                    <tr key={recordId}>
-                      <td>{subject?.id ?? "N/A"}</td>
-                      <td>{subject?.name ?? "N/A"}</td>
-                      <td>{subject?.type ?? "N/A"}</td>
-                      
-                      <td>{subject?.course_name ?? `course_id: ${subject.course_id}`}</td>
-
-                      <td className="action-buttons">
-                        <Link
-                          to={`/subject/edit/${subject.id}`}
-                          className="edit-btn"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          className="delete-btn"
-                          onClick={() => {
-                            if (subject.id) {
-                              handleDelete(subject.id);
-                            }
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={6}
-                    style={{
-                      textAlign: "center",
-                      padding: "20px",
-                    }}
-                  >
-                    No subjects found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <CommonTable data={subjects} columns={columns} />
         )}
+        <div className="pagination-controls">
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            totalRecords={totalRecords}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1);
+            }}
+          />
+        </div>
       </div>
       <ConfirmModal
         isOpen={openModal}
-        title="Delete Student"
-        message="Are you sure you want to delete this student?"
+        title="Delete Subject"
+        message="Are you sure you want to delete this subject?"
         onConfirm={confirmDelete}
         onCancel={() => {
           setOpenModal(false);

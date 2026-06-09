@@ -1,0 +1,18 @@
+.breadcrumb-container {
+  padding: 10px 0;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.breadcrumb-container a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.breadcrumb-container a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-container span {
+  color: #555;
+}

@@ -1,26 +1,40 @@
 import axios from "axios";
 import { RegisterPayload, UpdateProfilePayload } from "../types/Datatypes.ts";
+import { store } from "../store/store.ts";
 
 const API_URL = import.meta.env.VITE_BackEndURL;
 const LOGIN_ENDPOINT = API_URL+"/student/";
 
-const getHeaders = () => ({
-  headers: {
-    "content-type": "application/json",
-    Authorization: `Bearer ${localStorage.getItem("access")}`,
-  },
-});
+const getHeaders = () => {
+  const token =
+    store.getState().auth.token || localStorage.getItem("access");
+    console.log(token);
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
 
 export const getProfile = async() => {
     return await axios.get(LOGIN_ENDPOINT + "profile",getHeaders());
+};
+
+export const getStudents = (
+  page: number,
+  limit: number
+) => {
+  return axios.get(
+    `${LOGIN_ENDPOINT}students?page=${page}&limit=${limit}`,getHeaders()
+  );
 };
 
 export const registerStudent = async (formData: RegisterPayload) => {
     return await axios.post(LOGIN_ENDPOINT + "add-student",formData,getHeaders());
 };
 
-export const getAllStudents = async () => {
-    return await axios.get(LOGIN_ENDPOINT + "get-students",getHeaders());
+export const getAllStudents = async (page: number, limit: number, search: string) => {
+    return await axios.get(`${LOGIN_ENDPOINT}get-students?page=${page}&limit=${limit}&search=${search}`, getHeaders());
 };
 
 export const getStudentById = async (id: number) => {

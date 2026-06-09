@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { registerStaff } from "../services/StaffApi.ts";
-
 import { ProfileData, RegisterPayload } from "../types/Datatypes.ts";
 
 import "../styles/register.css";
 import { toast } from "react-toastify";
 import ProfileForm from "../components/ProfileForm.tsx";
 import { registerStudent } from "../services/StudentApi.ts";
+import Breadcrumbs from "../components/Breadcrumbs.tsx";
 
 const RegisterStaff = () => {
   const location = useLocation();
@@ -211,6 +211,7 @@ const buttonText = isStaff ? "Add Staff" : "Add Student";
     e.preventDefault();
 
     if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
       return;
     }
 
@@ -263,6 +264,8 @@ const buttonText = isStaff ? "Add Staff" : "Add Student";
   };
 
   return (
+         <div>
+          <Breadcrumbs />
     <ProfileForm
       title={title}
       formData={formData}
@@ -275,6 +278,7 @@ const buttonText = isStaff ? "Add Staff" : "Add Student";
       handleLoginChange={handleLoginChange}
       handleSubmit={handleSubmit}
     />
+         </div>
   );
 };
 

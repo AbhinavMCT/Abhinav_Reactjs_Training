@@ -7,6 +7,25 @@
   padding: 20px;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  margin-left: 0;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 .student-form {
   width: 100%;
   max-width: 500px;

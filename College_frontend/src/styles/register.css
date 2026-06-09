@@ -203,18 +203,24 @@ row-gap: 38px;
 }
 
 .error-control {
-  position: relative;
-
   display: flex;
   flex-direction: column;
-
   width: 100%;
+  margin-bottom: 20px;
+}
+
+.error-control label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-top: -30px;
+  position: absolute;
 }
 
 .error-text {
   position: absolute;
 
-  top: 48px;
+  top: 41px;
   left: 4px;
 
   color: #ef4444;

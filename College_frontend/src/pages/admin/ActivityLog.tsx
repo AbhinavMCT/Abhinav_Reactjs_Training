@@ -1,6 +1,7 @@
 import {useState,useEffect} from "react";
 import {getActivityLog} from "../../services/ActivitylogApi.ts";
 import {ActivityLog} from "../../types/Datatypes.ts";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 
 const ViewActivityLog = () =>{
     const [activity, setActivity] = useState<ActivityLog[]>([]);
@@ -20,7 +21,8 @@ const ViewActivityLog = () =>{
     return (
         <div className="student-management-container">
       <div className="management-header">
-        <h2>Staff Management</h2>
+        <h2>Activity Log</h2>
+        <Breadcrumbs />
       </div>
 
       <div className="table-container">

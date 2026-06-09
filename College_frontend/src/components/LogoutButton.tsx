@@ -1,11 +1,14 @@
 import { useNavigate } from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {logout} from "../store/authSlice.ts";
 import "../styles/logoutButton.css";
 
 const LogoutButton = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleLogout = () => {
     localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
+    dispatch((logout()));
     navigate("/");
   }
   return (

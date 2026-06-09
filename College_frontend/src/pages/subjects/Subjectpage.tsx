@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-type DepartmentPageProps = {
+type subjectPageProps = {
   id?: string;
   navigate: ReturnType<typeof useNavigate>;
   isEditMode: boolean;
@@ -21,7 +21,7 @@ const AddSubject = ({
   id,
   navigate,
   isEditMode,
-}:DepartmentPageProps ) => {
+}:subjectPageProps ) => {
   
   const [courses, setCourses] = useState<CourseOption[]>([]);
   

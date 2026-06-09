@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar.tsx";
 import Header from "./Header.tsx";
 import "../styles/layout.css";
 import { FaBars } from "react-icons/fa";
+import Breadcrumbs from "../components/Breadcrumbs.tsx";
 
 interface MenuItem {
   name: string;
@@ -35,7 +36,7 @@ const DashboardLayout = ({
 
       <div className="main-content">
         <Header title={title} />
-
+         <Breadcrumbs />
         <div className="page-content">{children}</div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getProfile, getStudentById, updateProfile, updateStudents } from "../../services/StudentApi.ts";
 import { ProfileData, UpdateProfilePayload } from "../../types/Datatypes.ts";
 import "../../styles/student/editStudent.css";
@@ -19,6 +19,7 @@ const EditProfile = ({
   navigate,
   isEditMode
 }: DepartmentPageProps) => {
+  const isProfilePage = !id;
   
   
   const [formData, setFormData] = useState<ProfileData>({
@@ -48,10 +49,11 @@ const EditProfile = ({
     const fetchProfile = async () => {
       try {
 
-        const res = isEditMode
-                  ? await getProfile()
-                  : await getStudentById(Number(id));
-        
+
+
+const res = isProfilePage
+  ? await getProfile()
+  : await getStudentById(Number(id));        
                 setFormData({
                   ...res.data,
                   DOB: res.data.DOB
@@ -109,7 +111,7 @@ const EditProfile = ({
         },
       };
 
-      if(isEditMode) {
+      if(isProfilePage) {
         await updateProfile(payload);
       toast.success("Updated SuccessFully");
       navigate("/student/profile");

@@ -55,6 +55,19 @@ export interface RegisterPayload {
   };
 }
 
+export interface StudentList {
+  id: number;
+  name: string;
+  email: string;
+  contact: string;
+  DOB: string;
+  gender: string;
+  city: string;
+  district: string;
+  state: string;
+  pin: string;
+}
+
 export interface UpdateProfilePayload {
 
   userData: {

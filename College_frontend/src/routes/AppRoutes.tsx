@@ -34,13 +34,13 @@ import StudentCoursePage from "../pages/studentcourse/StudentCoursePage.tsx";
 const routes = [
 
   {
-    path: "/staff/register",
+    path: "/staff-management/register",
     element: <RegisterUser />,
     roles: ["Admin"],
   },
 
   {
-    path: "/student/register",
+    path: "/student-management/register",
     element: <RegisterUser />,
     roles: ["Admin","staff"],
   },
@@ -104,13 +104,13 @@ const routes = [
   },
 
   {
-    path: "/exam/add",
+    path: "/exam-management/add",
     element: <Exampage />,
     roles: ["Admin", "staff"],
   },
 
   {
-    path: "/exam/edit/:id",
+    path: "/exam-management/edit/:id",
     element: <Exampage />,
     roles: ["Admin", "staff"],
   },
@@ -158,13 +158,13 @@ const routes = [
   },
 
   {
-    path: "/departments/add",
+    path: "/department-management/add",
     element: <DepartmentPage />,
     roles: ["Admin"],
   },
 
   {
-    path: "/departments/edit/:id",
+    path: "/department-management/edit/:id",
     element: <DepartmentPage />,
     roles: ["Admin"],
   },
@@ -177,13 +177,13 @@ const routes = [
 
 
   {
-    path: "/subjectstaff/add",
+    path: "/subject-staff/add",
     element: <AllocationPage />,
     roles: ["Admin"],
   },
 
   {
-    path: "/subjectstaff/edit/:id",
+    path: "/subject-staff/edit/:id",
     element: <AllocationPage />,
     roles: ["Admin"],
   },
@@ -195,13 +195,13 @@ const routes = [
   },
 
   {
-    path: "/studentcourse/add",
+    path: "/student-course/add",
     element: <StudentCoursePage />,
     roles: ["Admin", "staff"]
   },
 
   {
-    path: "/studentcourse/edit",
+    path: "/student-course/edit/:id",
     element: <StudentCoursePage />,
     roles: ["Admin", "staff"]
   },

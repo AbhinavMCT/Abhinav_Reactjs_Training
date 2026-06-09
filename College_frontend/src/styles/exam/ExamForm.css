@@ -19,6 +19,19 @@
   gap: 18px;
 }
 
+.exam-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  position: relative;
+}
+
+.exam-form input,
+.exam-form select {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
 .exam-form h2 {
   text-align: center;
   color: #1f2937;
@@ -37,6 +50,13 @@
   outline: none;
   transition: all 0.3s ease;
   box-sizing: border-box;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
 }
 
 .exam-form input:focus,

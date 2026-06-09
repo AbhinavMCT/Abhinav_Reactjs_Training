@@ -1,16 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { SubjectStaffPayload,SubjectItem,StaffItem } from "../../types/Datatypes.ts";
 
 import { getAllSubjects } from "../../services/SubjectApi.ts";
 import { getAllStaff } from "../../services/StaffApi.ts";
 
-import {
-  updateSubjectStaff,
-  getSubjectStaffById,
-  createSubjectStaff,
-} from "../../services/SubjectStaffApi.ts";
+import {updateSubjectStaff,getSubjectStaffById,createSubjectStaff} from "../../services/SubjectStaffApi.ts";
 
 import "../../styles/subjectstaff/addsubjectstaff.css";
 import { toast } from "react-toastify";
@@ -18,7 +14,7 @@ import SubjectStaffForm from "../../components/SubjectStaffForm.tsx";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-type DepartmentPageProps = {
+type subjectStaffPageProps = {
   id?: string;
   navigate: ReturnType<typeof useNavigate>;
   isEditMode: boolean;
@@ -28,7 +24,7 @@ const EditSubjectStaff = ({
   id,
   navigate,
   isEditMode,
-}: DepartmentPageProps) => {
+}: subjectStaffPageProps) => {
 
 
   const [formData, setFormData] = useState<SubjectStaffPayload>({
@@ -44,26 +40,26 @@ const EditSubjectStaff = ({
     const loadData = async () => {
       try {
         const [subjectRes, staffRes] = await Promise.all([
-          getAllSubjects(),
-          getAllStaff(),
+          getAllSubjects(10, 1),
+          getAllStaff(10, 1),
         ]);
 
         setSubjects(
-          Array.isArray(subjectRes.data)
-            ? subjectRes.data
-            : JSON.parse(subjectRes.data),
+          Array.isArray(subjectRes.data.subject)
+            ? subjectRes.data.subject
+            : JSON.parse(subjectRes.data.subject),
         );
-        console.log("subjects",subjectRes.data);
+        console.log("subjects",subjectRes.data.subject);
 
         setStaffList(
-          Array.isArray(staffRes.data)
-            ? staffRes.data
-            : JSON.parse(staffRes.data),
+          Array.isArray(staffRes.data.staff)
+            ? staffRes.data.staff
+            : JSON.parse(staffRes.data.staff),
         );
 
         if(id){
           const allocData = await getSubjectStaffById(Number(id))
-          setFormData(allocData.data);
+          setFormData(allocData.data[0]);
         }
       } catch (error) {
         console.error("Error loading data:", error);

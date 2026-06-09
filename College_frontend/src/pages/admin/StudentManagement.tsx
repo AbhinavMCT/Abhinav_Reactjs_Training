@@ -5,12 +5,17 @@ import { useEffect, useState } from "react";
 import { getAllStudents, deleteStudent } from "../../services/StudentApi.ts";
 
 import "../../styles/student/studentManagement.css";
-import { RegisterPayload } from "../../types/Datatypes.ts";
+import { RegisterPayload, StudentList } from "../../types/Datatypes.ts";
 import ConfirmModal from "../../components/ConfirmModal.tsx";
 import { toast } from "react-toastify";
+import DeleteButton from "../../components/DeleteButton.tsx";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
+import Pagination from "../../components/Pagination.tsx";
+import CommonTable, { Column } from "../../components/ViewComponent.tsx";
+import CommonSearch from "../../components/CommonSearch.tsx";
 
 const StudentManagement = () => {
-  const [students, setStudents] = useState<RegisterPayload[]>([]);
+  const [students, setStudents] = useState<StudentList[]>([]);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -18,12 +23,21 @@ const StudentManagement = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     const loadStudents = async () => {
       try {
-        const response = await getAllStudents();
+        const response = await getAllStudents(page, limit, search);
 
-        setStudents(response.data);
+        setStudents(response.data.students);
+        setTotalPages(response.data.totalPages);
+        setTotalRecords(response.data.totalRecords);
       } catch (error) {
         console.error(error);
       } finally {
@@ -32,7 +46,7 @@ const StudentManagement = () => {
     };
 
     loadStudents();
-  }, []);
+  }, [page, limit, search]);
 
   const handleDelete = (id: number) => {
     setSelectedId(id);
@@ -47,7 +61,7 @@ const StudentManagement = () => {
       toast.success("Deleted SuccessFully");
       setStudents((prevStudents) =>
         prevStudents.filter((student) => {
-          const studentInfo = student?.userData || student;
+          const studentInfo = student;
 
           return studentInfo?.id !== selectedId;
         }),
@@ -61,88 +75,106 @@ const StudentManagement = () => {
     }
   };
 
+  const columns: Column<StudentList>[] = [
+    {
+      title: "ID",
+      key: "id",
+    },
+    {
+      title: "Name",
+      key: "name",
+    },
+    {
+      title: "Email",
+      key: "email",
+    },
+    {
+      title: "Contact",
+      key: "contact",
+    },
+    {
+      title: "DOB",
+      key: "DOB",
+      render: (value) =>
+        value ? new Date(value as string).toLocaleDateString() : "N/A",
+    },
+    {
+      title: "Gender",
+      key: "gender",
+    },
+    {
+      title: "City",
+      key: "city",
+    },
+    {
+      title: "District",
+      key: "district",
+    },
+    {
+      title: "State",
+      key: "state",
+    },
+    {
+      title: "Pin",
+      key: "pin",
+    },
+    {
+      title: "Actions",
+      key: "id",
+      render: (value) => (
+        <div className="action-buttons">
+          <Link to={`/student/edit/${value}`} className="edit-btn">
+            Edit
+          </Link>
+
+          <DeleteButton id={Number(value)} onDelete={handleDelete} />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="student-management-container">
       <div className="management-header">
         <h2>Student Management</h2>
+        <Breadcrumbs />
         <div className="buttons">
-          <Link to="/student-course" className="create-btn">+ Allocate Course</Link>
+          <Link to="/student-course" className="create-btn">
+            + Allocate Course
+          </Link>
 
-        <Link to="/student/register" className="create-btn">
-          + Create Student
-        </Link>
+          <Link to="/student-management/register" className="create-btn">
+            + Create Student
+          </Link>
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search Student..."
+            />
+          </div>
         </div>
-        
       </div>
 
       <div className="table-container">
         {loading ? (
           <p>Loading students...</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Contact</th>
-                <th>DOB</th>
-                <th>Gender</th>
-                <th>City</th>
-                <th>District</th>
-                <th>State</th>
-                <th>Pin</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {students.map((student, index) => {
-                const studentInfo = student?.userData || student;
-                const addressInfo = student?.addressData || student;
-
-                const rowKey = `student-${studentInfo?.id || "new"}-${index}`;
-
-                return (
-                  <tr key={rowKey}>
-                    <td>{studentInfo?.id}</td>
-                    <td>{studentInfo?.name ?? "N/A"}</td>
-                    <td>{studentInfo?.email ?? "N/A"}</td>
-                    <td>{studentInfo?.contact ?? "N/A"}</td>
-                    <td>{studentInfo?.DOB ?? "N/A"}</td>
-                    <td>{studentInfo?.gender ?? "N/A"}</td>
-
-                    <td>{addressInfo?.city ?? "N/A"}</td>
-                    <td>{addressInfo?.district ?? "N/A"}</td>
-                    <td>{addressInfo?.state ?? "N/A"}</td>
-                    <td>{addressInfo?.pin ?? "N/A"}</td>
-
-                    <td className="action-buttons">
-                      {studentInfo?.id && (
-                        <Link
-                          to={`/student/edit/${studentInfo.id}`}
-                          className="edit-btn"
-                        >
-                          Edit
-                        </Link>
-                      )}
-                      <button
-                        className="delete-btn"
-                        onClick={() => {
-                          if (studentInfo?.id) {
-                            handleDelete(studentInfo.id);
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <CommonTable data={students} columns={columns} />
         )}
+        <div className="pagination-controls">
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            totalRecords={totalRecords}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1);
+            }}
+          />
+        </div>
       </div>
       <ConfirmModal
         isOpen={openModal}

@@ -11,6 +11,7 @@ import {
 import { Department } from "../../types/Datatypes.ts";
 import { toast } from "react-toastify";
 import withCrudPage from "../hoc/withCrudPage.tsx";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 
 
 type DepartmentPageProps = {
@@ -25,6 +26,12 @@ const DepartmentPage = ({
   isEditMode
 }: DepartmentPageProps) => {
   
+  const [errors, setErrors] = useState({
+  name: "",
+  type: "",
+  office_location: "",
+  established_year: "",
+});
 
   const [formData, setFormData] = useState<Department>({
     name: "",
@@ -32,6 +39,52 @@ const DepartmentPage = ({
     office_location: "",
     established_year: new Date().getFullYear(),
   });
+
+  const validateForm = () => {
+  const newErrors = {
+    name: "",
+    type: "",
+    office_location: "",
+    established_year: "",
+  };
+
+  let isValid = true;
+
+  if (!formData.name.trim()) {
+    newErrors.name = "Department name is required";
+    isValid = false;
+  } else if (formData.name.trim().length < 3) {
+    newErrors.name =
+      "Department name must be at least 3 characters";
+    isValid = false;
+  }
+
+  if (!formData.type.trim()) {
+    newErrors.type = "Department type is required";
+    isValid = false;
+  }
+
+  if (!formData.office_location.trim()) {
+    newErrors.office_location =
+      "Office location is required";
+    isValid = false;
+  }
+
+  const currentYear = new Date().getFullYear();
+
+  if (
+    formData.established_year < 1900 ||
+    formData.established_year > currentYear
+  ) {
+    newErrors.established_year =
+      `Year must be between 1900 and ${currentYear}`;
+    isValid = false;
+  }
+
+  setErrors(newErrors);
+
+  return isValid;
+};
 
   useEffect(() => {
     if (!isEditMode) return;
@@ -51,22 +104,34 @@ const DepartmentPage = ({
   }, [id, isEditMode]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]:
-        e.target.name === "established_year"
-          ? Number(e.target.value)
-          : e.target.value,
-    });
-  };
+  e: React.ChangeEvent<
+    HTMLInputElement | HTMLSelectElement
+  >
+) => {
+  const { name, value } = e.target;
+
+  setFormData({
+    ...formData,
+    [name]:
+      name === "established_year"
+        ? Number(value)
+        : value,
+  });
+
+  setErrors({
+    ...errors,
+    [name]: "",
+  });
+};
 
   const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
+    e: React.SubmitEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
-
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
+      return;
+    }
     try {
       if (isEditMode) {
         await updateDepartment(Number(id), formData);
@@ -89,14 +154,14 @@ const DepartmentPage = ({
 
   return (
     <div>
-      <h2>
-        {isEditMode ? "Edit Department" : "Add Department"}
-      </h2>
+      
 
       <DepartmentForm
         formData={formData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
+        errors={errors}
+        title={isEditMode ? "Edit Department" : "Add Department"}
         buttonText={
           isEditMode
             ? "Update Department"

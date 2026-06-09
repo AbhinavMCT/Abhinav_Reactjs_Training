@@ -1,17 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  getStaffById,
-  getstaffProfile,
-  updateStaff,
-  updateProfile,
-} from "../../services/StaffApi.ts";
+import {getStaffById,getstaffProfile,updateStaff,updateProfile} from "../../services/StaffApi.ts";
 
-import {
-  ProfileData,
-  UpdateProfilePayload,
-} from "../../types/Datatypes.ts";
+import { ProfileData, UpdateProfilePayload } from "../../types/Datatypes.ts";
 
 import ProfileForm from "../../components/ProfileForm.tsx";
 
@@ -20,62 +12,51 @@ import "../../styles/staff/editStaff.css";
 import { toast } from "react-toastify";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
-
 type DepartmentPageProps = {
   id?: string;
   navigate: ReturnType<typeof useNavigate>;
   isEditMode: boolean;
 };
 
-const StaffPage = ({
-  id,
-  navigate,
-  isEditMode
-}: DepartmentPageProps) => {
+const StaffPage = ({ id, navigate, isEditMode }: DepartmentPageProps) => {
+  const isProfilePage = !id;
 
-  const [formData, setFormData] =
-    useState<ProfileData>({
-      name: "",
-      email: "",
-      contact: "",
-      gender: "",
-      DOB: "",
-      address_id: undefined,
+  const [formData, setFormData] = useState<ProfileData>({
+    name: "",
+    email: "",
+    contact: "",
+    gender: "",
+    DOB: "",
+    address_id: undefined,
 
-      address: {
-        city: "",
-        district: "",
-        state: "",
-        pin: 0,
-      },
+    address: {
+      city: "",
+      district: "",
+      state: "",
+      pin: 0,
+    },
 
-      login: {
-        username: "",
-        password: "",
-      },
-    });
+    login: {
+      username: "",
+      password: "",
+    },
+  });
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = isEditMode
+        const res = isProfilePage
           ? await getstaffProfile()
           : await getStaffById(Number(id));
 
         setFormData({
           ...res.data,
-          DOB: res.data.DOB
-            ? res.data.DOB.split("T")[0]
-            : "",
+          DOB: res.data.DOB ? res.data.DOB.split("T")[0] : "",
         });
       } catch (error) {
-        console.error(
-          "Error fetching staff data:",
-          error
-        );
+        console.error("Error fetching staff data:", error);
       }
     };
 
@@ -83,9 +64,7 @@ const StaffPage = ({
   }, [id, isEditMode]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -93,9 +72,7 @@ const StaffPage = ({
     }));
   };
 
-  const handleAddressChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
       ...prev,
 
@@ -103,74 +80,52 @@ const StaffPage = ({
         ...prev.address,
 
         [e.target.name]:
-          e.target.name === "pin"
-            ? Number(e.target.value)
-            : e.target.value,
+          e.target.name === "pin" ? Number(e.target.value) : e.target.value,
       },
     }));
   };
 
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     setLoading(true);
 
     try {
-      const payload: UpdateProfilePayload =
-        {
-          userData: {
-            name: formData.name,
-            email: formData.email,
-            contact: formData.contact,
-            gender: formData.gender,
-            DOB: formData.DOB,
-            address_id:
-              formData.address_id,
-          },
+      const payload: UpdateProfilePayload = {
+        userData: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.contact,
+          gender: formData.gender,
+          DOB: formData.DOB,
+          address_id: formData.address_id,
+        },
 
-          addressData: {
-            city: formData.address.city,
-            district:
-              formData.address.district,
-            state:
-              formData.address.state,
-            pin: formData.address.pin,
-          },
-        };
+        addressData: {
+          city: formData.address.city,
+          district: formData.address.district,
+          state: formData.address.state,
+          pin: formData.address.pin,
+        },
+      };
 
-      if (isEditMode) {
+      if (isProfilePage) {
         await updateProfile(payload);
 
-        toast.success(
-          "Profile Updated Successfully"
-        );
+        toast.success("Profile Updated Successfully");
 
         navigate("/staff/profile");
       } else {
-        await updateStaff(
-          Number(id),
-          payload
-        );
+        await updateStaff(Number(id), payload);
 
-        toast.success(
-          "Staff Updated Successfully"
-        );
+        toast.success("Staff Updated Successfully");
 
-        navigate(
-          "/staff-management"
-        );
+        navigate("/staff-management");
       }
     } catch (error) {
-      console.error(
-        "Update Failed:",
-        error
-      );
+      console.error("Update Failed:", error);
 
-      toast.error(
-        "Failed to update"
-      );
+      toast.error("Failed to update");
     } finally {
       setLoading(false);
     }
@@ -178,22 +133,12 @@ const StaffPage = ({
 
   return (
     <ProfileForm
-      title={
-        isEditMode
-          ? "Edit Profile"
-          : "Edit Staff"
-      }
+      title={isEditMode ? "Edit Profile" : "Edit Staff"}
       formData={formData}
       loading={loading}
-      buttonText={
-        isEditMode
-          ? "Update Profile"
-          : "Update Staff"
-      }
+      buttonText={isEditMode ? "Update Profile" : "Update Staff"}
       handleChange={handleChange}
-      handleAddressChange={
-        handleAddressChange
-      }
+      handleAddressChange={handleAddressChange}
       handleSubmit={handleSubmit}
     />
   );

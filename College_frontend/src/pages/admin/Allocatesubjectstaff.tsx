@@ -4,9 +4,14 @@ import {
   getAllSubjectStaff,
   deleteSubjectStaff,
 } from "../../services/SubjectStaffApi.ts";
+import DeleteButton from "../../components/DeleteButton.tsx";
 import { SubjectStaffPayload } from "../../types/Datatypes.ts";
 import ConfirmModal from "../../components/ConfirmModal.tsx";
 import { toast } from "react-toastify";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
+import Pagination from "../../components/Pagination.tsx";
+import CommonTable, { Column } from "../../components/ViewComponent.tsx";
+import CommonSearch from "../../components/CommonSearch.tsx";
 
 const AllocateSubjectStaff = () => {
   const [allocations, setAllocations] = useState<SubjectStaffPayload[]>([]);
@@ -15,16 +20,19 @@ const AllocateSubjectStaff = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [limit, setLimit] = useState(0);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const loadAllocated = async () => {
       try {
-        const res = await getAllSubjectStaff();
-        if (res && Array.isArray(res.data)) {
-          setAllocations(res.data);
-        } else {
-          setAllocations([]);
-        }
+        const res = await getAllSubjectStaff(limit, page, search);
+        setTotalPages(res.data.totalPages);
+        setTotalRecords(res.data.totalRecords);
+        setAllocations(res.data.staffsubject);
       } catch (error) {
         console.error("Failed to load Data", error);
         setAllocations([]);
@@ -33,7 +41,7 @@ const AllocateSubjectStaff = () => {
       }
     };
     loadAllocated();
-  }, []);
+  }, [page, limit, search]);
 
   const handleDelete = (id: number) => {
     setSelectedId(id);
@@ -60,84 +68,70 @@ const AllocateSubjectStaff = () => {
     }
   };
 
+  const columns: Column<SubjectStaffPayload>[] = [
+    {
+      title: "ID",
+      key: "id",
+    },
+    {
+      title: "Staff Name",
+      key: "staff_name",
+    },
+    {
+      title: "Subject Name",
+      key: "subject_name",
+    },
+    {
+      title: "Actions",
+      key: "id",
+      render: (value) => (
+        <div className="action-buttons">
+          <Link to={`/subject-staff/edit/${value}`} className="edit-btn">
+            Edit
+          </Link>
+
+          <DeleteButton id={Number(value)} onDelete={handleDelete} />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="student-management-container">
+      <Breadcrumbs />
       <div className="management-header">
         <h2>Subject to Staff Allocation Management</h2>
-        <Link to="/subjectstaff/add" className="create-btn">
+
+        <Link to="/subject-staff/add" className="create-btn">
           + Allocate New
         </Link>
+        <div className="table-actions">
+          <CommonSearch
+            search={search}
+            setSearch={setSearch}
+            placeholder="Search Allocated Data..."
+          />
+        </div>
       </div>
       <div className="table-container">
         {loading ? (
           <p>Loading Allocated Staff and Subject matrices...</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Staff Name</th>
-                <th>Subject Name</th>
-                <th>Action Rows</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allocations.length > 0 ? (
-                allocations.map((data) => {
-                  const recordId =
-                    data.id ?? `fallback-${data.staff_id}-${data.subject_id}`;
-
-                  return (
-                    <tr key={recordId}>
-                      <td>{data.id ?? "N/A"}</td>
-                      <td>{data.staff_name ?? `Staff ID: ${data.staff_id}`}</td>
-                      <td>
-                        {data.subject_name ?? `Subject ID: ${data.subject_id}`}
-                      </td>
-                      <td className="action-button">
-                        <Link
-                          to={`/subjectstaff/edit/${data.id}`}
-                          className="edit-btn"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          className="delete-btn"
-                          onClick={() => {
-                            if (data.id) {
-                              handleDelete(data.id);
-                            } else {
-                              alert(
-                                "Cannot delete an item lacking a unique database record key.",
-                              );
-                            }
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan={4}
-                    style={{
-                      textAlign: "center",
-                      padding: "24px",
-                      color: "#666",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    No staff allocations found. Click "+ Allocate New" to create
-                    one.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <CommonTable data={allocations} columns={columns} />
         )}
+        <div className="pagination-controls">
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            totalRecords={totalRecords}
+            limit={limit}
+            onPageChange={setPage}
+            onLimitChange={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1);
+            }}
+          />
+        </div>
       </div>
       <ConfirmModal
         isOpen={openModal}

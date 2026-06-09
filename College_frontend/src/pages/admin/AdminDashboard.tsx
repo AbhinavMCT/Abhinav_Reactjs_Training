@@ -4,7 +4,7 @@ import "../../styles/cards.css";
 
 const AdminDashboard = () => {
   const menuItems = [
-    { name: "Dashboard", path: "/" },
+    { name: "Dashboard", path: "/admin-home" },
     { name: "Staff Management", path: "/staff-management" },
     { name: "Student Management", path: "/student-management" },
     { name: "Exam Management", path: "/exam-management" },

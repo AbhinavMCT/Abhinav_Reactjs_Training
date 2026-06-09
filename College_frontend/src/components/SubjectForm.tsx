@@ -1,4 +1,5 @@
 import { SubjectPayload } from "../types/Datatypes.ts";
+import Breadcrumbs from "./Breadcrumbs.tsx";
 
 interface CourseOption {
   id: number;
@@ -36,7 +37,7 @@ const SubjectForm = ({
 }: Props) => {
   return (
     <div className="form-card-container">
-
+      <Breadcrumbs />
       <form
         className="department-form-stack"
         onSubmit={handleSubmit}

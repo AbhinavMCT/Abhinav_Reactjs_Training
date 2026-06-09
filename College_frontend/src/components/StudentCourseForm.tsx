@@ -1,5 +1,6 @@
 import {StudentCourse,Studentlist,Courselist} from "../types/Datatypes.ts";
 import {useNavigate} from "react-router-dom";
+import Breadcrumbs from "./Breadcrumbs.tsx";
 
 type props = {
     formData: StudentCourse;
@@ -25,6 +26,7 @@ const StudentCourseForm = ({
 
     return(
         <div className="form-container">
+      <Breadcrumbs />
       <div className="form-header">
         <h2>{title}</h2>
 
@@ -32,16 +34,16 @@ const StudentCourseForm = ({
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="subject_id">Select Subject</label>
+          <label htmlFor="student_id">Select Student</label>
 
           <select
-            id="subject_id"
-            name="subject_id"
+            id="student_id"
+            name="student_id"
             value={formData.student_id}
             onChange={handleChange}
             required
           >
-            <option value="">-- Choose Subject --</option>
+            <option value="">Choose Student</option>
 
             {students.map((student) => (
               <option key={student.id} value={student.id}>
@@ -52,16 +54,16 @@ const StudentCourseForm = ({
         </div>
 
         <div className="form-group">
-          <label htmlFor="staff_id">Select Staff Member</label>
+          <label htmlFor="course_id">Select Course</label>
 
           <select
-            id="staff_id"
-            name="staff_id"
+            id="course_id"
+            name="course_id"
             value={formData.course_id}
             onChange={handleChange}
             required
           >
-            <option value="">-- Choose Staff Member --</option>
+            <option value="">Choose Course</option>
 
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
@@ -75,7 +77,7 @@ const StudentCourseForm = ({
           <button
             type="button"
             className="btn btn-cancel"
-            onClick={() => navigate("/subject-staff")}
+            onClick={() => navigate("/student-course")}
           >
             Cancel
           </button>

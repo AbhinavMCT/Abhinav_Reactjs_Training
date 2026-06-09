@@ -6,7 +6,20 @@
   min-height: 100vh;
 }
 
-/* Header */
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.table-actions input {
+  width: 250px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+}
 
 .management-header {
   display: flex;
@@ -112,7 +125,7 @@ tbody tr:hover {
 
   color: white;
 
-  cursor: pointer;
+  
 
   font-weight: 600;
 
@@ -123,13 +136,15 @@ tbody tr:hover {
   background: #0f766e;
 }
 
+
+
 .delete-btn {
   background: #dc2626;
 }
 
 .edit-btn:hover,
 .delete-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(2px);
 }
 
 /* Responsive */
