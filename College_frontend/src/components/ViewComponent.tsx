@@ -12,6 +12,7 @@ type Props<T> = {
   columns: Column<T>[];
 };
 
+
 const CommonTable = <T,>({
   data,
   columns,
@@ -20,7 +21,7 @@ const CommonTable = <T,>({
     <table>
       <thead>
   <tr>
-    {columns.map((column) => (
+    {(columns || []).map((column) => (
       <th key={column.title}>
         {column.title}
       </th>
@@ -29,7 +30,7 @@ const CommonTable = <T,>({
 </thead>
 
 <tbody>
-  {data.map((record, index) => (
+  {(data || []).map((record, index) => (
     <tr key={index}>
       {columns.map((column) => (
         <td key={column.title}>

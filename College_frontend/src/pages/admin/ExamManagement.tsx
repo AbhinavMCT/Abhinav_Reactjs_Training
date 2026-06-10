@@ -62,6 +62,7 @@ const ExamManagement = () => {
           return exam.id !== selectedId;
         }),
       );
+      console.log("exam",exams);
     } catch (error) {
       console.error("Error Deleting Exams", error);
     } finally {
