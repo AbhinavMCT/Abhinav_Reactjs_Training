@@ -8,6 +8,7 @@ import StaffHome from "./pages/staff/Staffhome.tsx";
 
 import ProtectedRoute from "./routes/ProtectedRoute.tsx";
 import NotFound from "./pages/Notfound.tsx";
+import HomePage from "./components/HomePage.tsx";
 
 import AppRoutes from "./routes/AppRoutes.tsx";
 import { ToastContainer } from "react-toastify";
@@ -17,9 +18,10 @@ function App() {
     <>
       <Router>
         <Routes>
+          <Route path="/" element={<HomePage />} />
 
           <Route
-            path="/"
+            path="/login"
             element={<Login />}
           />
 

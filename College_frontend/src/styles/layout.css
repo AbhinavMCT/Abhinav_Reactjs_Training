@@ -1,88 +1,180 @@
 .dashboard-container {
   display: flex;
   min-height: 100vh;
+  background: #f8fafc;
 }
 
+/* SIDEBAR */
+
 .sidebar {
-  width: 250px;
-  background: #1e293b;
+  width: 280px;
+  background: linear-gradient(
+    180deg,
+    #0f172a 0%,
+    #1e293b 100%
+  );
+
   color: white;
-  padding: 20px;
-  transition: 0.3s;
+  padding: 25px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+
+  transition: all 0.3s ease;
 }
 
 .sidebar h2 {
-  margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 40px;
+
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  padding-bottom: 15px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
+
+/* MENU */
 
 .sidebar ul {
   list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .sidebar li {
-  margin-bottom: 10px;
+  width: 100%;
 }
 
 .nav-link {
-  color: white;
+  color: #cbd5e1;
   text-decoration: none;
-  display: block;
-  padding: 12px;
-  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 14px 18px;
+
+  border-radius: 12px;
+
+  transition: all 0.3s ease;
+
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .nav-link:hover {
-  background: #334155;
+  background: rgba(255, 255, 255, 0.08);
+
+  color: white;
+
+  transform: translateX(5px);
 }
 
 .nav-link.active {
-  background: #475569;
+  background: #2563eb;
+
+  color: white;
+
+  font-weight: 600;
+
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
-
+/* MAIN CONTENT */
 
 .main-content {
   flex: 1;
-  background: #f1f5f9;
+  background: #f8fafc;
+  overflow-x: auto;
 }
 
 .page-content {
-  padding: 20px;
+  padding: 30px;
 }
 
+/* LOGOUT */
+
+.logout-container {
+  margin-top: auto;
+  padding-top: 30px;
+}
+
+.logout-container button {
+  width: 100%;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #dc2626;
+  color: white;
+
+  cursor: pointer;
+
+  font-weight: 600;
+
+  transition: 0.3s;
+}
+
+.logout-container button:hover {
+  background: #b91c1c;
+}
+
+/* HAMBURGER */
 
 .menu-toggle {
   display: none;
+
   position: fixed;
   top: 15px;
   left: 15px;
-  z-index: 1001;
 
-  background: black;
+  z-index: 1100;
+
+  width: 45px;
+  height: 45px;
+
   border: none;
-  padding: 10px;
-  border-radius: 8px;
+  border-radius: 10px;
+
+  background: #1e293b;
+  color: white;
+
+  cursor: pointer;
 
   font-size: 22px;
-  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-
+/* MOBILE */
 
 @media (max-width: 768px) {
-
   .menu-toggle {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .sidebar {
     position: fixed;
-    left: -260px;
+
+    left: -300px;
     top: 0;
 
     height: 100vh;
 
-    z-index: 1000;
+    z-index: 1050;
+
+    transition: left 0.3s ease;
   }
 
   .sidebar.active {

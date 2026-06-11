@@ -24,7 +24,12 @@ const Sidebar = ({
   return (
     <div className={`sidebar ${sidebarOpen ? "active" : ""}`}>
 
-      <h2>{role} Panel</h2>
+      <div className="sidebar-header">
+
+  <div>
+    <h2>{role}</h2>
+  </div>
+</div>
 
       <ul>
         {menuItems.map((item) => (

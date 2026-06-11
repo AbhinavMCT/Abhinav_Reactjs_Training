@@ -172,3 +172,15 @@ export interface Courselist{
   id: number;
   name: string;
 }
+
+export interface NavItem {
+  label: string;
+  path: string;
+}
+
+export interface JwtPayload {
+  id: number;
+  username: string;
+  role: string;
+  exp: number;
+}

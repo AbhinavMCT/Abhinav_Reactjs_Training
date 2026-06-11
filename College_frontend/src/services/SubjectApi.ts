@@ -1,49 +1,36 @@
-import axios from "axios";
-
 import { SubjectPayload } from "../types/Datatypes.ts";
-import { store } from "../store/store.ts";
+import api from "../interceptor.ts";
 
-const API_URL = import.meta.env.VITE_BackEndURL;
-const SUBJECT_ENDPOINT = API_URL + "/subject/";
+const SUBJECT_ENDPOINT = "/subject/";
 
-const getHeaders = () => {
-  const token =
-    store.getState().auth.token || localStorage.getItem("access");
-    console.log(token);
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
+
 
 export const getAllSubjects = async (limit: number, page: number, search: string) => {
-  return axios.get(`${SUBJECT_ENDPOINT}get-subjects?limit=${limit}&page=${page}&search=${search}`, getHeaders());
+  return api.get(`${SUBJECT_ENDPOINT}get-subjects?limit=${limit}&page=${page}&search=${search}`,);
 };
 
 export const getSubjectById = async (id: number) => {
-  return axios.get(`${SUBJECT_ENDPOINT}get-subjectby/${id}`, getHeaders());
+  return api.get(`${SUBJECT_ENDPOINT}get-subjectby/${id}`, );
 };
 
 export const createSubject = async (data: SubjectPayload) => {
-  return axios.post(
+  return api.post(
     `${SUBJECT_ENDPOINT}add-subject`,
     data,
-    getHeaders()
   );
 };
 
 export const updateSubject = async (id: number,data: SubjectPayload) => {
-  return axios.put(
+  return api.put(
     `${SUBJECT_ENDPOINT}edit-subject/${id}`,
     data,
-    getHeaders()
   );
 };
 
 export const deleteSubject = async (id: number) => {
-  return axios.delete(
+  return api.delete(
     `${SUBJECT_ENDPOINT}delete-subject/${id}`,
-    getHeaders()
   );
 };
+
+export const getAllCourses = () => api.get(`/course/get-course`,);

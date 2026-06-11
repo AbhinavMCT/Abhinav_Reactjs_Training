@@ -87,6 +87,8 @@ const ExamManagement = () => {
     {
       title: "Exam Date",
       key: "exam_date",
+      render: (value) =>
+        value ? new Date(value as string).toLocaleDateString() : "N/A",
     },
     {
       title: "Course name",

@@ -3,8 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import SubjectForm from "../../components/SubjectForm.tsx";
 
-import { createSubject,getSubjectById,updateSubject } from "../../services/SubjectApi.ts";
-import { getAllCourses } from "../../services/CourseApi.ts";
+import { createSubject,getSubjectById,updateSubject, getAllCourses } from "../../services/SubjectApi.ts";
 
 import { SubjectPayload, CourseOption } from "../../types/Datatypes.ts";
 import { toast } from "react-toastify";
@@ -40,7 +39,7 @@ const AddSubject = ({
 
       const response = await getAllCourses();
 
-      setCourses(response.data);
+      setCourses(response.data.course);
 
     } catch (error) {
 

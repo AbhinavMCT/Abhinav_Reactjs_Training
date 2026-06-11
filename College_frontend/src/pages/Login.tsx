@@ -6,6 +6,7 @@ import type { LoginCredentials } from "../types/Datatypes.ts";
 import { decodeToken } from "../utils/Jwt.ts";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/authSlice.ts";
+import Breadcrumbs from "../components/Breadcrumbs.tsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ const Login = () => {
   return (
     <div className="page-center">
       <div className="login-container">
+        <Breadcrumbs />
         <h2>Login</h2>
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>

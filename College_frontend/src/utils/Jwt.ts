@@ -1,11 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-
-export interface JwtPayload {
-  id: number;
-  username: string;
-  role: string;
-  exp: number;
-}
+import {JwtPayload} from "../types/Datatypes.ts"
 
 export const decodeToken = (
   token: string

@@ -1,56 +1,45 @@
-import axios from "axios";
 import { RegisterPayload, UpdateProfilePayload } from "../types/Datatypes.ts";
-import { store } from "../store/store.ts";
+import api from "../interceptor.ts";
 
-const API_URL = import.meta.env.VITE_BackEndURL;
-const LOGIN_ENDPOINT = API_URL+"/student/";
+const LOGIN_ENDPOINT = "/student/";
 
-const getHeaders = () => {
-  const token =
-    store.getState().auth.token || localStorage.getItem("access");
-    console.log(token);
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
+
 
 export const getProfile = async() => {
-    return await axios.get(LOGIN_ENDPOINT + "profile",getHeaders());
+    return await api.get(LOGIN_ENDPOINT + "profile",);
 };
 
 export const getStudents = (
   page: number,
   limit: number
 ) => {
-  return axios.get(
-    `${LOGIN_ENDPOINT}students?page=${page}&limit=${limit}`,getHeaders()
+  return api.get(
+    `${LOGIN_ENDPOINT}students?page=${page}&limit=${limit}`,
   );
 };
 
 export const registerStudent = async (formData: RegisterPayload) => {
-    return await axios.post(LOGIN_ENDPOINT + "add-student",formData,getHeaders());
+    return await api.post(LOGIN_ENDPOINT + "add-student",formData,);
 };
 
 export const getAllStudents = async (page: number, limit: number, search: string) => {
-    return await axios.get(`${LOGIN_ENDPOINT}get-students?page=${page}&limit=${limit}&search=${search}`, getHeaders());
+    return await api.get(`${LOGIN_ENDPOINT}get-students?page=${page}&limit=${limit}&search=${search}`, );
 };
 
 export const getStudentById = async (id: number) => {
-    return await axios.get(LOGIN_ENDPOINT + `get-student/${id}`, getHeaders());
+    return await api.get(LOGIN_ENDPOINT + `get-student/${id}`, );
 };
 
 export const deleteStudent = async (id: number) => {
     console.log(`${LOGIN_ENDPOINT}/delete-student/${id}`);
-    return await axios.delete(LOGIN_ENDPOINT + `delete-student/${id}`,getHeaders());
+    return await api.delete(LOGIN_ENDPOINT + `delete-student/${id}`,);
 };
 
 export const updateProfile = async (formData: UpdateProfilePayload) => {
-    return await axios.put(LOGIN_ENDPOINT + "edit-profile",formData,getHeaders());
+    return await api.put(LOGIN_ENDPOINT + "edit-profile",formData,);
 };
 
 
 export const updateStudents = async (id: number, formData: UpdateProfilePayload) => {
-    return await axios.put(LOGIN_ENDPOINT + `edit-student/${id}`,formData,getHeaders());
+    return await api.put(LOGIN_ENDPOINT + `edit-student/${id}`,formData,);
 };

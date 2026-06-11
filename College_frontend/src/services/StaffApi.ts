@@ -1,46 +1,34 @@
-import axios from "axios";
 import { RegisterPayload, UpdateProfilePayload } from "../types/Datatypes.ts";
-import { store } from "../store/store.ts";
+import api from "../interceptor.ts"
+const LOGIN_ENDPOINT = "/staff/";
 
-const API_URL = import.meta.env.VITE_BackEndURL;
-const LOGIN_ENDPOINT = API_URL+"/staff/";
 
-const getHeaders = () => {
-  const token =
-    store.getState().auth.token || localStorage.getItem("access");
-    console.log(token);
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
 
 export const getstaffProfile = async() => {
-    return await axios.get(LOGIN_ENDPOINT + "staffprofile",getHeaders());
+    return await api.get(LOGIN_ENDPOINT + "staffprofile",);
 };
 
 export const registerStaff = async (formData: RegisterPayload) => {
-    return await axios.post(LOGIN_ENDPOINT + "add-staff",formData,getHeaders());
+    return await api.post(LOGIN_ENDPOINT + "add-staff",formData,);
 };
 
 export const getAllStaff = async (limit: number, page: number, search: string = "") => {
-    return await axios.get(`${LOGIN_ENDPOINT}get-staffs?page=${page}&limit=${limit}&search=${search}`, getHeaders());
+    return await api.get(`${LOGIN_ENDPOINT}get-staffs?page=${page}&limit=${limit}&search=${search}`,);
 };
 
 export const getStaffById = async (id: number) => {
-    return await axios.get(LOGIN_ENDPOINT + `get-staff/${id}`, getHeaders());
+    return await api.get(LOGIN_ENDPOINT + `get-staff/${id}`,);
 };
 
 export const deleteStaff = async (id: number) => {
-    return await axios.delete(LOGIN_ENDPOINT + `delete-staff/${id}`,getHeaders());
+    return await api.delete(LOGIN_ENDPOINT + `delete-staff/${id}`,);
 };
 
 export const updateProfile = async (formData: UpdateProfilePayload) => {
-    return await axios.put(LOGIN_ENDPOINT + "edit-profile",formData,getHeaders());
+    return await api.put(LOGIN_ENDPOINT + "edit-profile",formData,);
 };
 
 
 export const updateStaff = async (id: number, formData: UpdateProfilePayload) => {
-    return await axios.put(LOGIN_ENDPOINT + `edit-staff/${id}`,formData,getHeaders());
+    return await api.put(LOGIN_ENDPOINT + `edit-staff/${id}`,formData,);
 };
