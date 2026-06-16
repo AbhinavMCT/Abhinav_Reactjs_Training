@@ -17,6 +17,11 @@
   font-weight: bold;
 }
 
+.navbarContent {
+  display: flex;
+  align-items: center;
+}
+
 .navbar-list {
   display: flex;
   gap: 2rem;

@@ -33,9 +33,10 @@ const StudentCoursePage = ({
   useEffect(() => {
   const loadData = async () => {
     try {
+      
       const [studentData, courseData] = await Promise.all([
-        getAllStudents(1, 10),
-        getAllCourses(10, 1),
+        getAllStudents(1, 10,""),
+        getAllCourses(10, 1,""),
       ]);
 
       setStudents(
@@ -45,14 +46,15 @@ const StudentCoursePage = ({
       );
 
       setCourses(
-        Array.isArray(courseData.data)
-          ? courseData.data
-          : JSON.parse(courseData.data)
+        Array.isArray(courseData.data.course)
+          ? courseData.data.course
+          : JSON.parse(courseData.data.course)
       );
 
       if (id) {
         const allocData = await getStudentcoursebyId(Number(id));
         setFormData(allocData.data[0]);
+        
       }
     } catch (error) {
       console.error(error);
@@ -77,14 +79,13 @@ const StudentCoursePage = ({
   const handleSubmit = async(e: React.SubmitEvent<HTMLFormElement>)=>{
     e.preventDefault();
     try{
-        if(!isEditMode) return;
-
         if(isEditMode){
             await updateStudentCourse(Number(id), formData);
             toast.success("Updated SuccessFully");
             navigate("/student-course")
         }else{
             await createStudentCourse(formData);
+            console.log(formData);
             toast.success("Allocated SuccessFully");
             navigate("/student-course");
         }

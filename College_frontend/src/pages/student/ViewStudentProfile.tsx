@@ -6,6 +6,7 @@ import { ProfileData } from "../../types/Datatypes.ts";
 
 import "../../styles/student/viewStudent.css";
 import { Link } from "react-router-dom";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 
 const ViewStudent = () => {
 
@@ -37,12 +38,14 @@ const ViewStudent = () => {
   }, []);
 
   return (
+    
     <div className="student-profile-container">
 
+
       {profile ? (
-
+        
         <div className="student-profile-card">
-
+         <Breadcrumbs />
           <div className="profile-banner">
 
             <div className="profile-left">
@@ -72,7 +75,7 @@ const ViewStudent = () => {
 
             </div>
 
-            <Link to="/student/edit-profile" className="edit-btn">
+            <Link to="/student-home/edit-profile" className="edit-btn">
               <FaUserEdit /> Edit Profile
             </Link>
 

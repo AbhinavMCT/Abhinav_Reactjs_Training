@@ -58,7 +58,7 @@ const ViewStaff = () => {
             <button
   onClick={() => {
     console.log("Navigating...");
-    navigate("/staff/edit-profile");
+    navigate("/staff-home/edit-profile");
   }}
   className="edit-btn"
 >

@@ -12,6 +12,7 @@ import HomePage from "./components/HomePage.tsx";
 
 import AppRoutes from "./routes/AppRoutes.tsx";
 import { ToastContainer } from "react-toastify";
+import ViewCourse from "./pages/course/ViewCourse.tsx";
 
 function App() {
   return (
@@ -51,6 +52,10 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route path="/view-course"
+          element={<ViewCourse />} />
+
 
           {AppRoutes()}
 

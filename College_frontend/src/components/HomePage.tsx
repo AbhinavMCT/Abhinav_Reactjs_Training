@@ -4,7 +4,7 @@ import "../styles/home.css";
 
 const Home = () => {
   const navLinks = [
-    { label: "Courses", path: "/courses" },
+    { label: "Courses", path: "/view-course" },
     { label: "Teachers", path: "/teachers" },
     { label: "Login", path: "/login" },
   ];
@@ -21,7 +21,7 @@ const Home = () => {
               Empowering students with quality education, innovation, and
               excellence for a brighter future.
             </p>
-            <a href="/courses" className="hero-btn">
+            <a href="/view-course" className="hero-btn">
               Explore Courses
             </a>
           </div>

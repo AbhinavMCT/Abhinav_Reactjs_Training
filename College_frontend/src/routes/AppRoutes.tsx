@@ -30,6 +30,8 @@ import AllocationPage from "../pages/subjectstaff/SubjectStaffAllocationPage.tsx
 import ViewActivityLog from "../pages/admin/ActivityLog.tsx";
 import AllocateStudentCourse from "../pages/admin/Allocatestudentcourse.tsx";
 import StudentCoursePage from "../pages/studentcourse/StudentCoursePage.tsx";
+import StudentCourseView from "../pages/course/ViewAllocatedstudentcourse.tsx";
+
 
 const routes = [
 
@@ -60,13 +62,13 @@ const routes = [
   },
 
   {
-    path: "/student/profile",
+    path: "/student-home/profile",
     element: <ViewStudent />,
     roles: ["student"],
   },
 
   {
-    path: "/student/edit-profile",
+    path: "/student-home/edit-profile",
     element: <EditStudentPage />,
     roles: ["student"],
   },
@@ -86,13 +88,13 @@ const routes = [
   },
 
   {
-    path: "/staff/profile",
+    path: "/staff-home/profile",
     element: <ViewStaff />,
     roles: ["staff"],
   },
 
   {
-    path: "/staff/edit-profile",
+    path: "/staff-home/edit-profile",
     element: <EditStaffProfile />,
     roles: ["staff"],
   },
@@ -150,7 +152,6 @@ const routes = [
     element: <Coursepage />,
     roles: ["Admin"],
   },
-
   {
     path: "/department-management",
     element: <DepartmentManagement />,
@@ -204,6 +205,11 @@ const routes = [
     path: "/student-course/edit/:id",
     element: <StudentCoursePage />,
     roles: ["Admin", "staff"]
+  },
+  {
+    path:"/student-home/view",
+    element: <StudentCourseView />,
+    roles: ["student"]
   },
 
   {

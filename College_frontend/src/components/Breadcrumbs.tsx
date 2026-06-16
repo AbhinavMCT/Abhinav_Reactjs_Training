@@ -9,6 +9,7 @@ const Breadcrumbs = () => {
   const decoded = token ? decodeToken(token) : null;
 
   const roleHomeMap: Record<string, string> = {
+    login: "/",
     Admin: "/admin-home",
     Staff: "/staff-home",
     Student: "/student-home",

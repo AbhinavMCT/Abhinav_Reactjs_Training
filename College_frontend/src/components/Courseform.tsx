@@ -46,6 +46,7 @@ const CourseForm = ({
             id="name"
             type="text"
             name="name"
+            placeholder="Course Name"
             value={formData.name}
             onChange={handleChange}
           />

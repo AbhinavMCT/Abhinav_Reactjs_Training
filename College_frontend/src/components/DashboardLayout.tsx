@@ -13,6 +13,7 @@ interface MenuItem {
 interface Props {
   children: ReactNode;
   title: string;
+  username: string;
   role: string;
   menuItems: MenuItem[];
 }
@@ -20,6 +21,7 @@ interface Props {
 const DashboardLayout = ({
   children,
   title,
+  username,
   role,
   menuItems,
 }: Props) => {
@@ -32,7 +34,7 @@ const DashboardLayout = ({
       >
         <FaBars />
       </button>
-      <Sidebar role={role} menuItems={menuItems} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
+      <Sidebar username={username} role={role} menuItems={menuItems} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
 
       <div className="main-content">
         <Header title={title} />

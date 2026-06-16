@@ -107,7 +107,6 @@ const validateForm = () => {
         return;
       }
 
-      if(!isEditmode) return;
       if(isEditmode){
         await updateCourse(Number(id), formData);
         toast.success("Updated SuccessFully");

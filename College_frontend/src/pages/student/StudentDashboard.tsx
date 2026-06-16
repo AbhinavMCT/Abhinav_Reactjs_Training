@@ -12,7 +12,7 @@ const StudentDashboard = () => {
     { name: "Profile", path: "/student/profile" },
     { name: "Exams", path: "/student/exams" },
     { name: "Results", path: "/student/results" },
-    { name: "Hall Ticket", path: "/student/hall-ticket" },
+    { name: "Course", path: "/student-home/view" },
     { name: "Attendance", path: "/student/attendance" },
   ];
 

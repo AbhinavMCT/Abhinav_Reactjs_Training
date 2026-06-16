@@ -16,7 +16,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <DashboardLayout title="Admin Dashboard" role="Admin" menuItems={menuItems}>
+    <DashboardLayout title="Admin Dashboard" username="Admin" role="Admin"  menuItems={menuItems}>
       <div className="card-grid">
         <StatCard title="Total Students" value="1500" />
         <StatCard title="Total Staff" value="120" />

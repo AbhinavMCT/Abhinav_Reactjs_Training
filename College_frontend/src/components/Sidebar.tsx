@@ -8,6 +8,7 @@ interface MenuItem {
 }
 
 interface SidebarProps {
+  username: string
   role: string;
   menuItems: MenuItem[];
   sidebarOpen: boolean;
@@ -15,6 +16,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({
+  username,
   role,
   menuItems,
   sidebarOpen,
@@ -27,7 +29,8 @@ const Sidebar = ({
       <div className="sidebar-header">
 
   <div>
-    <h2>{role}</h2>
+    <h2>{username}</h2>
+    <p>{role}</p>
   </div>
 </div>
 
