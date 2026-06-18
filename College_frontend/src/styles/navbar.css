@@ -3,6 +3,10 @@
   padding: 1rem 2rem;
 }
 
+.logout-wrapper {
+  margin-left: auto;
+}
+
 .navbar-data {
   display: flex;
   justify-content: space-between;

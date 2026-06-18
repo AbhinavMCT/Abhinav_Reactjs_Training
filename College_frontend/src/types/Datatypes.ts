@@ -184,3 +184,32 @@ export interface JwtPayload {
   role: string;
   exp: number;
 }
+
+export interface Attendence {
+    id: number,
+    attendenc_count: number,
+    semester: number,
+    total_working_days: number,
+    student_id: number,
+    name?: string,
+}
+
+export interface Markattendence{
+    attendance: {
+        student_id: number;
+        status: string;
+    }[];
+    attendance_date?: string;
+    semester: number;
+}
+
+export interface AttendanceFilter {
+  page: number;
+  limit: number;
+  search: string;
+  date: string;
+  status: string;
+  reportType: string;
+  month: string;
+  year: string;
+}

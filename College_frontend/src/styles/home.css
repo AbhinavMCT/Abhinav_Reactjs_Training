@@ -24,9 +24,15 @@
 }
 
 .hero-content h1 {
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.15;
   margin-bottom: 20px;
   letter-spacing: 2px;
+  color: #fff;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-content p {
@@ -49,6 +55,38 @@
 .hero-btn:hover {
   background: #1d4ed8;
   transform: translateY(-2px);
+}
+
+.hero-swiper {
+  width: 100%;
+  height: 500px;
+}
+
+.hero-swiper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.swiper-pagination-bullet {
+  background: #fff !important;
+  opacity: 0.8;
+}
+
+.swiper-pagination-bullet-active {
+  background: #2563eb !important;
+}
+
+.carousel-section {
+  padding: 40px 10%;
+  background: #fff;
+}
+
+.hero-swiper {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .about-section {

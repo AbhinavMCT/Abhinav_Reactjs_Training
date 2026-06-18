@@ -2,13 +2,15 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { NavItem } from "../types/Datatypes.ts";
 import "../styles/navbar.css";
+import LogoutButton from "./LogoutButton.tsx";
 
 interface NavbarProps {
   title: string;
   links: NavItem[];
+  showLogout?: boolean;
 }
 
-const Navbar = ({ title, links }: NavbarProps) => {
+const Navbar = ({ title, links, showLogout = false }: NavbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -38,6 +40,10 @@ const Navbar = ({ title, links }: NavbarProps) => {
                   </Link>
                 </li>
               ))}
+              <div className="logout-wrapper">
+                <li>{showLogout && <LogoutButton />}</li>
+              </div>
+              
             </ul>
           </div>
         </nav>

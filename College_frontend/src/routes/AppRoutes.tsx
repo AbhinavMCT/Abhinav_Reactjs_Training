@@ -31,6 +31,8 @@ import ViewActivityLog from "../pages/admin/ActivityLog.tsx";
 import AllocateStudentCourse from "../pages/admin/Allocatestudentcourse.tsx";
 import StudentCoursePage from "../pages/studentcourse/StudentCoursePage.tsx";
 import StudentCourseView from "../pages/course/ViewAllocatedstudentcourse.tsx";
+import Viewattendence from "../pages/attendence/Viewattendence.tsx";
+import MarkAttendance from "../pages/attendence/MarkAttendence.tsx";
 
 
 const routes = [
@@ -71,6 +73,18 @@ const routes = [
     path: "/student-home/edit-profile",
     element: <EditStudentPage />,
     roles: ["student"],
+  },
+
+  {
+    path: "/view-all-attendence",
+    element: <Viewattendence />,
+    roles: ["Admin", "staff"],
+  },
+
+  {
+    path: "/view-all-attendence/mark-attendence",
+    element: < MarkAttendance/>,
+    roles: ["Admin", "staff"]
   },
 
   {

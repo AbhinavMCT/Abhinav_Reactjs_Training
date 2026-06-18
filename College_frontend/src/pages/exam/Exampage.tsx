@@ -92,7 +92,7 @@ const AddExam = ({ id, navigate, isEditMode }: examPageProps) => {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const response = await getAllCourses();
+        const response = await getAllCourses(1,10,"");
         console.log("Courses fetched:", response.data);
         setCourses(response.data);
         setLoadingCourses(false);

@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import "../styles/footer.css";
 
 const Footer = () => {
@@ -6,26 +5,8 @@ const Footer = () => {
     <footer className="footer-container">
       <div className="footer-content">
         <div className="footer-section">
-          <h3>My Website</h3>
+          <h3>USACFAS</h3>
           <p>Learn, Grow, and Succeed.</p>
-        </div>
-
-        <div className="footer-section">
-          <h4>Quick Links</h4>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/courses">Courses</Link>
-            </li>
-            <li>
-              <Link to="/teachers">Teachers</Link>
-            </li>
-            <li>
-              <Link to="/contact">Contact</Link>
-            </li>
-          </ul>
         </div>
 
         <div className="footer-section">
