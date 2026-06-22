@@ -35,26 +35,55 @@ const Login = () => {
     setError("");
     try {
       const res = await loginUser(formData);
-      const token = res.data.token;
-      localStorage.setItem("access", token);
-      const decoded = decodeToken(token);
-      dispatch(
-        loginSuccess({
-          token,
-          role: decoded.role,
-          username: decoded.username,
-        }),
-      );
+      const accessToken = res.data.accessToken;
+const refreshToken = res.data.refreshToken;
 
-      if (decoded.role === "Admin") {
-        navigate("/admin-home", { replace: true });
-      } else if (decoded.role === "staff") {
-        navigate("/staff-home");
-      } else if (decoded.role === "student") {
-        navigate("/student-home");
-      } else {
-        navigate("/");
-      }
+console.log("Access",accessToken);
+console.log("Refresh",refreshToken);
+
+localStorage.setItem(
+  "accessToken",
+  accessToken
+);
+
+localStorage.setItem(
+  "refreshToken",
+  refreshToken
+);
+
+const decoded = decodeToken(accessToken);
+
+if (!decoded) {
+  setError("Invalid token received");
+  return;
+}
+
+dispatch(
+  loginSuccess({
+    token: accessToken,
+    role: decoded.role,
+    username: decoded.username,
+  })
+);
+
+switch (decoded.role) {
+  case "Admin":
+    navigate("/admin-home", {
+      replace: true,
+    });
+    break;
+
+  case "staff":
+    navigate("/staff-home");
+    break;
+
+  case "student":
+    navigate("/student-home");
+    break;
+
+  default:
+    navigate("/");
+}
     } catch (err: unknown) {
       const errMsg =
         (err as { response?: { data?: { message?: string } } }).response?.data

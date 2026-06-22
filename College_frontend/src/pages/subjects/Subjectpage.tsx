@@ -1,26 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 
 import SubjectForm from "../../components/SubjectForm.tsx";
 
 import { createSubject,getSubjectById,updateSubject, getAllCourses } from "../../services/SubjectApi.ts";
 
-import { SubjectPayload, CourseOption } from "../../types/Datatypes.ts";
+import { SubjectPayload, CourseOption, pageprops } from "../../types/Datatypes.ts";
 import { toast } from "react-toastify";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-type subjectPageProps = {
-  id?: string;
-  navigate: ReturnType<typeof useNavigate>;
-  isEditMode: boolean;
-};
-
-const AddSubject = ({
-  id,
-  navigate,
-  isEditMode,
-}:subjectPageProps ) => {
+const AddSubject = ({id,navigate,isEditMode,}:pageprops ) => {
   
   const [courses, setCourses] = useState<CourseOption[]>([]);
   

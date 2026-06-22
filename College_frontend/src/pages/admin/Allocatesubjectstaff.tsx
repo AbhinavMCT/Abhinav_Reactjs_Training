@@ -101,18 +101,24 @@ const AllocateSubjectStaff = () => {
       <Breadcrumbs />
       <div className="management-header">
         <h2>Subject to Staff Allocation Management</h2>
+        <Breadcrumbs />
+        <div className="header-actions">
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search Allocated Data..."
+            />
+          </div>
 
-        <Link to="/subject-staff/add" className="create-btn">
-          + Allocate New
-        </Link>
-        <div className="table-actions">
-          <CommonSearch
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Allocated Data..."
-          />
+          <div className="buttons">
+            <Link to="/subject-staff/add" className="create-btn">
+              + Allocate New
+            </Link>
+          </div>
         </div>
       </div>
+
       <div className="table-container">
         {loading ? (
           <p>Loading Allocated Staff and Subject matrices...</p>

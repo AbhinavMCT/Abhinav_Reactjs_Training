@@ -1,6 +1,5 @@
 import { CoursePayload, DepartmentOption } from "../types/Datatypes.ts";
 import "../styles/course/AddCourse.css";
-import Breadcrumbs from "./Breadcrumbs.tsx";
 
 type Props = {
   formData: CoursePayload;

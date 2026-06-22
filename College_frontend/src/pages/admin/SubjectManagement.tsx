@@ -104,16 +104,20 @@ const SubjectManagement = () => {
       <div className="management-header">
         <h2>Subject Management</h2>
         <Breadcrumbs />
+        <div className="header-actions">
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search Subject..."
+            />
+          </div>
 
-        <Link to="/subject/add" className="create-btn">
+          <div className="buttons">
+            <Link to="/subject/add" className="create-btn">
           + Create Subject
         </Link>
-        <div className="table-actions">
-          <CommonSearch
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Subject..."
-          />
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { store } from "./store/store.ts";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BackEndURL,
@@ -7,15 +6,63 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth.token || localStorage.getItem("access");
+    const token =
+      localStorage.getItem("accessToken");
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization =
+        `Bearer ${token}`;
     }
 
     return config;
-  },
-  (error) => Promise.reject(error)
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      error.response?.status === 403 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken =
+          localStorage.getItem(
+            "refreshToken"
+          );
+
+        const response = await axios.post(
+          `${import.meta.env.VITE_BackEndURL}/auth/refresh-token`,
+          {
+            refreshToken,
+          }
+        );
+
+        const newAccessToken =
+          response.data.accessToken;
+
+        localStorage.setItem(
+          "accessToken",
+          newAccessToken
+        );
+
+        originalRequest.headers.Authorization =
+          `Bearer ${newAccessToken}`;
+
+        return api(originalRequest);
+      } catch {
+        localStorage.clear();
+        globalThis.location.href = "/login";
+
+      }
+    }
+
+  }
 );
 
 export default api;

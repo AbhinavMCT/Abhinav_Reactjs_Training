@@ -15,6 +15,8 @@ const StaffHome = () => {
    const navLinks = [
     { label: "Profile", path: "/staff-home/profile" },
     { label: "Attendece Management", path: "/view-all-attendence" },
+    {label: "Marks", path: "/mark-page"},
+    {label: "Assignments", path: "/assignment-view"},
 
   ];
   return (

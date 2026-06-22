@@ -1,0 +1,64 @@
+.assignment-container {
+  padding: 20px;
+}
+
+.management-header {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.management-header h2 {
+  margin: 0;
+}
+
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+  align-items: center;
+}
+
+.table-actions select,
+.table-actions input[type="date"] {
+  padding: 8px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn {
+  padding: 6px 12px;
+  background: #0d6efd;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.edit-btn:hover {
+  opacity: 0.9;
+}
+
+.create-btn {
+  width: fit-content;
+  padding: 10px 15px;
+  background: #198754;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.create-btn:hover {
+  opacity: 0.9;
+}

@@ -1,50 +1,30 @@
-import axios from "axios";
 import { SubjectStaffPayload } from "../types/Datatypes.ts";
-import { store } from "../store/store.ts";
+import api from "../interceptor.ts";
 
-const API_URL = import.meta.env.VITE_BackEndURL;
-const SUBJECT_STAFF_ENDPOINT = API_URL + "/subject-staff/";
+const SUBJECT_STAFF_ENDPOINT = "/subject-staff/";
 
-const getHeaders = () => {
-  const token =
-    store.getState().auth.token || localStorage.getItem("access");
-    console.log(token);
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
+
 
 export const getAllSubjectStaff = async (limit: number, page: number, search: string) => {
-  return axios.get(`${SUBJECT_STAFF_ENDPOINT}get-subjectstaff?limit=${limit}&page=${page}&search=${search}`, 
-    getHeaders(),
-  );
+  return api.get(`${SUBJECT_STAFF_ENDPOINT}get-subjectstaff?limit=${limit}&page=${page}&search=${search}`, );
 };
 
 export const getSubjectStaffById = async (id: number) => {
-  return axios.get(`${SUBJECT_STAFF_ENDPOINT}get-subjectstaff/${id}`, 
-   getHeaders(),
-  );
+  return api.get(`${SUBJECT_STAFF_ENDPOINT}get-subjectstaff/${id}`, );
 };
 
 export const createSubjectStaff = async (data: SubjectStaffPayload) => {
-  return axios.post(
-    `${SUBJECT_STAFF_ENDPOINT}add-subjectstaff`,
-    data,
-    getHeaders(),
-    
-  );
+  return api.post(`${SUBJECT_STAFF_ENDPOINT}add-subjectstaff`,data,);
 };
 
 export const updateSubjectStaff = async (id: number, data: SubjectStaffPayload) => {
-  return axios.put(
-    `${SUBJECT_STAFF_ENDPOINT}edit-subjectstaff/${id}`,data,
-    getHeaders(),
-    );
+  return api.put(`${SUBJECT_STAFF_ENDPOINT}edit-subjectstaff/${id}`,data,);
 };
 
 export const deleteSubjectStaff = async (id: number) => {
-  return axios.delete(`${SUBJECT_STAFF_ENDPOINT}delete-subjectstaff/${id}`, getHeaders()
-);
+  return api.delete(`${SUBJECT_STAFF_ENDPOINT}delete-subjectstaff/${id}`,);
 }
+
+export const getAllSubjects = async () => {
+  return api.get(`/subject/get-subjects`,);
+};

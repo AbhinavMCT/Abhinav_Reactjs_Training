@@ -1,25 +1,14 @@
 import { useState, useEffect } from "react";
-import { StudentCourse, Studentlist, Courselist } from "../../types/Datatypes.ts";
+import { StudentCourse, Studentlist, Courselist, pageprops } from "../../types/Datatypes.ts";
 import {updateStudentCourse,createStudentCourse,getStudentcoursebyId} from "../../services/StudentCourseApi.ts";
 import { getAllCourses } from "../../services/CourseApi.ts";
 import { getAllStudents } from "../../services/StudentApi.ts";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import StudentCourseForm from "../../components/StudentCourseForm.tsx";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-type studentCoursePageProps = {
-  id?: string;
-  navigate: ReturnType<typeof useNavigate>;
-  isEditMode: boolean;
-};
-
-const StudentCoursePage = ({
-  id,
-  navigate,
-  isEditMode
-}: studentCoursePageProps) => {
+const StudentCoursePage = ({id,navigate,isEditMode}: pageprops) => {
 
   const [formData, setFormData] = useState<StudentCourse>({
     id: 0,
@@ -82,13 +71,12 @@ const StudentCoursePage = ({
         if(isEditMode){
             await updateStudentCourse(Number(id), formData);
             toast.success("Updated SuccessFully");
-            navigate("/student-course")
         }else{
             await createStudentCourse(formData);
             console.log(formData);
             toast.success("Allocated SuccessFully");
-            navigate("/student-course");
         }
+        navigate("/student-course");
     } catch(error){
     console.error("Error submitting form", error);
     toast.error("Error submitting form");

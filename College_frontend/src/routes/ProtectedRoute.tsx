@@ -7,26 +7,40 @@ interface Props {
   allowedRoles: string[];
 }
 
-const ProtectedRoute = ({children,allowedRoles,}: Props) => {
-
-  const token = localStorage.getItem("access");
+const ProtectedRoute = ({
+  children,
+  allowedRoles,
+}: Props) => {
+  const token =
+    localStorage.getItem("accessToken");
 
   if (!token) {
     return <Navigate to="/" replace />;
   }
-  let decoded;
-  try {
-    decoded = decodeToken(token);
 
-  } catch {
+  const decoded = decodeToken(token);
+
+  if (!decoded) {
+    localStorage.removeItem(
+      "accessToken"
+    );
+
+    localStorage.removeItem(
+      "refreshToken"
+    );
 
     return <Navigate to="/" replace />;
   }
-  if (allowedRoles.includes(decoded.role)) {
-      return children;
-    }
 
-    return <Navigate to="/" replace />;
+  if (
+    allowedRoles.includes(
+      decoded.role
+    )
+  ) {
+    return <>{children}</>;
+  }
+
+  return <Navigate to="/" replace />;
 };
 
 export default ProtectedRoute;

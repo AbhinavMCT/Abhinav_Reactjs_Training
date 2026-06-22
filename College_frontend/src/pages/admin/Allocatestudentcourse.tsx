@@ -96,15 +96,20 @@ const AllocateStudentCourse = () => {
       <div className="management-header">
         <h2>Student-Course Allocation Management</h2>
         <Breadcrumbs />
-        <Link to="/student-course/add" className="create-btn">
+        <div className="header-actions">
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search Allocated Data..."
+            />
+          </div>
+
+          <div className="buttons">
+            <Link to="/student-course/add" className="create-btn">
           + Allocate New
         </Link>
-        <div className="table-actions">
-          <CommonSearch
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Allocated Data..."
-          />
+          </div>
         </div>
       </div>
       <div className="table-container">

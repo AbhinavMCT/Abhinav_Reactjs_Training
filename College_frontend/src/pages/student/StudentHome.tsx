@@ -14,6 +14,8 @@ import school3 from "../../assets/college3.png";
 const StudentHome = () => {
   const navLinks = [
     { label: "Profile", path: "/student-home/profile" },
+    {label: "Assignments", path: "/students-assignment"},
+    {label: "Exams", path: "/exams-view"},
 
   ];
   return (

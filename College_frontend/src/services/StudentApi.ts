@@ -43,3 +43,15 @@ export const updateProfile = async (formData: UpdateProfilePayload) => {
 export const updateStudents = async (id: number, formData: UpdateProfilePayload) => {
     return await api.put(LOGIN_ENDPOINT + `edit-student/${id}`,formData,);
 };
+
+export const importStudents = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return api.post("/import-students",formData,{
+      headers: {
+        "Content-Type":
+          "multipart/form-data",
+      },
+    }
+  );
+};

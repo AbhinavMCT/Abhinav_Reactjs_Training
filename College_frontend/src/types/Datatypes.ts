@@ -1,9 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 export interface LoginCredentials {
   username: string;
   password: string;
 }
 
 export interface LoginResponse {
+  refreshToken: any;
+  accessToken: any;
   token: string;
   message: string;
 }
@@ -95,6 +99,8 @@ export interface Exam {
   exam_date: string;
   course_id: number;
   course_name?: string;
+  exam_type: string;
+  total_mark: number;
 }
 
 export interface SubjectPayload {
@@ -189,6 +195,7 @@ export interface Attendence {
     id: number,
     attendenc_count: number,
     semester: number,
+    semester_name?: string,
     total_working_days: number,
     student_id: number,
     name?: string,
@@ -213,3 +220,51 @@ export interface AttendanceFilter {
   month: string;
   year: string;
 }
+
+export interface Marks {
+  id?: number;
+  student_id: number;
+  subject_id: number;
+  exam_id: number;
+  mark: number;
+  grade: string;
+  student_name?: string,
+  subject_name?: string,
+  exam_name?: string,
+  obtained_mark?: number,
+  maximum_mark?: number,
+  percentage?: number
+}
+
+export interface Examlist {
+  id: number,
+  name: string
+  total_mark: number;
+}
+
+export interface Assignment{
+  id: number,
+  assignment_name: string,
+  description: string,
+  start_date: string,
+  end_date: string,
+  subject_id: number,
+  subject_name?: string,
+  status?: string,
+  staff_name?: string,
+};
+
+export interface AssignmentFilter {
+  page: number;
+  limit: number;
+  search: string;
+  status: string;
+  startDate: string;
+  endDate: string;
+}
+
+export type pageprops = {
+  id?: string;
+  navigate: ReturnType<typeof useNavigate>;
+  isEditMode: boolean;
+};

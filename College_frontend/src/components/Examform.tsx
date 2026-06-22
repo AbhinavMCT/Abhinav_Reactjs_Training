@@ -1,11 +1,7 @@
-import { Exam } from "../types/Datatypes.ts";
+import { Exam,CourseOption } from "../types/Datatypes.ts";
 import "../styles/exam/ExamForm.css";
-import Breadcrumbs from "./Breadcrumbs.tsx";
 
-interface CourseOption {
-  id: number;
-  name: string;
-}
+
 
 type Props = {
   formData: Exam;
@@ -17,11 +13,13 @@ type Props = {
   handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   buttonText: string;
   errors: {
-    name: string;
-    semester: string;
-    exam_date: string;
-    course_id: string;
-  };
+  name: string;
+  semester: string;
+  exam_date: string;
+  course_id: string;
+  exam_type: string;
+  total_mark: string;
+};
   title: string;
 };
 
@@ -48,6 +46,23 @@ const Examform = ({
           onChange={handleChange}
         />
         {errors.name && <span className="error">{errors.name}</span>}
+        <label htmlFor="exam_type">Exam Type</label>
+<select
+  id="exam_type"
+  name="exam_type"
+  value={formData.exam_type}
+  onChange={handleChange}
+>
+  <option value="">Select Exam Type</option>
+  <option value="Internal">Internal</option>
+  <option value="Assignment">Assignment</option>
+  <option value="Lab">Lab</option>
+  <option value="External">External</option>
+</select>
+
+{errors.exam_type && (
+  <span className="error">{errors.exam_type}</span>
+)}
         <label htmlFor="semester">Semester</label>
         <input
           id="semester"
@@ -67,6 +82,18 @@ const Examform = ({
           onChange={handleChange}
         />
         {errors.exam_date && <span className="error">{errors.exam_date}</span>}
+        <label htmlFor="total_mark">Total Mark</label>
+<input
+  id="total_mark"
+  type="number"
+  name="total_mark"
+  value={formData.total_mark}
+  onChange={handleChange}
+/>
+
+{errors.total_mark && (
+  <span className="error">{errors.total_mark}</span>
+)}
         <label htmlFor="course_id">Course</label>
         <select
           id="course_id"

@@ -4,14 +4,22 @@ import { decodeToken } from "../utils/Jwt.ts";
 const Breadcrumbs = () => {
   const location = useLocation();
 
-  const token = localStorage.getItem("access");
+const token = localStorage.getItem("accessToken");
 
-  const decoded = token ? decodeToken(token) : null;
+if (!token) {
+  return null;
+}
+
+const decoded = decodeToken(token);
+
+if (!decoded) {
+  return null;
+}
 
   const roleHomeMap: Record<string, string> = {
     Admin: "/admin-home",
-    Staff: "/staff-home",
-    Student: "/student-home",
+    staff: "/staff-home",
+    student: "/student-home",
   };
 
   const homePath =

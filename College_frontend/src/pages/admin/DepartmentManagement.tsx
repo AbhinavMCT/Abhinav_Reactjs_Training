@@ -123,17 +123,22 @@ const DepartmentManagement = () => {
   return (
     <div className="management-container">
       <div className="management-header">
-        <h1>Department Management</h1>
+        <h2>Department Management</h2>
         <Breadcrumbs />
-        <Link to="/department-management/add" className="btn-create-link">
-          + Create Department
-        </Link>
-        <div className="table-actions">
-          <CommonSearch
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Department..."
-          />
+        <div className="header-actions">
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search Department..."
+            />
+          </div>
+
+          <div className="buttons">
+            <Link to="/department-management/add" className="btn-create-link">
+              + Create Department
+            </Link>
+          </div>
         </div>
       </div>
 

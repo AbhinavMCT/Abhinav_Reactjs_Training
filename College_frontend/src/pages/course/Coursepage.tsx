@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
 
 import { createCourse, getAllDepartments, updateCourse, getCourseById } from "../../services/CourseApi.ts";
 
-import { CoursePayload, DepartmentOption } from "../../types/Datatypes.ts";
+import { CoursePayload, DepartmentOption, pageprops } from "../../types/Datatypes.ts";
 
 import CourseForm from "../../components/Courseform.tsx";
 import { toast } from "react-toastify";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 
-type coursePageProps = {
-  id?: string;
-  navigate: ReturnType<typeof useNavigate>;
-  isEditMode: boolean;
-};
 
-const AddCourse = ({ id, navigate }: coursePageProps) => {
+
+const AddCourse = ({ id, navigate, isEditMode }: pageprops) => {
   
 
   const [departments, setDepartments] = useState<DepartmentOption[]>([]);
@@ -59,7 +54,6 @@ const validateForm = () => {
   return isValid;
 };
 
-  const isEditmode = Boolean(id);
 
   useEffect(() => {
     const loadDepartments = async () => {
@@ -85,7 +79,7 @@ const validateForm = () => {
         }
     };
     LoadCourse();
-  }, [id, isEditmode]);
+  }, [id, isEditMode]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -107,7 +101,7 @@ const validateForm = () => {
         return;
       }
 
-      if(isEditmode){
+      if(isEditMode){
         await updateCourse(Number(id), formData);
         toast.success("Updated SuccessFully");
       }else{
@@ -125,7 +119,7 @@ const validateForm = () => {
   return (
     <div>
       <h2>
-        {isEditmode ? "Edit Course" : "Add Course"}
+        {isEditMode ? "Edit Course" : "Add Course"}
         <Breadcrumbs />
       </h2>
       <CourseForm
@@ -136,9 +130,9 @@ const validateForm = () => {
         handleSubmit={handleSubmit}
         errors={errors}
         buttonText={
-          isEditmode ? "Update Course": "Add Course"
+          isEditMode ? "Update Course": "Add Course"
         }
-        title = {isEditmode ? "Edit Course" : "Add Course"}
+        title = {isEditMode ? "Edit Course" : "Add Course"}
       />
     </div>
   );

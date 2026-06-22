@@ -7,8 +7,8 @@ export const getallattenndence = async ({page, limit, search, date, status, repo
     return api.get(`${ATTENDENCE_ENDPOIN}get-all-attendence?limit=${limit}&page=${page}&search=${search}&date=${date}&status=${status}&reportType=${reportType}&month=${month}&year=${year}`)
 };
 
-export const getattendencebystudent = async () => {
-    return api.get(`${ATTENDENCE_ENDPOIN}get-attendence-student`)
+export const getattendencebystudent = async (semester: number,date: string, status: string, reportType: string,month: string,year: string) => {
+    return api.get(`${ATTENDENCE_ENDPOIN}get-attendence-student?semester=${semester}&date=${date}&status=${status}&reportType=${reportType}&month=${month}&year=${year}`)
 };
 
 export const getattendencebyID = async (id: number) => {

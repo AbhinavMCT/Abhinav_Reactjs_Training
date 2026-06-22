@@ -24,7 +24,7 @@ const CourseManagement = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -36,10 +36,10 @@ const CourseManagement = () => {
         setTotalRecords(response.data.totalRecords);
 
         setCourses(response.data.course);
+        console.log(response.data.course)
       } catch (error) {
         console.error("Failed to load courses:", error);
 
-        setCourses([]);
       } finally {
         setLoading(false);
       }
@@ -103,15 +103,20 @@ const CourseManagement = () => {
       <div className="management-header">
         <h2>Course Management</h2>
         <Breadcrumbs />
-        <Link to="/course/add" className="create-btn">
+        <div className="header-actions">
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search Course..."
+            />
+          </div>
+
+          <div className="buttons">
+            <Link to="/course/add" className="create-btn">
           + Create Course
         </Link>
-        <div className="table-actions">
-          <CommonSearch
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Course..."
-          />
+          </div>
         </div>
       </div>
 

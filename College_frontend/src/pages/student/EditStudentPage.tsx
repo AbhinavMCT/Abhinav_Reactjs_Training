@@ -1,26 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { getProfile, getStudentById, updateProfile, updateStudents } from "../../services/StudentApi.ts";
-import { ProfileData, UpdateProfilePayload } from "../../types/Datatypes.ts";
+import { pageprops, ProfileData, UpdateProfilePayload } from "../../types/Datatypes.ts";
 import "../../styles/student/editStudent.css";
 import { toast } from "react-toastify";
 import ProfileForm from "../../components/ProfileForm.tsx";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-type DepartmentPageProps = {
-  id?: string;
-  navigate: ReturnType<typeof useNavigate>;
-  isEditMode: boolean;
-};
-
-const EditProfile = ({
-  id,
-  navigate,
-  isEditMode
-}: DepartmentPageProps) => {
+const EditProfile = ({id,navigate,isEditMode}: pageprops) => {
   const isProfilePage = !id;
-  
   
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
@@ -114,12 +102,11 @@ const res = isProfilePage
       if(isProfilePage) {
         await updateProfile(payload);
       toast.success("Updated SuccessFully");
-      navigate("/student/profile");
       } else {
         await updateStudents(Number(id), payload);
            toast.success("Edited Successfully");
-            navigate("/student-management");
       }
+      navigate("/student-management");
     } catch (error) {
       console.error("Update Failed:", error);
     } finally {

@@ -95,6 +95,14 @@ const ExamManagement = () => {
       key: "course_name",
     },
     {
+      title: "Exam Type",
+      key: "exam_type",
+    },
+    {
+      title: "Maximum Mark",
+      key: "total_mark",
+    },
+    {
       title: "Actions",
       key: "id",
       render: (value) => (
@@ -114,15 +122,21 @@ const ExamManagement = () => {
       <div className="management-header">
         <h2>Exam Management</h2>
         <Breadcrumbs />
-        <Link to="/exam-management/add" className="create-btn">
-          + Create Exam
-        </Link>
-        <div className="table-actions">
-          <CommonSearch
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Exam..."
-          />
+        <div className="header-actions">
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search Exam..."
+            />
+          </div>
+
+          <div className="buttons">
+            <Link to="/exam-management/add" className="create-btn">
+            + Create Exam
+          </Link>
+
+          </div>
         </div>
       </div>
 

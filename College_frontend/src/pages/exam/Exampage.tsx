@@ -1,27 +1,17 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { createExam, getExamById, updateExam, getallCourse } from "../../services/ExamApi.ts";
 
-import { createExam, getExamById, updateExam } from "../../services/ExamApi.ts";
-import { getAllCourses } from "../../services/CourseApi.ts";
-
-import { Exam } from "../../types/Datatypes.ts";
+import { Exam, CourseOption, pageprops } from "../../types/Datatypes.ts";
 import { toast } from "react-toastify";
 import Examform from "../../components/Examform.tsx";
 import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
-interface CourseOption {
-  id: number;
-  name: string;
-}
 
-type examPageProps = {
-  id?: string;
-  navigate: ReturnType<typeof useNavigate>;
-  isEditMode: boolean;
-};
 
-const AddExam = ({ id, navigate, isEditMode }: examPageProps) => {
+
+
+const AddExam = ({ id, navigate, isEditMode }: pageprops) => {
 
   const [courses, setCourses] = useState<CourseOption[]>([]);
   const [loadingCourses, setLoadingCourses] = useState<boolean>(true);
@@ -31,6 +21,8 @@ const AddExam = ({ id, navigate, isEditMode }: examPageProps) => {
   semester: "",
   exam_date: "",
   course_id: "",
+  exam_type: "",
+  total_mark: "",
 });
 
   const [formData, setFormData] = useState<Exam>({
@@ -39,6 +31,8 @@ const AddExam = ({ id, navigate, isEditMode }: examPageProps) => {
     semester: 0,
     exam_date: "",
     course_id: 0,
+    exam_type: "",
+    total_mark: 0
   });
 
 
@@ -48,6 +42,8 @@ const AddExam = ({ id, navigate, isEditMode }: examPageProps) => {
     semester: "",
     exam_date: "",
     course_id: "",
+    exam_type: "",
+  total_mark: "",
   };
 
   let isValid = true;
@@ -92,9 +88,10 @@ const AddExam = ({ id, navigate, isEditMode }: examPageProps) => {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const response = await getAllCourses(1,10,"");
-        console.log("Courses fetched:", response.data);
-        setCourses(response.data);
+        const response = await getallCourse();;
+        console.log("Courses fetched response payload:", response.data.course);
+        
+        setCourses(response.data.course);
         setLoadingCourses(false);
       } catch (error) {
         console.error("Error fetching courses", error);
@@ -109,7 +106,6 @@ const AddExam = ({ id, navigate, isEditMode }: examPageProps) => {
       if (!isEditMode) return;
       try {
         const response = await getExamById(Number(id));
-        console.log("Exam fetched:", response.data[0]);
         const exam = response.data[0];
         setFormData({
           ...exam,

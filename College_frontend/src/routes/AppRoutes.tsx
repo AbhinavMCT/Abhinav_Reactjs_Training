@@ -30,9 +30,17 @@ import AllocationPage from "../pages/subjectstaff/SubjectStaffAllocationPage.tsx
 import ViewActivityLog from "../pages/admin/ActivityLog.tsx";
 import AllocateStudentCourse from "../pages/admin/Allocatestudentcourse.tsx";
 import StudentCoursePage from "../pages/studentcourse/StudentCoursePage.tsx";
-import StudentCourseView from "../pages/course/ViewAllocatedstudentcourse.tsx";
+import StudentCourseView from "../pages/studentcourse/ViewAllocatedstudentcourse.tsx";
 import Viewattendence from "../pages/attendence/Viewattendence.tsx";
 import MarkAttendance from "../pages/attendence/MarkAttendence.tsx";
+import ViewAttendenceStudents from "../pages/attendence/ViewattendenceStudent.tsx";
+import MarkPages from "../pages/mark/MarkPage.tsx";
+import MarkView from "../pages/mark/MarkView.tsx";
+import ViewProfileMark from "../pages/mark/ViewProfileMark.tsx";
+import AssignmentView from "../pages/assignment/AssignmentView.tsx";
+import AssignmentPage from "../pages/assignment/AssignmentPage.tsx";
+import ViewAssignments from "../pages/assignment/ViewAssignments.tsx";
+import ViewExamsStudents from "../pages/exam/ViewExam.tsx";
 
 
 const routes = [
@@ -66,6 +74,12 @@ const routes = [
   {
     path: "/student-home/profile",
     element: <ViewStudent />,
+    roles: ["student"],
+  },
+
+  {
+    path: "/student-home/profile/attendenc-view",
+    element: <ViewAttendenceStudents />,
     roles: ["student"],
   },
 
@@ -231,6 +245,51 @@ const routes = [
     element: <ViewActivityLog />,
     roles: ["Admin"],
   },
+  {
+    path: "/mark-page/add",
+    element: <MarkPages />,
+    roles: ["staff", "Admin"],
+  },
+  {
+    path: "/mark-page/edit/:id",
+    element: <MarkPages />,
+    roles: ["staff", "Admin"],
+  },
+  {
+    path: "/mark-page",
+    element: <MarkView />,
+    roles: ["staff", "Admin"],
+  },
+  {
+    path: "/student-home/profile/mark-view",
+    element: <ViewProfileMark />,
+    roles: ["student"]
+  },
+  {
+    path: "/assignment-view",
+    element: <AssignmentView />,
+    roles: ["Admin","staff"]
+  },
+  {
+    path: "/assignment-view/add",
+    element: <AssignmentPage />,
+    roles: ["Admin","staff"]
+  },
+  {
+    path: "/assignment-view/edit/:id",
+    element: <AssignmentPage />,
+    roles: ["Admin","staff"]
+  },
+  {
+    path: "/students-assignment",
+    element: <ViewAssignments />,
+    roles: ["student"],
+  },
+  {
+    path: "/exams-view",
+    element: <ViewExamsStudents />,
+    roles: ["student"],
+  }
 ];
 
 function AppRoutes() {

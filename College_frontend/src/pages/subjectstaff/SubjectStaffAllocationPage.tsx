@@ -1,31 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
-import { SubjectStaffPayload,SubjectItem,StaffItem } from "../../types/Datatypes.ts";
-
-import { getAllSubjects } from "../../services/SubjectApi.ts";
+import { SubjectStaffPayload,SubjectItem,StaffItem, pageprops } from "../../types/Datatypes.ts";
 import { getAllStaff } from "../../services/StaffApi.ts";
-
-import {updateSubjectStaff,getSubjectStaffById,createSubjectStaff} from "../../services/SubjectStaffApi.ts";
-
+import {updateSubjectStaff,getSubjectStaffById,createSubjectStaff, getAllSubjects} from "../../services/SubjectStaffApi.ts";
 import "../../styles/subjectstaff/addsubjectstaff.css";
 import { toast } from "react-toastify";
 import SubjectStaffForm from "../../components/SubjectStaffForm.tsx";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-type subjectStaffPageProps = {
-  id?: string;
-  navigate: ReturnType<typeof useNavigate>;
-  isEditMode: boolean;
-};
-
-const EditSubjectStaff = ({
-  id,
-  navigate,
-  isEditMode,
-}: subjectStaffPageProps) => {
-
+const EditSubjectStaff = ({id,navigate,isEditMode,}: pageprops) => {
 
   const [formData, setFormData] = useState<SubjectStaffPayload>({
     subject_id: 0,
@@ -35,12 +18,11 @@ const EditSubjectStaff = ({
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [staffList, setStaffList] = useState<StaffItem[]>([]);
 
-
   useEffect(() => {
     const loadData = async () => {
       try {
         const [subjectRes, staffRes] = await Promise.all([
-          getAllSubjects(10, 1),
+          getAllSubjects(),
           getAllStaff(10, 1),
         ]);
 
@@ -81,30 +63,36 @@ const EditSubjectStaff = ({
     }));
   };
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    if (!id) return;
+  try {
+    if (isEditMode) {
+      if (!id) {
+        toast.error("Invalid allocation ID");
+        return;
+      }
 
-    try {
-      if(!isEditMode) return;
-      if(isEditMode){
-        await updateSubjectStaff(Number(id), formData);
+      await updateSubjectStaff(Number(id), formData);
 
       toast.success("Updated Successfully");
+    } else {
+      await createSubjectStaff(formData);
 
-      navigate("/subject-staff");
-      }else{
-        await createSubjectStaff(formData);
-              toast.success("Added Successfully");
-              navigate("/subject-staff");
-      }
-    } catch (error) {
-      console.error(error);
-
-      toast.error("Failed to Update");
+      toast.success("Added Successfully");
     }
-  };
+
+    navigate("/subject-staff");
+  } catch (error) {
+    console.error(error);
+
+    toast.error(
+      isEditMode
+        ? "Failed to Update"
+        : "Failed to Add"
+    );
+  }
+};
 
   return (
     <SubjectStaffForm 

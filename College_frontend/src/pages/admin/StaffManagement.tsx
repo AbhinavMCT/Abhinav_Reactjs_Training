@@ -138,24 +138,31 @@ const StaffManagement = () => {
 
   return (
     <div className="student-management-container">
+
       <div className="management-header">
         <h2>Staff Management</h2>
+
         <Breadcrumbs />
-        <div className="buttons">
-          <Link to="/subject-staff" className="create-btn">
+
+        <div className="header-actions">
+          <div className="table-actions">
+            <CommonSearch
+              search={search}
+              setSearch={setSearch}
+              placeholder="Search staff..."
+            />
+          </div>
+
+          <div className="buttons">
+            <Link to="/subject-staff" className="create-btn">
             Allocate Subject to Staff
           </Link>
 
-          <Link to="/staff-management/register" className="create-btn">
+            <Link to="/staff-management/register" className="create-btn">
             + Create Staff
           </Link>
-        </div>
-        <div className="table-actions">
-          <CommonSearch
-            search={search}
-            setSearch={setSearch}
-            placeholder="Search Staff..."
-          />
+
+          </div>
         </div>
       </div>
 

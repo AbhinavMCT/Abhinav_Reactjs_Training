@@ -6,10 +6,28 @@
   min-height: 100vh;
 }
 
+.management-header {
+  margin-bottom: 25px;
+}
+
+.management-header h2 {
+  font-size: 32px;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 15px;
+  gap: 20px;
+}
+
 .table-actions {
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 15px;
+  align-items: center;
 }
 
 .table-actions input {
@@ -21,27 +39,10 @@
   color: black;
 }
 
-.management-header {
+.buttons {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-bottom: 25px;
-
-  flex-wrap: wrap;
-
   gap: 15px;
-}
-
-.management-header h2 {
-  font-size: 32px;
-
-  color: #1e293b;
-}
-
-.buttons{
-  gap: 20px;
-  display: flex;
+  align-items: center;
 }
 
 .create-btn {
@@ -50,24 +51,17 @@
     #2563eb,
     #1d4ed8
   );
-
   color: white;
-
   text-decoration: none;
-
-  padding: 12px 22px;
-
+  padding: 10px 18px;
   border-radius: 12px;
-
   font-weight: 600;
-
   transition: 0.3s;
 }
 
 .create-btn:hover {
   transform: translateY(-3px);
-
-  box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
 }
 
 /* Table */

@@ -13,6 +13,7 @@ import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 import Pagination from "../../components/Pagination.tsx";
 import CommonTable, { Column } from "../../components/ViewComponent.tsx";
 import CommonSearch from "../../components/CommonSearch.tsx";
+import ImportStudentModal from "../../components/ImportStudentModal.tsx";
 
 const StudentManagement = () => {
   const [students, setStudents] = useState<StudentList[]>([]);
@@ -29,6 +30,7 @@ const StudentManagement = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
+  const [openImportModal, setOpenImportModal] = useState(false);
 
   useEffect(() => {
     const loadStudents = async () => {
@@ -137,21 +139,34 @@ const StudentManagement = () => {
     <div className="student-management-container">
       <div className="management-header">
         <h2>Student Management</h2>
-        <Breadcrumbs />
-        <div className="buttons">
-          <Link to="/student-course" className="create-btn">
-            + Allocate Course
-          </Link>
 
-          <Link to="/student-management/register" className="create-btn">
-            + Create Student
-          </Link>
+        <Breadcrumbs />
+
+        <div className="header-actions">
           <div className="table-actions">
             <CommonSearch
               search={search}
               setSearch={setSearch}
               placeholder="Search Student..."
             />
+          </div>
+
+          <div className="buttons">
+            <Link to="/student-course" className="create-btn">
+              + Allocate Course
+            </Link>
+
+            <Link to="/student-management/register" className="create-btn">
+              + Create Student
+            </Link>
+
+            <Link
+              to="#"
+              className="create-btn"
+              onClick={() => setOpenImportModal(true)}
+            >
+              + Import Students Details
+            </Link>
           </div>
         </div>
       </div>
@@ -162,6 +177,10 @@ const StudentManagement = () => {
         ) : (
           <CommonTable data={students} columns={columns} />
         )}
+        <ImportStudentModal
+          isOpen={openImportModal}
+          onClose={() => setOpenImportModal(false)}
+        />
         <div className="pagination-controls">
           <Pagination
             page={page}

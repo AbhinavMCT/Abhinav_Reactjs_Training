@@ -9,6 +9,8 @@ export const getAllSubjects = async (limit: number, page: number, search: string
   return api.get(`${SUBJECT_ENDPOINT}get-subjects?limit=${limit}&page=${page}&search=${search}`,);
 };
 
+
+
 export const getSubjectById = async (id: number) => {
   return api.get(`${SUBJECT_ENDPOINT}get-subjectby/${id}`, );
 };
