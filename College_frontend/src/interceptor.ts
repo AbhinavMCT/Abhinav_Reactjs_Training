@@ -32,9 +32,7 @@ api.interceptors.response.use(
 
       try {
         const refreshToken =
-          localStorage.getItem(
-            "refreshToken"
-          );
+          localStorage.getItem("refreshToken");
 
         const response = await axios.post(
           `${import.meta.env.VITE_BackEndURL}/auth/refresh-token`,
@@ -55,13 +53,15 @@ api.interceptors.response.use(
           `Bearer ${newAccessToken}`;
 
         return api(originalRequest);
-      } catch {
+      } catch (refreshError) {
         localStorage.clear();
         globalThis.location.href = "/login";
 
+        throw refreshError;
       }
     }
 
+    throw error;
   }
 );
 

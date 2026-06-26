@@ -4,11 +4,9 @@
 
 .hero-section {
   height: 80vh;
-  background: linear-gradient(
-      rgba(0, 0, 0, 0.5),
-      rgba(0, 0, 0, 0.5)
-    ),
-      center/cover no-repeat;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../assets/college1.png") center/cover no-repeat;
 
   display: flex;
   justify-content: center;
@@ -60,6 +58,9 @@
 .hero-swiper {
   width: 100%;
   height: 500px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .hero-swiper img {
@@ -81,12 +82,6 @@
 .carousel-section {
   padding: 40px 10%;
   background: #fff;
-}
-
-.hero-swiper {
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .about-section {
@@ -135,32 +130,294 @@
   color: #64748b;
 }
 
+.principal-card {
+  max-width: 900px;
+  margin: auto;
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: white;
+  padding: 50px;
+  border-radius: 24px;
+  text-align: center;
+}
 
-@media (max-width: 768px) {
-  .hero-content h1 {
-    font-size: 2.5rem;
+.principal-card h2 {
+  margin-bottom: 20px;
+}
+
+.principal-card p {
+  line-height: 1.9;
+  margin-bottom: 25px;
+}
+
+.principal-card h4 {
+  margin-bottom: 5px;
+}
+
+.placement-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+}
+
+.placement-card {
+  background: white;
+  padding: 30px;
+  text-align: center;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.placement-card h3 {
+  color: #2563eb;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.testimonial-card {
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.testimonial-card p {
+  line-height: 1.8;
+  margin-bottom: 20px;
+  color: #475569;
+}
+
+.testimonial-card h4 {
+  margin-bottom: 5px;
+}
+
+.testimonial-card span {
+  color: #64748b;
+}
+
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.event-card {
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.event-card h3 {
+  margin-bottom: 12px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.about-content p {
+  line-height: 1.9;
+  color: #475569;
+  margin-bottom: 20px;
+}
+
+.about-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.about-content li {
+  margin-bottom: 12px;
+  color: #334155;
+  font-weight: 500;
+}
+
+.about-image img {
+  width: 100%;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15);
+}
+
+@media (max-width: 1024px) {
+  .hero-section {
+    height: 75vh;
   }
 
-  .features-grid {
+  .hero-content h1 {
+    font-size: 3rem;
+  }
+
+  .features-grid,
+  .placement-grid,
+  .testimonial-grid,
+  .event-grid,
+  .about-grid 
+  .faculty-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-swiper {
+    height: 400px;
+  }
+
+  .principal-card {
+    padding: 40px;
   }
 }
 
+@media (max-width: 768px) {
+  .home-container {
+    overflow-x: hidden;
+  }
 
-@media (max-width: 576px) {
   .hero-section {
-    height: 70vh;
+    height: auto;
+    min-height: 70vh;
+    padding: 80px 20px;
   }
 
   .hero-content h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
   }
 
   .hero-content p {
     font-size: 1rem;
   }
 
-  .features-grid {
+  .carousel-section,
+  .about-section,
+  .features-section {
+    padding: 50px 5%;
+  }
+
+  .hero-swiper {
+    height: 320px;
+  }
+
+  .features-grid,
+  .placement-grid,
+  .testimonial-grid,
+  .event-grid,
+  .about-grid
+  .faculty-grid {
     grid-template-columns: 1fr;
+  }
+
+  .principal-card {
+    padding: 30px;
+  }
+
+  .principal-card h2 {
+    font-size: 1.8rem;
+  }
+
+  .principal-card p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section {
+    min-height: 65vh;
+    padding: 60px 15px;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-content h1 {
+    font-size: 1.9rem;
+    line-height: 1.3;
+  }
+
+  .hero-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .hero-btn {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .hero-swiper {
+    height: 220px;
+  }
+
+  .hero-swiper img {
+    object-fit: cover;
+  }
+
+  .about-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .about-section p {
+    font-size: 0.95rem;
+  }
+
+  .feature-card,
+  .placement-card,
+  .testimonial-card,
+  .event-card,
+  .contact-card {
+    padding: 20px;
+  }
+
+  .placement-card h3 {
+    font-size: 1.6rem;
+  }
+
+  .principal-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .principal-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .principal-card p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero-content h1 {
+    font-size: 1.6rem;
+  }
+
+  .hero-content p {
+    font-size: 0.85rem;
+  }
+
+  .hero-swiper {
+    height: 180px;
+  }
+
+  .principal-card {
+    padding: 15px;
+  }
+
+  .feature-card,
+  .placement-card,
+  .testimonial-card,
+  .event-card,
+  .about-grid {
+    padding: 15px;
   }
 }

@@ -61,7 +61,7 @@ const AddExam = ({ id, navigate, isEditMode }: pageprops) => {
     isValid = false;
   }
 
-  if (!formData.exam_date) {
+  if (formData.exam_date === "")  {
     newErrors.exam_date = "Exam date is required";
     isValid = false;
   } else {

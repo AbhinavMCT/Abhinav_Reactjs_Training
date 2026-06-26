@@ -64,8 +64,8 @@ const ViewCourse = () => {
   return (
     <div className="student-management-container">
       <div className="management-header">
-        <h2>Courses</h2>
         <Breadcrumbs />
+        <h2>Courses</h2>
       </div>
 
       <div className="course-container">

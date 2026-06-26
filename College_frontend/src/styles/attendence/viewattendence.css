@@ -96,7 +96,8 @@
 }
 
 .edit-btn {
-  background: orange;
+  background: #f59e0b;
+  color: #1f2937;
   text-decoration: none;
   padding: 8px 14px;
   border-radius: 8px;
@@ -106,7 +107,8 @@
 }
 
 .edit-btn:hover {
-  background: red;
+  background: #9a3412;
+  color: #ffffff;
 }
 
 .pagination-controls {
@@ -118,8 +120,62 @@
 .loading-text {
   text-align: center;
   padding: 40px;
-  color: #64748b;
+  color: #475569;
   font-size: 16px;
+}
+
+.attendance-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 1000;
+}
+
+.attendance-modal {
+  background: white;
+  width: 400px;
+
+  padding: 24px;
+  border-radius: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  margin-top: 15px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.save-btn {
+  background: #15803d;
+  color: #ffffff;
+  border: none;
+
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.cancel-btn {
+  background: #b91c1c;
+  color: #ffffff;
+  border: none;
+
+  padding: 8px 16px;
+  border-radius: 6px;
 }
 
 @media (max-width: 768px) {
@@ -136,7 +192,8 @@
   .table-actions select,
   .table-actions input[type="date"],
   .clear-filter-btn {
-    width: 100%;
+    background: #dc2626;
+  color: #ffffff;
   }
 
   .create-btn {

@@ -10,7 +10,7 @@
 .exam-form {
   width: 100%;
   max-width: 550px;
-  background: #fff;
+  background: #ffffff;
   padding: 35px;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -19,44 +19,35 @@
   gap: 18px;
 }
 
+.exam-form h2 {
+  text-align: center;
+  color: #111827;
+  margin-bottom: 10px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
 .exam-form label {
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
+  color: #1f2937;
   position: relative;
 }
 
 .exam-form input,
 .exam-form select {
   width: 100%;
-  margin-bottom: 10px;
-}
-
-.exam-form h2 {
-  text-align: center;
-  color: #1f2937;
-  margin-bottom: 10px;
-  font-size: 28px;
-  font-weight: 600;
-}
-
-.exam-form input,
-.exam-form select {
-  width: 100%;
   padding: 12px 14px;
+  margin-bottom: 10px;
   font-size: 15px;
+  color: #1f2937;
+  background: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   outline: none;
   transition: all 0.3s ease;
   box-sizing: border-box;
-}
-
-.error {
-  color: red;
-  font-size: 12px;
-  display: block;
-  margin-top: 4px;
 }
 
 .exam-form input:focus,
@@ -66,13 +57,22 @@
 }
 
 .exam-form select:disabled {
-  background: #f3f4f6;
+  background: #e5e7eb;
+  color: #4b5563;
   cursor: not-allowed;
 }
 
+.error {
+  color: #b91c1c; /* Accessible dark red */
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+  margin-top: 4px;
+}
+
 .exam-form button {
-  background: #2563eb;
-  color: white;
+  background: #1d4ed8;
+  color: #ffffff;
   border: none;
   padding: 12px;
   border-radius: 8px;
@@ -83,7 +83,7 @@
 }
 
 .exam-form button:hover {
-  background: #1d4ed8;
+  background: #1e40af;
   transform: translateY(-2px);
 }
 

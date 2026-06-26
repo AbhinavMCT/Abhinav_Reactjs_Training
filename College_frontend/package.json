@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest --coverage",
     "test:ui": "vitest --ui",
     "coverage": "vitest run --coverage",
     "sonar": "sonar-scanner"
@@ -43,6 +43,7 @@
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.9",
     "babel-plugin-react-compiler": "^1.0.0",
     "babel-plugin-transform-import-meta": "^2.3.3",
     "eslint": "^10.3.0",

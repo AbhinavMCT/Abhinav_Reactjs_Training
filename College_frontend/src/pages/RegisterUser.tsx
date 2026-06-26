@@ -21,7 +21,7 @@ const RegisterStaff = () => {
 
   const title = isStaff ? "Register Staff" : "Register Student";
 
-const buttonText = isStaff ? "Add Staff" : "Add Student";
+  const buttonText = isStaff ? "Add Staff" : "Add Student";
   const navigate = useNavigate();
   const [formData, setFormData] = useState<ProfileData>({
     name: "",
@@ -59,119 +59,68 @@ const buttonText = isStaff ? "Add Staff" : "Add Student";
 
   const [loading, setLoading] = useState(false);
 
-  const validateForm = () => {
-    const newErrors = {
-      name: "",
-      email: "",
-      contact: "",
-      gender: "",
-      DOB: "",
-      city: "",
-      district: "",
-      state: "",
-      pin: "",
-      username: "",
-      password: "",
-    };
+  const validateName = (name: string) => {
+    if (!name.trim()) return "Name is required";
+    if (name.length < 3) return "Minimum 3 characters required";
+    return "";
+  };
 
-    let isValid = true;
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-
-      isValid = false;
-    } else if (formData.name.length < 3) {
-      newErrors.name = "Minimum 3 characters required";
-
-      isValid = false;
+  const validateEmail = (email: string) => {
+    if (!email.trim()) return "Email is required";
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
+      return "Invalid email address";
     }
+    return "";
+  };
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-
-      isValid = false;
-    } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
-    ) {
-      newErrors.email = "Invalid email address";
-
-      isValid = false;
+  const validateContact = (contact: string) => {
+    if (!contact.trim()) return "Contact is required";
+    if (!/^\d{10}$/.test(contact)) {
+      return "Contact must be 10 digits";
     }
+    return "";
+  };
 
-    if (!formData.contact.trim()) {
-      newErrors.contact = "Contact is required";
-
-      isValid = false;
-    } else if (!/^\d{10}$/.test(formData.contact)) {
-      newErrors.contact = "Contact must be 10 digits";
-
-      isValid = false;
+  const validatePin = (pin: number) => {
+    if (!pin) return "PIN is required";
+    if (!/^\d{6}$/.test(String(pin))) {
+      return "PIN must be 6 digits";
     }
+    return "";
+  };
 
-    if (!formData.gender) {
-      newErrors.gender = "Please select gender";
+  const validatePassword = (password: string) => {
+    if (!password.trim()) return "Password is required";
 
-      isValid = false;
-    }
-
-    if (!formData.DOB) {
-      newErrors.DOB = "Date of birth is required";
-
-      isValid = false;
-    }
-
-    if (!formData.address.city.trim()) {
-      newErrors.city = "City is required";
-
-      isValid = false;
-    }
-
-    if (!formData.address.district.trim()) {
-      newErrors.district = "District is required";
-
-      isValid = false;
-    }
-
-    if (!formData.address.state.trim()) {
-      newErrors.state = "State is required";
-
-      isValid = false;
-    }
-
-    if (!formData.address.pin) {
-      newErrors.pin = "PIN is required";
-
-      isValid = false;
-    } else if (!/^\d{6}$/.test(String(formData.address.pin))) {
-      newErrors.pin = "PIN must be 6 digits";
-
-      isValid = false;
-    }
-
-    if (!formData.login.username.trim()) {
-      newErrors.username = "Username is required";
-
-      isValid = false;
-    }
-
-    if (!formData.login.password.trim()) {
-      newErrors.password = "Password is required";
-
-      isValid = false;
-    } else if (
+    if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-        formData.login.password,
+        password,
       )
     ) {
-      newErrors.password =
-        "Password must contain uppercase, lowercase, number, special character and minimum 8 characters";
-
-      isValid = false;
+      return "Password must contain uppercase, lowercase, number, special character and minimum 8 characters";
     }
+
+    return "";
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      name: validateName(formData.name),
+      email: validateEmail(formData.email),
+      contact: validateContact(formData.contact),
+      gender: formData.gender ? "" : "Please select gender",
+      DOB: formData.DOB ? "" : "Date of birth is required",
+      city: formData.address.city.trim() ? "" : "City is required",
+      district: formData.address.district.trim() ? "" : "District is required",
+      state: formData.address.state.trim() ? "" : "State is required",
+      pin: validatePin(formData.address.pin),
+      username: formData.login.username.trim() ? "" : "Username is required",
+      password: validatePassword(formData.login.password),
+    };
 
     setErrors(newErrors);
 
-    return isValid;
+    return Object.values(newErrors).every((error) => error === "");
   };
 
   const handleChange = (
@@ -207,13 +156,14 @@ const buttonText = isStaff ? "Add Staff" : "Add Student";
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) {
       toast.error("Please fix the errors in the form");
       return;
     }
+    console.log(validateForm());
 
     setLoading(true);
 
@@ -249,36 +199,36 @@ const buttonText = isStaff ? "Add Staff" : "Add Student";
           DOB: formData.DOB,
         },
       };
-
       const res = await api(payload);
 
       toast.success(res.data.message || message);
-      navigate(redirect);
 
-      console.log(res.data);
-    } catch (error) {
-      console.error("Registration Failed:", error);
+      navigate(redirect);
+    } catch (error: any) {
+      console.error(error);
+
+      toast.error(error.response?.data?.message || "Registration Failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-         <div>
-          <Breadcrumbs />
-    <ProfileForm
-      title={title}
-      formData={formData}
-      loading={loading}
-      buttonText={buttonText}
-      showLoginFields={true}
-      errors={errors}
-      handleChange={handleChange}
-      handleAddressChange={handleAddressChange}
-      handleLoginChange={handleLoginChange}
-      handleSubmit={handleSubmit}
-    />
-         </div>
+    <div>
+      <Breadcrumbs />
+      <ProfileForm
+        title={title}
+        formData={formData}
+        loading={loading}
+        buttonText={buttonText}
+        showLoginFields={true}
+        errors={errors}
+        handleChange={handleChange}
+        handleAddressChange={handleAddressChange}
+        handleLoginChange={handleLoginChange}
+        handleSubmit={handleSubmit}
+      />
+    </div>
   );
 };
 

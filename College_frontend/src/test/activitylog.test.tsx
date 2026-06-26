@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { AxiosResponse, AxiosHeaders } from "axios";
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 import ViewActivityLog from "../pages/admin/ActivityLog.tsx";
-import { getActivityLog } from "../services/ActivitylogApi.ts";
+import * as ActivityLogApi from "../services/ActivitylogApi.ts";
 
-// Correct mock path
+// 1. Mock the API
 vi.mock("../services/ActivitylogApi.ts", () => ({
   getActivityLog: vi.fn(),
 }));
@@ -14,100 +14,49 @@ describe("ViewActivityLog Component", () => {
     vi.clearAllMocks();
   });
 
-  it("renders table heading", async () => {
-    const mockResponse: AxiosResponse = {
-      data: [],
-      status: 200,
-      statusText: "OK",
-      headers: {},
-      config: {
-        headers: new AxiosHeaders(),
-      },
+  it("fetches and displays activity logs on mount", async () => {
+    const mockData = {
+      data: [
+        {
+          id: 1,
+          role: "Admin",
+          action: "DELETE",
+          table_name: "Student",
+        },
+      ],
     };
 
-    vi.mocked(getActivityLog).mockResolvedValue(mockResponse);
+    vi.mocked(ActivityLogApi.getActivityLog).mockResolvedValue(mockData as any);
 
-    render(<ViewActivityLog />);
-
-    expect(screen.getByText("Staff Management")).toBeInTheDocument();
-  });
-
-  it("fetches and displays activity log data", async () => {
-    const mockData = [
-      {
-        id: 1,
-        role: "Admin",
-        action: "Created Student",
-        table_name: "Student",
-      },
-      {
-        id: 2,
-        role: "Staff",
-        action: "Updated Exam",
-        table_name: "Exam",
-      },
-    ];
-
-    const mockResponse: AxiosResponse = {
-      data: mockData,
-      status: 200,
-      statusText: "OK",
-      headers: {},
-      config: {
-        headers: new AxiosHeaders(),
-      },
-    };
-
-    vi.mocked(getActivityLog).mockResolvedValue(mockResponse);
-
-    render(<ViewActivityLog />);
-
-    await waitFor(() => {
-      expect(screen.getByText("Admin")).toBeInTheDocument();
-      expect(screen.getByText("Created Student")).toBeInTheDocument();
-      expect(screen.getByText("Student")).toBeInTheDocument();
-
-      expect(screen.getByText("Staff")).toBeInTheDocument();
-      expect(screen.getByText("Updated Exam")).toBeInTheDocument();
-      expect(screen.getByText("Exam")).toBeInTheDocument();
-    });
-  });
-
-  it("calls getActivityLog API once", async () => {
-    const mockResponse: AxiosResponse = {
-      data: [],
-      status: 200,
-      statusText: "OK",
-      headers: {},
-      config: {
-        headers: new AxiosHeaders(),
-      },
-    };
-
-    vi.mocked(getActivityLog).mockResolvedValue(mockResponse);
-
-    render(<ViewActivityLog />);
-
-    await waitFor(() => {
-      expect(getActivityLog).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  it("handles API error gracefully", async () => {
-    const consoleSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    vi.mocked(getActivityLog).mockRejectedValue(
-      new Error("API Error")
+    render(
+      <MemoryRouter>
+        <ViewActivityLog />
+      </MemoryRouter>
     );
 
-    render(<ViewActivityLog />);
-
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalled();
+      expect(screen.getByText("Admin")).toBeDefined();
+      expect(screen.getByText("DELETE")).toBeDefined();
+      expect(screen.getByText("Student")).toBeDefined();
     });
 
-    consoleSpy.mockRestore();
+    expect(ActivityLogApi.getActivityLog).toHaveBeenCalledTimes(1);
+  });
+
+  it("displays empty table when no logs are returned", async () => {
+    vi.mocked(ActivityLogApi.getActivityLog).mockResolvedValue({ data: [] } as any);
+
+    render(
+      <MemoryRouter>
+        <ViewActivityLog />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(ActivityLogApi.getActivityLog).toHaveBeenCalled();
+    });
+    
+    const rows = screen.queryByRole("row", { name: /admin/i });
+    expect(rows).toBeNull();
   });
 });

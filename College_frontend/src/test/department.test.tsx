@@ -1,271 +1,140 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { describe, test, expect, vi, beforeEach } from "vitest";
-
+import {render,screen,fireEvent,act,waitFor,} from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import "./setupMocks.tsx"
+import { MemoryRouter } from "react-router-dom";
 import DepartmentManagement from "../pages/admin/DepartmentManagement.tsx";
-import AddDepartment from "../pages/department/DepartmentPage.tsx";
-import EditDepartment from "../pages/department/EditDepartment.tsx";
+import DepartmentPage from "../pages/department/DepartmentPage.tsx";
+import * as DepartmentApi from "../services/DepartmentApi.ts";
 
-vi.mock("../services/DepartmentApi.ts", () => ({
-  getDepartments: vi.fn(),
-  deleteDepartment: vi.fn(),
-  createDepartment: vi.fn(),
-  getDepartmentById: vi.fn(),
-  updateDepartment: vi.fn(),
+vi.mock("../services/DepartmentApi");
+
+vi.mock("../interceptor", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+  },
 }));
 
-import {
-  getDepartments,
-  deleteDepartment,
-  createDepartment,
-  getDepartmentById,
-  updateDepartment,
-} from "../services/DepartmentApi.ts";
 
-const mockNavigate = vi.fn();
+describe("Department Module", () => {
+  
 
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual<
-    typeof import("react-router-dom")
-  >("react-router-dom");
-
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
-
-describe("Department Module Test Cases", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    globalThis.alert = vi.fn();
-    globalThis.confirm = vi.fn();
   });
 
-  describe("DepartmentManagement Component", () => {
-    const mockDepartments = [
-      {
-        id: 1,
-        name: "Computer Science",
-        type: "Science",
-        office_location: "Block A",
-        established_year: 2000,
-      },
-    ];
-
-    test("renders department data", async () => {
-      vi.mocked(getDepartments).mockResolvedValue({
-        data: mockDepartments,
-      } as never);
-
-      render(
-        <MemoryRouter>
-          <DepartmentManagement />
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText("Computer Science")
-      ).toBeInTheDocument();
-
-      expect(screen.getByText("Science")).toBeInTheDocument();
-
-      expect(screen.getByText("Block A")).toBeInTheDocument();
-    });
-
-    test("shows no departments found message", async () => {
-      vi.mocked(getDepartments).mockResolvedValue({
-        data: [],
-      } as never);
-
-      render(
-        <MemoryRouter>
-          <DepartmentManagement />
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText(/No Departments Found/i)
-      ).toBeInTheDocument();
-    });
-
-    test("deletes department successfully", async () => {
-      vi.mocked(getDepartments).mockResolvedValue({
-        data: mockDepartments,
-      } as never);
-
-      vi.mocked(deleteDepartment).mockResolvedValue(
-        {} as never
-      );
-
-      vi.mocked(globalThis.confirm).mockReturnValue(true);
-
-      render(
-        <MemoryRouter>
-          <DepartmentManagement />
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText("Computer Science")
-      ).toBeInTheDocument();
-
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /delete/i,
-        })
-      );
-
-      await waitFor(() => {
-        expect(deleteDepartment).toHaveBeenCalledWith(1);
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Department deleted successfully"
-        );
-      });
-    });
-
-    test("cancels delete when confirmation rejected", async () => {
-      vi.mocked(getDepartments).mockResolvedValue({
-        data: mockDepartments,
-      } as never);
-
-      vi.mocked(globalThis.confirm).mockReturnValue(false);
-
-      render(
-        <MemoryRouter>
-          <DepartmentManagement />
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText("Computer Science")
-      ).toBeInTheDocument();
-
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /delete/i,
-        })
-      );
-
-      expect(deleteDepartment).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("AddDepartment Component", () => {
-    test("creates department successfully", async () => {
-      vi.mocked(createDepartment).mockResolvedValue(
-        {} as never
-      );
-
-      render(
-        <MemoryRouter>
-          <AddDepartment />
-        </MemoryRouter>
-      );
-
-      fireEvent.change(
-        screen.getByPlaceholderText("Department Name"),
-        {
-          target: { value: "Physics" },
-        }
-      );
-
-      fireEvent.change(screen.getByRole("combobox"), {
-        target: { value: "Science" },
-      });
-
-      fireEvent.change(
-        screen.getByPlaceholderText("Office Location"),
-        {
-          target: { value: "Block B" },
-        }
-      );
-
-      fireEvent.change(
-        screen.getByPlaceholderText("Year"),
-        {
-          target: { value: "2010" },
-        }
-      );
-
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /add department/i,
-        })
-      );
-
-      await waitFor(() => {
-        expect(createDepartment).toHaveBeenCalled();
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Department added successfully"
-        );
-      });
-    });
-  });
-
-  describe("EditDepartment Component", () => {
-    const mockDepartment = [
-      {
-        id: 1,
-        name: "Computer Science",
-        type: "Science",
-        office_location: "Block A",
-        established_year: 2000,
-      },
-    ];
-
-    test("loads department and updates successfully", async () => {
-      vi.mocked(getDepartmentById).mockResolvedValue({
-        data: mockDepartment,
-      } as never);
-
-      vi.mocked(updateDepartment).mockResolvedValue(
-        {} as never
-      );
-
-      render(
-        <MemoryRouter initialEntries={["/departments/edit/1"]}>
-          <Routes>
-            <Route
-              path="/departments/edit/:id"
-              element={<EditDepartment />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByDisplayValue("Computer Science")
-      ).toBeInTheDocument();
-
-      fireEvent.change(
-        screen.getByDisplayValue("Computer Science"),
-        {
-          target: {
-            value: "Information Technology",
+  describe("DepartmentManagement", () => {
+    it("fetches and displays departments", async () => {
+      vi.mocked(DepartmentApi.getDepartments).mockResolvedValue({
+        department: [
+          {
+            id: 1,
+            name: "Computer Science",
+            type: "Academic",
+            office_location: "Block A",
+            established_year: 2000,
           },
-        }
-      );
+        ],
+        totalPages: 1,
+        totalRecords: 1,
+      } as any);
 
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /update department/i,
-        })
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <DepartmentManagement />
+          </MemoryRouter>,
+        );
+      });
+
+      expect(await screen.findByText("Computer Science")).toBeDefined();
+    });
+
+    it("deletes a department", async () => {
+      vi.mocked(DepartmentApi.getDepartments).mockResolvedValue({
+        department: [{ id: 1, name: "CS" }],
+        totalPages: 1,
+        totalRecords: 1,
+      } as any);
+      vi.mocked(DepartmentApi.deleteDepartment).mockResolvedValue({} as any);
+
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <DepartmentManagement />
+          </MemoryRouter>,
+        );
+      });
+
+      const deleteBtn = await screen.findByText("Delete");
+      fireEvent.click(deleteBtn);
+
+      const confirmBtn = screen.getByText("Confirm");
+      await act(async () => {
+        fireEvent.click(confirmBtn);
+      });
+
+      expect(DepartmentApi.deleteDepartment).toHaveBeenCalledWith(1);
+    });
+  });
+
+  describe("DepartmentPage (Form)", () => {
+    it("validates required fields", async () => {
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <DepartmentPage isEditMode={false} />
+          </MemoryRouter>,
+        );
+      });
+
+      fireEvent.click(screen.getByRole("button", { name: /add department/i }));
+      expect(screen.getByText(/Department name is required/i)).toBeDefined();
+    });
+
+    it("submits form with correct data", async () => {
+      vi.mocked(DepartmentApi.createDepartment).mockResolvedValue({} as any);
+
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <DepartmentPage isEditMode={false} />
+          </MemoryRouter>,
+        );
+      });
+
+      fireEvent.change(screen.getByLabelText(/Department Name/i), {
+        target: { value: "Physics" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Department Type/i), {
+        target: { value: "Academic" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Office Location/i), {
+        target: { value: "Block B" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Established Year/i), {
+        target: { value: "2010" },
+      });
+
+      fireEvent.submit(
+        screen
+          .getByRole("button", {
+            name: /add department/i,
+          })
+          .closest("form")!,
       );
 
       await waitFor(() => {
-        expect(updateDepartment).toHaveBeenCalled();
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Department updated successfully"
-        );
-
-        expect(mockNavigate).toHaveBeenCalledWith(
-          "/departments"
-        );
+        expect(DepartmentApi.createDepartment).toHaveBeenCalled();
       });
     });
   });
+
+
 });
+

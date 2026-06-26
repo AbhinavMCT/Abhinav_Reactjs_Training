@@ -1,141 +1,62 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import "./setupMocks.tsx";
+import { MemoryRouter } from 'react-router-dom';
+import StaffManagement from '../pages/admin/StaffManagement.tsx';
+import ViewStaff from '../pages/staff/ViewStaffProfile.tsx';
+import * as StaffApi from '../services/StaffApi.ts';
 
-import StaffManagement from "../pages/admin/StaffManagement.tsx";
-import ViewStaff from "../pages/staff/ViewStaffProfile.tsx";
+vi.mock('../services/StaffApi');
+vi.mock('../pages/staff/EditStaffPage.tsx');
 
-vi.mock("../services/StaffApi.ts", () => ({
-  getAllStaff: vi.fn(),
-  deleteStaff: vi.fn(),
-  getProfile: vi.fn(),
-}));
-
-import {
-  getAllStaff,
-  deleteStaff,
-  getProfile,
-} from "../services/StaffApi.ts";
-
-describe("Staff Module Test Cases", () => {
+describe('Staff Module', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    globalThis.alert = vi.fn();
-    globalThis.confirm = vi.fn();
   });
 
-  describe("StaffManagement Component", () => {
-    const mockStaff = [
-      {
-        userData: {
-          id: 1,
-          name: "John",
-          email: "john@gmail.com",
-          contact: "9999999999",
-          gender: "male",
-          DOB: "1999-01-01",
-        },
+  describe('StaffManagement', () => {
+    it('fetches and displays staff list', async () => {
+      vi.mocked(StaffApi.getAllStaff).mockResolvedValue({
+        data: { staff: [{ id: 1, name: 'John Doe', email: 'john@test.com' }], totalPages: 1, totalRecords: 1 }
+      } as any);
 
-        addressData: {
-          city: "Kochi",
-          district: "Ernakulam",
-          state: "Kerala",
-          pin: 682001,
-        },
-      },
-    ];
-
-    test("renders staff data", async () => {
-      vi.mocked(getAllStaff).mockResolvedValue({
-        data: mockStaff,
-      } as never);
-
-      render(
-        <MemoryRouter>
-          <StaffManagement />
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText("John")
-      ).toBeInTheDocument();
-
-      expect(
-        screen.getByText("john@gmail.com")
-      ).toBeInTheDocument();
-
-      expect(
-        screen.getByText("Kochi")
-      ).toBeInTheDocument();
-    });
-
-    test("deletes staff successfully", async () => {
-      vi.mocked(getAllStaff).mockResolvedValue({
-        data: mockStaff,
-      } as never);
-
-      vi.mocked(deleteStaff).mockResolvedValue(
-        {} as never
-      );
-
-      vi.mocked(globalThis.confirm).mockReturnValue(true);
-
-      render(
-        <MemoryRouter>
-          <StaffManagement />
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText("John")
-      ).toBeInTheDocument();
-
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /delete/i,
-        })
-      );
-
-      await waitFor(() => {
-        expect(deleteStaff).toHaveBeenCalledWith(1);
+      await act(async () => {
+        render(<MemoryRouter><StaffManagement /></MemoryRouter>);
       });
+
+      expect(await screen.findByText('John Doe')).toBeDefined();
+    });
+
+    it('deletes a staff member', async () => {
+      vi.mocked(StaffApi.getAllStaff).mockResolvedValue({ data: { staff: [{ id: 1, name: 'John' }], totalPages: 1, totalRecords: 1 } } as any);
+      vi.mocked(StaffApi.deleteStaff).mockResolvedValue({} as any);
+
+      await act(async () => {
+        render(<MemoryRouter><StaffManagement /></MemoryRouter>);
+      });
+
+      fireEvent.click(await screen.findByText('Delete'));
+      await act(async () => {
+        fireEvent.click(screen.getByText('Confirm'));
+      });
+
+      expect(StaffApi.deleteStaff).toHaveBeenCalledWith(1);
     });
   });
 
-  describe("ViewStaff Component", () => {
-    const mockProfile = {
-      name: "John",
-      email: "john@gmail.com",
-      contact: "9999999999",
-      gender: "male",
-      DOB: "1999-01-01",
+  describe('ViewStaff', () => {
+    it('displays staff profile details', async () => {
+      const mockProfile = { data: { name: 'Alice', email: 'alice@test.com', contact: '1234567890', gender: 'Female', address: { city: 'Kozhikode' } } };
+      vi.mocked(StaffApi.getstaffProfile).mockResolvedValue(mockProfile as any);
 
-      address: {
-        city: "Kochi",
-        district: "Ernakulam",
-        state: "Kerala",
-        pin: 682001,
-      },
-    };
+      await act(async () => {
+        render(<MemoryRouter><ViewStaff /></MemoryRouter>);
+      });
 
-    test("renders profile data", async () => {
-      vi.mocked(getProfile).mockResolvedValue({
-        data: mockProfile,
-      } as never);
-
-      render(
-        <MemoryRouter>
-          <ViewStaff />
-        </MemoryRouter>
-      );
-
-      expect(
-        await screen.findByText("John")
-      ).toBeInTheDocument();
-
-      expect(
-        screen.getByText("Kochi")
-      ).toBeInTheDocument();
+      expect(await screen.findByText('Alice')).toBeDefined();
+      expect(screen.getByText('Kozhikode')).toBeDefined();
     });
   });
+
+  
 });

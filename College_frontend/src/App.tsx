@@ -13,6 +13,7 @@ import HomePage from "./components/HomePage.tsx";
 import AppRoutes from "./routes/AppRoutes.tsx";
 import { ToastContainer } from "react-toastify";
 import ViewCourse from "./pages/course/ViewCourse.tsx";
+import ViewStaff from "./pages/staff/ViewStaffs.tsx";
 
 function App() {
   return (
@@ -55,6 +56,9 @@ function App() {
 
           <Route path="/view-course"
           element={<ViewCourse />} />
+          
+          <Route path="/view-staff"
+          element = {<ViewStaff />}/>
 
 
           {AppRoutes()}

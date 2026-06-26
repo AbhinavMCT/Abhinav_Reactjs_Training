@@ -66,7 +66,7 @@ const routes = [
 
 
   {
-    path: "/student/edit/:id",
+    path: "/student-management/edit/:id",
     element: <EditStudentPage />,
     roles: ["Admin", "staff"],
   },
@@ -110,7 +110,7 @@ const routes = [
   
 
   {
-    path: "/staff/edit/:id",
+    path: "/staff-management/edit/:id",
     element: <EditStaffProfile />,
     roles: ["Admin"],
   },
@@ -152,13 +152,13 @@ const routes = [
   },
 
   {
-    path: "/subject/add",
+    path: "/subject-management/add",
     element: <SubjectPage />,
     roles: ["Admin"],
   },
 
   {
-    path: "/subject/edit/:id",
+    path: "/subject-management/edit/:id",
     element: <SubjectPage />,
     roles: ["Admin"],
   },
@@ -170,13 +170,13 @@ const routes = [
   },
 
   {
-    path: "/course/add",
+    path: "/course-management/add",
     element: <Coursepage />,
     roles: ["Admin"],
   },
 
   {
-    path: "/course/edit/:id",
+    path: "/course-management/edit/:id",
     element: <Coursepage />,
     roles: ["Admin"],
   },
@@ -235,7 +235,7 @@ const routes = [
     roles: ["Admin", "staff"]
   },
   {
-    path:"/student-home/view",
+    path:"/student-home/profile/view",
     element: <StudentCourseView />,
     roles: ["student"]
   },

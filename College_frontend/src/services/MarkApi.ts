@@ -30,7 +30,7 @@ export const updateMark = async(id: number,data: Marks) =>{
 
 
 export const getAllSubjects = async () => {
-  return api.get(`/subject/get-subjects`,);
+  return api.get(`/subject/get-subject-staff-allo`,);
 };
 
 

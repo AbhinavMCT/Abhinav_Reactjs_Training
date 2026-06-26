@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   getAllSubjectStaff,
@@ -23,7 +23,7 @@ const AllocateSubjectStaff = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState(5);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const AllocateSubjectStaff = () => {
     }
   };
 
-  const columns: Column<SubjectStaffPayload>[] = [
+  const columns = useMemo<Column<SubjectStaffPayload>[]>(()=>[
     {
       title: "ID",
       key: "id",
@@ -94,14 +94,13 @@ const AllocateSubjectStaff = () => {
         </div>
       ),
     },
-  ];
+  ],[]) 
 
   return (
     <div className="student-management-container">
       <Breadcrumbs />
       <div className="management-header">
         <h2>Subject to Staff Allocation Management</h2>
-        <Breadcrumbs />
         <div className="header-actions">
           <div className="table-actions">
             <CommonSearch
@@ -123,7 +122,7 @@ const AllocateSubjectStaff = () => {
         {loading ? (
           <p>Loading Allocated Staff and Subject matrices...</p>
         ) : (
-          <CommonTable data={allocations} columns={columns} />
+          <CommonTable data={allocations} columns={columns}  rowKey="id"/>
         )}
         <div className="pagination-controls">
           <Pagination

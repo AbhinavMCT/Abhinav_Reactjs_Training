@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
-import { markAttendance } from "../../services/AttendenceApi.ts";
-import { getAllStudents } from "../../services/StudentApi.ts";
+import { useState, useEffect, useCallback } from "react";
+import {
+  markAttendance,
+  getStudentsByCourse,
+  getAllCourse,
+} from "../../services/AttendenceApi.ts";
 import { toast } from "react-toastify";
 import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 import "../../styles/attendence/markattendance.css";
+import { Courselist } from "../../types/Datatypes.ts";
+import { useNavigate } from "react-router-dom";
 
 interface Student {
   id: number;
@@ -11,9 +16,13 @@ interface Student {
 }
 
 const MarkAttendance = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
+  const [courses, setCourses] = useState<Courselist[]>([]);
+  const [courseId, setCourseId] = useState<number>(0);
   const [attendanceDate, setAttendanceDate] = useState("");
-  const [semester, setSemester] = useState(1);
+  const [semester, setSemester] = useState<number>(1);
+  const [loading, setLoading] = useState(false);
 
   const [attendance, setAttendance] = useState<
     {
@@ -22,37 +31,64 @@ const MarkAttendance = () => {
     }[]
   >([]);
 
-  useEffect(() => {
-    loadStudents();
-  }, []);
+  const loadStudentsByCourse = useCallback(async () => {
+    if (!courseId) return;
 
-  const loadStudents = async () => {
     try {
-      const res = await getAllStudents(1, 10, "");
+      setLoading(true);
 
-      setStudents(res.data.students);
+      const res = await getStudentsByCourse(courseId);
+
+      setStudents(res.data);
 
       setAttendance(
-        res.data.students.map((student: Student) => ({
+        res.data.map((student: Student) => ({
           student_id: student.id,
           status: "Present",
-        }))
+        })),
       );
     } catch (error) {
       console.error(error);
+      toast.error("Failed to load students");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [courseId]);
 
-  const handleStatusChange = (
-    studentId: number,
-    status: string
-  ) => {
+  const loadCourses = useCallback(async () => {
+    try {
+      const res = await getAllCourse();
+
+      setCourses(res.data);
+
+      if (res.data.length > 0) {
+        setCourseId(res.data[0].id);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load courses");
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
+
+  useEffect(() => {
+    if (courseId === 0) {
+      setStudents([]);
+      setAttendance([]);
+      return;
+    }
+
+    loadStudentsByCourse();
+  }, [courseId, loadStudentsByCourse]);
+
+  const handleStatusChange = (studentId: number, status: string) => {
     setAttendance((prev) =>
       prev.map((record) =>
-        record.student_id === studentId
-          ? { ...record, status }
-          : record
-      )
+        record.student_id === studentId ? { ...record, status } : record,
+      ),
     );
   };
 
@@ -62,14 +98,26 @@ const MarkAttendance = () => {
       return;
     }
 
+    if (!courseId) {
+      toast.error("Please select a course");
+      return;
+    }
+
+    if (attendance.length === 0) {
+      toast.error("No students found");
+      return;
+    }
+
     try {
       await markAttendance({
         attendance,
         attendance_date: attendanceDate,
         semester,
+        course_id: courseId,
       });
 
       toast.success("Attendance marked successfully");
+      navigate("/view-all-attendence");
     } catch (error) {
       console.error(error);
       toast.error("Failed to mark attendance");
@@ -88,96 +136,109 @@ const MarkAttendance = () => {
       <div className="attendance-filter-card">
         <div className="filter-group">
           <label htmlFor="date">Attendance Date</label>
+
           <input
+            data-testid="attendance-date-input"
             className="modern-date"
             type="date"
             name="date"
             value={attendanceDate}
-            onChange={(e) =>
-              setAttendanceDate(e.target.value)
-            }
+            onChange={(e) => setAttendanceDate(e.target.value)}
           />
         </div>
 
         <div className="filter-group">
-          <label htmlFor="sem">Semester</label>
+          <label htmlFor="course">Course</label>
+
           <select
-          name="sem"
+            className="modern-select"
+            value={courseId}
+            onChange={(e) => setCourseId(Number.parseInt(e.target.value, 10))}
+          >
+            <option value={0}>Select Course</option>
+
+            {courses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-group">
+          <label htmlFor="sem">Semester</label>
+
+          <select
             className="modern-select"
             value={semester}
-            onChange={(e) =>
-              setSemester(Number(e.target.value))
-            }
+            onChange={(e) => setSemester(Number(e.target.value))}
           >
-            <option value={1}>Semester 1</option>
-            <option value={2}>Semester 2</option>
-            <option value={3}>Semester 3</option>
-            <option value={4}>Semester 4</option>
+            {Array.from({ length: 8 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                Semester {i + 1}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
       <div className="attendance-table-wrapper">
-        <table className="attendance-table">
-          <thead>
-            <tr>
-              <th>Student Name</th>
-              <th>Attendance Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.id}>
-                <td className="student-name">
-                  👨‍🎓 {student.name}
-                </td>
-
-                <td>
-                  <select
-                    className={`status-select ${
-                      attendance
-                        .find(
-                          (a) =>
-                            a.student_id === student.id
-                        )
-                        ?.status.toLowerCase()
-                    }`}
-                    value={
-                      attendance.find(
-                        (a) =>
-                          a.student_id === student.id
-                      )?.status
-                    }
-                    onChange={(e) =>
-                      handleStatusChange(
-                        student.id,
-                        e.target.value
-                      )
-                    }
-                  >
-                    <option value="Present">
-                      Present
-                    </option>
-
-                    <option value="Absent">
-                      Absent
-                    </option>
-
-                    <option value="Leave">
-                      Leave
-                    </option>
-                  </select>
-                </td>
+        {loading ? (
+          <div className="loading">Loading students...</div>
+        ) : (
+          <table className="attendance-table">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Attendance Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {students.length > 0 ? (
+                students.map((student) => {
+                  const record = attendance.find(
+                    (a) => a.student_id === student.id,
+                  );
+
+                  return (
+                    <tr key={student.id}>
+                      <td className="student-name">👨‍🎓 {student.name}</td>
+
+                      <td>
+                        <select
+                          className={`status-select ${
+                            record?.status.toLowerCase() ?? ""
+                          }`}
+                          value={record?.status ?? "Present"}
+                          onChange={(e) =>
+                            handleStatusChange(student.id, e.target.value)
+                          }
+                        >
+                          <option value="Present">Present</option>
+                          <option value="Absent">Absent</option>
+                          <option value="Leave">Leave</option>
+                        </select>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={2} style={{ textAlign: "center" }}>
+                    No students found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <button
         className="submit-btn"
         onClick={handleSubmit}
+        disabled={attendance.length === 0}
       >
         Submit Attendance
       </button>

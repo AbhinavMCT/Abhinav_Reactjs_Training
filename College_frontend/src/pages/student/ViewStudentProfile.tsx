@@ -63,6 +63,13 @@ const ViewStudent = () => {
               </Link>
 
               <Link
+                to="/student-home/profile/view"
+                className="attendance-btn"
+              >
+                View Enrolled Courses
+              </Link>
+
+              <Link
                 to="/student-home/profile/mark-view"
                 className="attendance-btn"
               >

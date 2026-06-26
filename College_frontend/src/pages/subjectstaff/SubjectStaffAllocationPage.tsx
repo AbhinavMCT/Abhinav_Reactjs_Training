@@ -8,8 +8,9 @@ import SubjectStaffForm from "../../components/SubjectStaffForm.tsx";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
 
-const EditSubjectStaff = ({id,navigate,isEditMode,}: pageprops) => {
-
+const StudentCoursePage = ({id,navigate,isEditMode,}: pageprops) => {
+  console.log("isEditMode =", isEditMode);
+console.log("button =", isEditMode ? "Edit" : "Add");
   const [formData, setFormData] = useState<SubjectStaffPayload>({
     subject_id: 0,
     staff_id: 0,
@@ -63,7 +64,7 @@ const EditSubjectStaff = ({id,navigate,isEditMode,}: pageprops) => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
   e.preventDefault();
 
   try {
@@ -107,4 +108,4 @@ const EditSubjectStaff = ({id,navigate,isEditMode,}: pageprops) => {
   );
 };
 
-export default withCrudPage(EditSubjectStaff);
+export default withCrudPage(StudentCoursePage);

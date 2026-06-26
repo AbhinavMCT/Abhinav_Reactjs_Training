@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -71,7 +71,7 @@ const ExamManagement = () => {
     }
   };
 
-  const columns: Column<Exam>[] = [
+  const columns = useMemo<Column<Exam>[]>(()=>[
     {
       title: "ID",
       key: "id",
@@ -115,7 +115,7 @@ const ExamManagement = () => {
         </div>
       ),
     },
-  ];
+  ],[]);
 
   return (
     <div className="student-management-container">
@@ -144,7 +144,7 @@ const ExamManagement = () => {
         {loading ? (
           <p>Loading exams...</p>
         ) : (
-          <CommonTable data={exams} columns={columns} />
+          <CommonTable data={exams} columns={columns}  rowKey="id"/>
         )}
         <div className="pagination-controls">
           <Pagination

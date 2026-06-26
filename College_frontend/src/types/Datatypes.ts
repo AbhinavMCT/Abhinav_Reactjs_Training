@@ -199,16 +199,34 @@ export interface Attendence {
     total_working_days: number,
     student_id: number,
     name?: string,
+    attendance_percentage: number,
+    present_days: string,
+    absent_days: string,
 }
 
 export interface Markattendence{
+  id?: number,
     attendance: {
         student_id: number;
         status: string;
     }[];
-    attendance_date?: string;
+    attendance_date: string;
     semester: number;
+    course_id: number;
 }
+
+export interface Updatemarkattendance {
+  id: number;
+  attendance: {
+    student_id: number;
+    status: string;
+  }[];
+  attendance_date: string;
+  semester: number;
+  status: string;
+  course_id: number;
+}
+  
 
 export interface AttendanceFilter {
   page: number;
@@ -219,6 +237,7 @@ export interface AttendanceFilter {
   reportType: string;
   month: string;
   year: string;
+  course_id: number;
 }
 
 export interface Marks {

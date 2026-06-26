@@ -1,6 +1,14 @@
-import { useState, useEffect } from "react";
-import { Attendence } from "../../types/Datatypes.ts";
-import { getallattenndence } from "../../services/AttendenceApi.ts";
+import { useState, useEffect, useCallback } from "react";
+import {
+  Attendence,
+  Courselist,
+  Updatemarkattendance,
+} from "../../types/Datatypes.ts";
+import {
+  getallattenndence,
+  updatemarkedAttendence,
+  getAllCourse,
+} from "../../services/AttendenceApi.ts";
 import { Link } from "react-router-dom";
 import CommonTable, { Column } from "../../components/ViewComponent.tsx";
 import Pagination from "../../components/Pagination.tsx";
@@ -8,6 +16,7 @@ import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 import CommonSearch from "../../components/CommonSearch.tsx";
 import "../../styles/attendence/viewattendence.css";
 import getSemesterName from "../../utils/semester.ts";
+import { toast } from "react-toastify";
 
 const Viewattendence = () => {
   const [formData, setFormData] = useState<Attendence[]>([]);
@@ -22,13 +31,22 @@ const Viewattendence = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("present");
   const [date, setDate] = useState("");
+  const [courses, setCourses] = useState<Courselist[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState(0);
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   const [reportType, setReportType] = useState("daily");
 
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const [selectedAttendance, setSelectedAttendance] =
+    useState<Updatemarkattendance | null>(null);
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
+
+      
 
       try {
         const res = await getallattenndence({
@@ -40,9 +58,13 @@ const Viewattendence = () => {
           reportType,
           month,
           year,
+          course_id: selectedCourse,
         });
 
+        console.log("Selected Course:", selectedCourse);
+
         setFormData(res.data.attendence);
+        console.log(res.data);
         setTotalPages(res.data.totalPages);
         setTotalRecords(res.data.totalRecords);
       } catch (error) {
@@ -53,7 +75,85 @@ const Viewattendence = () => {
     };
 
     loadData();
-  }, [page, limit, search, date, status, reportType, month, year]);
+  }, [
+    page,
+    limit,
+    search,
+    date,
+    status,
+    reportType,
+    month,
+    year,
+    selectedCourse,
+  ]);
+
+  const loadCourses = useCallback(async () => {
+    try {
+      const res = await getAllCourse();
+
+      setCourses(res.data);
+
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load courses");
+    }
+  }, []);
+
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
+
+  const handleUpdateAttendance = async () => {
+    if (!selectedAttendance) return;
+
+    try {
+      await updatemarkedAttendence(
+        selectedAttendance.id,
+        selectedAttendance.status,
+        selectedAttendance.attendance_date,
+        selectedAttendance.semester,
+        selectedAttendance.course_id,
+      );
+
+      toast.success("Attendance Updated");
+
+      setIsEditOpen(false);
+      console.log({
+        page,
+        limit,
+        search,
+        date,
+        status,
+        reportType,
+        month,
+        year,
+        selectedCourse,
+      });
+
+      const res = await getallattenndence({
+        page,
+        limit,
+        search,
+        date,
+        status,
+        reportType,
+        month,
+        year,
+        course_id: selectedCourse,
+      });
+
+      setFormData(res.data.attendence);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update attendance");
+    }
+  };
+
+  const handleEdit = (row: Updatemarkattendance) => {
+    setSelectedAttendance(row);
+    setIsEditOpen(true);
+  };
 
   const columns = (
     date
@@ -77,6 +177,15 @@ const Viewattendence = () => {
             render: (value) =>
               value ? new Date(value as string).toLocaleDateString() : "N/A",
           },
+          {
+            title: "Action",
+            key: "action",
+            render: (_: any, row: Updatemarkattendance) => (
+              <button className="edit-btn" onClick={() => handleEdit(row)}>
+                Edit
+              </button>
+            ),
+          },
         ]
       : [
           {
@@ -92,10 +201,11 @@ const Viewattendence = () => {
             title: "Total Working Days",
             key: "total_working_days",
           },
-          
         ]
   ) as Column<Attendence>[];
 
+  console.log("courses =", courses);
+console.log("Array?", Array.isArray(courses));
   return (
     <div className="student-management-container">
       <div className="management-header">
@@ -114,6 +224,21 @@ const Viewattendence = () => {
             placeholder="Search Student..."
           />
 
+          <select
+            className="modern-select"
+            value={selectedCourse}
+            onChange={(e) =>
+              setSelectedCourse(Number.parseInt(e.target.value, 10))
+            }
+          >
+            <option value={0}>Select Course</option>
+
+            {courses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.name}
+              </option>
+            ))}
+          </select>
           <select
             value={status}
             onChange={(e) => {
@@ -197,7 +322,7 @@ const Viewattendence = () => {
         {loading ? (
           <p>Loading attendance...</p>
         ) : (
-          <CommonTable data={formData} columns={columns} />
+          <CommonTable data={formData} columns={columns} rowKey="id"/>
         )}
 
         <div className="pagination-controls">
@@ -214,6 +339,47 @@ const Viewattendence = () => {
           />
         </div>
       </div>
+      {isEditOpen && selectedAttendance && (
+        <div className="attendance-modal-overlay">
+          <div className="attendance-modal">
+            <h3>Edit Attendance</h3>
+
+            <div className="form-group">
+              <label htmlFor="name">Status</label>
+
+              <select
+                name="name"
+                value={selectedAttendance.status}
+                onChange={(e) =>
+                  setSelectedAttendance({
+                    ...selectedAttendance,
+                    status: e.target.value,
+                  })
+                }
+              >
+                <option value="present">Present</option>
+
+                <option value="absent">Absent</option>
+
+                <option value="leave">Leave</option>
+              </select>
+            </div>
+
+            <div className="modal-actions">
+              <button className="save-btn" onClick={handleUpdateAttendance}>
+                Save
+              </button>
+
+              <button
+                className="cancel-btn"
+                onClick={() => setIsEditOpen(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

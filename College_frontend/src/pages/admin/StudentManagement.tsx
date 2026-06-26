@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import { getAllStudents, deleteStudent } from "../../services/StudentApi.ts";
 
@@ -77,63 +77,66 @@ const StudentManagement = () => {
     }
   };
 
-  const columns: Column<StudentList>[] = [
-    {
-      title: "ID",
-      key: "id",
-    },
-    {
-      title: "Name",
-      key: "name",
-    },
-    {
-      title: "Email",
-      key: "email",
-    },
-    {
-      title: "Contact",
-      key: "contact",
-    },
-    {
-      title: "DOB",
-      key: "DOB",
-      render: (value) =>
-        value ? new Date(value as string).toLocaleDateString() : "N/A",
-    },
-    {
-      title: "Gender",
-      key: "gender",
-    },
-    {
-      title: "City",
-      key: "city",
-    },
-    {
-      title: "District",
-      key: "district",
-    },
-    {
-      title: "State",
-      key: "state",
-    },
-    {
-      title: "Pin",
-      key: "pin",
-    },
-    {
-      title: "Actions",
-      key: "id",
-      render: (value) => (
-        <div className="action-buttons">
-          <Link to={`/student/edit/${value}`} className="edit-btn">
-            Edit
-          </Link>
+  const columns = useMemo<Column<StudentList>[]>(
+    () => [
+      {
+        title: "ID",
+        key: "id",
+      },
+      {
+        title: "Name",
+        key: "name",
+      },
+      {
+        title: "Email",
+        key: "email",
+      },
+      {
+        title: "Contact",
+        key: "contact",
+      },
+      {
+        title: "DOB",
+        key: "DOB",
+        render: (value) =>
+          value ? new Date(value as string).toLocaleDateString() : "N/A",
+      },
+      {
+        title: "Gender",
+        key: "gender",
+      },
+      {
+        title: "City",
+        key: "city",
+      },
+      {
+        title: "District",
+        key: "district",
+      },
+      {
+        title: "State",
+        key: "state",
+      },
+      {
+        title: "Pin",
+        key: "pin",
+      },
+      {
+        title: "Actions",
+        key: "id",
+        render: (value) => (
+          <div className="action-buttons">
+            <Link to={`/student/edit/${value}`} className="edit-btn">
+              Edit
+            </Link>
 
-          <DeleteButton id={Number(value)} onDelete={handleDelete} />
-        </div>
-      ),
-    },
-  ];
+            <DeleteButton id={Number(value)} onDelete={handleDelete} />
+          </div>
+        ),
+      },
+    ],
+    [],
+  );
 
   return (
     <div className="student-management-container">
@@ -175,7 +178,7 @@ const StudentManagement = () => {
         {loading ? (
           <p>Loading students...</p>
         ) : (
-          <CommonTable data={students} columns={columns} />
+          <CommonTable data={students} columns={columns}  rowKey="id"/>
         )}
         <ImportStudentModal
           isOpen={openImportModal}

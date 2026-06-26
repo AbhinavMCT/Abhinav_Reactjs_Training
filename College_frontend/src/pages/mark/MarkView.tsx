@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {getMarks,deleteMarks,downloadStudentReport} from "../../services/MarkApi.ts";
 import { Marks } from "../../types/Datatypes.ts";
 import { toast } from "react-toastify";
@@ -121,7 +121,7 @@ const MarkView = () => {
     }
   };
 
-  const columns: Column<Marks>[] = [
+  const columns = useMemo<Column<Marks>[]>(()=>[
     {
       title: "ID",
       key: "id",
@@ -180,7 +180,7 @@ const MarkView = () => {
         </div>
       ),
     },
-  ];
+  ],[]);
 
   return (
     <div className="student-management-container">
@@ -189,12 +189,7 @@ const MarkView = () => {
 
         <Breadcrumbs />
 
-        <Link
-          to="/mark-page/add"
-          className="create-btn"
-        >
-          + Add Mark
-        </Link>
+        
 
         <div className="table-actions">
           <CommonSearch
@@ -202,6 +197,8 @@ const MarkView = () => {
             setSearch={setSearch}
             placeholder="Search Marks..."
           />
+
+          
 
           <div className="filter-section">
             <label htmlFor="semester">
@@ -236,6 +233,12 @@ const MarkView = () => {
               </option>
             </select>
           </div>
+          <Link
+          to="/mark-page/add"
+          className="create-btn"
+        >
+          + Add Mark
+        </Link>
         </div>
       </div>
 
@@ -246,6 +249,7 @@ const MarkView = () => {
           <CommonTable
             data={formData}
             columns={columns}
+            rowKey="id"
           />
         )}
 

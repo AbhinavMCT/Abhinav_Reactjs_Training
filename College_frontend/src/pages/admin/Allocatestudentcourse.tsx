@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { StudentCourse } from "../../types/Datatypes.ts";
 import {
   getStudentCourse,
@@ -23,7 +23,7 @@ const AllocateStudentCourse = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, settotalRecords] = useState(0);
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState(5);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const AllocateStudentCourse = () => {
     }
   };
 
-  const columns: Column<StudentCourse>[] = [
+  const columns= useMemo<Column<StudentCourse>[]>(() => [
     {
       title: "ID",
       key: "id",
@@ -88,8 +88,8 @@ const AllocateStudentCourse = () => {
           <DeleteButton id={Number(value)} onDelete={handleDelete} />
         </div>
       ),
-    },
-  ];
+    }
+  ],[]);
 
   return (
     <div className="student-management-container">
@@ -116,7 +116,7 @@ const AllocateStudentCourse = () => {
         {loading ? (
           <p>Loading Allocated Student-Course matrices...</p>
         ) : (
-          <CommonTable data={allocation} columns={columns} />
+          <CommonTable data={allocation} columns={columns}  rowKey="id"/>
         )}
         <div className="pagination-controls">
           <Pagination

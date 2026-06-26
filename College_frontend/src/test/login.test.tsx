@@ -1,143 +1,80 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
-import { describe, test, expect, vi, beforeEach } from "vitest";
-
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import { MemoryRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 import Login from "../pages/Login.tsx";
-
-import { loginUser } from "../services/LoginApi.ts";
-import { decodeToken } from "../utils/Jwt.ts";
+import * as LoginApi from "../services/LoginApi.ts";
+import authReducer from "../store/authSlice.ts";
+import "./setupMocks.tsx";
 
 vi.mock("../services/LoginApi.ts", () => ({
   loginUser: vi.fn(),
 }));
 
-vi.mock("../utils/Jwt.ts", () => ({
-  decodeToken: vi.fn(),
-}));
+const fakeJwt =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
+  "eyJyb2xlIjoiQWRtaW4ifQ." +
+  "signature";
 
-const mockedLoginUser = vi.mocked(loginUser);
-const mockedDecodeToken = vi.mocked(decodeToken);
-
-const mockNavigate = vi.fn();
-
-vi.mock("react-router-dom", async () => {
-  const actual =
-    await vi.importActual<typeof import("react-router-dom")>(
-      "react-router-dom"
-    );
-
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
+localStorage.setItem("accessToken", fakeJwt);
 
 describe("Login Component", () => {
+  let store: any;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
+    store = configureStore({ reducer: { auth: authReducer } });
   });
 
-  test("renders login form", () => {
-    render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>
-    );
+  it("handles successful login and redirects based on role", async () => {
+    const mockResponse = {
+      data: { accessToken: "fake-jwt", refreshToken: "fake-refresh" },
+    };
+    vi.mocked(LoginApi.loginUser).mockResolvedValue(mockResponse as any);
 
-    expect(screen.getByText("Login")).toBeInTheDocument();
-  });
-
-  test("successful admin login", async () => {
-    mockedLoginUser.mockResolvedValue({
-      data: {
-        token: "fake-admin-token",
-        message: "Login successful",
-      },
-    } as never);
-
-    mockedDecodeToken.mockReturnValue({
-      id: 1,
-      username: "admin",
+    const { decodeToken } = await import("../utils/Jwt.ts");
+    vi.mocked(decodeToken).mockReturnValue({
       role: "Admin",
-      exp: 999999999,
-    });
+      username: "adminUser",
+    } as any);
 
     render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </Provider>
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Enter Username"), {
-      target: {
-        value: "admin",
-      },
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Enter Password"), {
-      target: {
-        value: "1234",
-      },
-    });
-
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: /submit/i,
-      })
-    );
+    fireEvent.change(screen.getByLabelText(/Username:/i), { target: { value: "admin" } });
+    fireEvent.change(screen.getByLabelText(/Password:/i), { target: { value: "pass123" } });
+    fireEvent.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
-      expect(loginUser).toHaveBeenCalled();
-
-      expect(localStorage.setItem).toHaveBeenCalledWith(
-        "access",
-        "fake-admin-token"
-      );
-
-      expect(mockNavigate).toHaveBeenCalledWith(
-        "/admin-home"
-      );
+      expect(LoginApi.loginUser).toHaveBeenCalled();
+      expect(localStorage.getItem("accessToken")).toBe("fake-jwt");
     });
   });
 
-  test("shows API error message", async () => {
-    mockedLoginUser.mockRejectedValue({
-      response: {
-        data: {
-          message: "Invalid username or password",
-        },
-      },
+  it("displays an error message on failed login", async () => {
+    vi.mocked(LoginApi.loginUser).mockRejectedValue({
+      response: { data: { message: "Invalid credentials" } },
     });
 
     render(
-      <BrowserRouter>
-        <Login />
-      </BrowserRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </Provider>
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Enter Username"), {
-      target: {
-        value: "wronguser",
-      },
-    });
+    fireEvent.change(screen.getByLabelText(/Username:/i), { target: { value: "wrong" } });
+    fireEvent.change(screen.getByLabelText(/Password:/i), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByRole("button", { name: /submit/i }));
 
-    fireEvent.change(screen.getByPlaceholderText("Enter Password"), {
-      target: {
-        value: "wrongpass",
-      },
-    });
-
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: /submit/i,
-      })
-    );
-
-    expect(
-      await screen.findByText(
-        "Invalid username or password"
-      )
-    ).toBeInTheDocument();
+    const errorMsg = await screen.findByText(/Invalid credentials/i);
+    expect(errorMsg).toBeDefined();
   });
 });

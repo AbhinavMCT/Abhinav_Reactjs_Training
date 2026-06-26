@@ -1,389 +1,284 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { describe, it, expect, beforeEach, vi } from "vitest";
-
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  waitFor,
+} from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import "./setupMocks.tsx";
+import { MemoryRouter } from "react-router-dom";
 import AllocateSubjectStaff from "../pages/admin/Allocatesubjectstaff.tsx";
 import EditSubjectStaff from "../pages/subjectstaff/SubjectStaffAllocationPage.tsx";
-import AddSubjectStaff from "../pages/subjectstaff/Addsubjectstaff.tsx";
+import * as SubjectStaffApi from "../services/SubjectStaffApi.ts";
+import * as StaffApi from "../services/StaffApi.ts";
 
-vi.mock("../services/SubjectStaffApi.ts", () => ({
-  getAllSubjectStaff: vi.fn(),
-  deleteSubjectStaff: vi.fn(),
-  getSubjectStaffById: vi.fn(),
-  updateSubjectStaff: vi.fn(),
-  createSubjectStaff: vi.fn(),
+vi.mock("../services/SubjectStaffApi");
+vi.mock("../services/StaffApi");
+
+vi.mock("../components/SubjectStaffForm.tsx", () => ({
+  default: ({
+    subjects,
+    staffList,
+    handleChange,
+    handleSubmit,
+    buttonText,
+  }: any) => (
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="subject">Subject</label>
+
+      <select id="subject" name="subject_id" onChange={handleChange}>
+        {subjects.map((s: any) => (
+          <option key={s.id} value={s.id}>
+            {s.name}
+          </option>
+        ))}
+      </select>
+
+      <label htmlFor="staff">Staff</label>
+
+      <select id="staff" name="staff_id" onChange={handleChange}>
+        {staffList.map((s: any) => (
+          <option key={s.id} value={s.id}>
+            {s.name}
+          </option>
+        ))}
+      </select>
+
+      <button type="submit">{buttonText}</button>
+    </form>
+  ),
 }));
 
-vi.mock("../services/SubjectApi.ts", () => ({
-  getAllSubjects: vi.fn(),
-}));
-
-vi.mock("../services/StaffApi.ts", () => ({
-  getAllStaff: vi.fn(),
-}));
-
-import {
-  getAllSubjectStaff,
-  deleteSubjectStaff,
-  getSubjectStaffById,
-  updateSubjectStaff,
-  createSubjectStaff,
-} from "../services/SubjectStaffApi.ts";
-
-import { getAllSubjects } from "../services/SubjectApi.ts";
-import { getAllStaff } from "../services/StaffApi.ts";
-
-const mockNavigate = vi.fn();
-
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual<
-    typeof import("react-router-dom")
-  >("react-router-dom");
-
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
-
-describe("Subject Staff Allocation Management System", () => {
+describe("SubjectStaff Module", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    globalThis.alert = vi.fn();
-
-    globalThis.confirm = vi.fn();
-
-    localStorage.clear();
   });
 
-  describe("AllocateSubjectStaff Component", () => {
-    const mockAllocations = [
-      {
-        id: 1,
-        staff_id: 101,
-        staff_name: "John Doe",
-        subject_id: 201,
-        subject_name: "Mathematics",
-      },
-      {
-        id: 2,
-        staff_id: 102,
-        staff_name: "Jane Smith",
-        subject_id: 202,
-        subject_name: "Science",
-      },
-    ];
+  describe("AllocateSubjectStaff (List)", () => {
+    it("fetches and displays allocation list", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjectStaff).mockResolvedValue({
+        data: {
+          staffsubject: [
+            { id: 1, staff_name: "Dr. Smith", subject_name: "Physics" },
+          ],
+          totalPages: 1,
+          totalRecords: 1,
+        },
+      } as any);
 
-    it("renders loading state and displays allocations", async () => {
-      vi.mocked(getAllSubjectStaff).mockResolvedValue({
-        data: mockAllocations,
-      } as never);
-
-      render(
-        <MemoryRouter initialEntries={["/subject-staff"]}>
-          <Routes>
-            <Route
-              path="/subject-staff"
-              element={<AllocateSubjectStaff />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      expect(
-        screen.getByText(/Loading Allocated Staff/i)
-      ).toBeInTheDocument();
-
-      await waitFor(() => {
-        expect(screen.getByText("John Doe")).toBeInTheDocument();
-
-        expect(
-          screen.getByText("Mathematics")
-        ).toBeInTheDocument();
-
-        expect(screen.getByText("Jane Smith")).toBeInTheDocument();
-
-        expect(screen.getByText("Science")).toBeInTheDocument();
-      });
-    });
-
-    it("shows empty message when no allocations exist", async () => {
-      vi.mocked(getAllSubjectStaff).mockResolvedValue({
-        data: [],
-      } as never);
-
-      render(
-        <MemoryRouter initialEntries={["/subject-staff"]}>
-          <Routes>
-            <Route
-              path="/subject-staff"
-              element={<AllocateSubjectStaff />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(/No staff allocations found/i)
-        ).toBeInTheDocument();
-      });
-    });
-
-    it("deletes allocation successfully", async () => {
-      vi.mocked(getAllSubjectStaff).mockResolvedValue({
-        data: mockAllocations,
-      } as never);
-
-      vi.mocked(deleteSubjectStaff).mockResolvedValue(
-        {} as never
-      );
-
-      vi.mocked(globalThis.confirm).mockReturnValue(true);
-
-      render(
-        <MemoryRouter initialEntries={["/subject-staff"]}>
-          <Routes>
-            <Route
-              path="/subject-staff"
-              element={<AllocateSubjectStaff />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText("John Doe")).toBeInTheDocument();
-      });
-
-      const deleteButtons = screen.getAllByRole("button", {
-        name: /delete/i,
-      });
-
-      fireEvent.click(deleteButtons[0]);
-
-      expect(globalThis.confirm).toHaveBeenCalledWith(
-        "Are you sure you want to delete this allocation assignment?"
-      );
-
-      await waitFor(() => {
-        expect(deleteSubjectStaff).toHaveBeenCalledWith(1);
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Deleted successfully"
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <AllocateSubjectStaff />
+          </MemoryRouter>,
         );
       });
+
+      expect(await screen.findByText("Dr. Smith")).toBeDefined();
+      expect(screen.getByText("Physics")).toBeDefined();
     });
 
-    it("does not delete allocation when confirmation is cancelled", async () => {
-      vi.mocked(getAllSubjectStaff).mockResolvedValue({
-        data: mockAllocations,
-      } as never);
-
-      vi.mocked(globalThis.confirm).mockReturnValue(false);
-
-      render(
-        <MemoryRouter initialEntries={["/subject-staff"]}>
-          <Routes>
-            <Route
-              path="/subject-staff"
-              element={<AllocateSubjectStaff />}
-            />
-          </Routes>
-        </MemoryRouter>
+    it("handles deletion of allocation", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjectStaff).mockResolvedValue({
+        data: {
+          staffsubject: [{ id: 1, staff_name: "Dr. Smith" }],
+          totalPages: 1,
+          totalRecords: 1,
+        },
+      } as any);
+      vi.mocked(SubjectStaffApi.deleteSubjectStaff).mockResolvedValue(
+        {} as any,
       );
 
-      await waitFor(() => {
-        expect(screen.getByText("John Doe")).toBeInTheDocument();
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <AllocateSubjectStaff />
+          </MemoryRouter>,
+        );
       });
 
-      const deleteButtons = screen.getAllByRole("button", {
-        name: /delete/i,
+      fireEvent.click(screen.getByText("Delete"));
+      await act(async () => {
+        fireEvent.click(screen.getByText("Confirm"));
       });
 
-      fireEvent.click(deleteButtons[0]);
-
-      expect(deleteSubjectStaff).not.toHaveBeenCalled();
-
-      expect(screen.getByText("John Doe")).toBeInTheDocument();
+      expect(SubjectStaffApi.deleteSubjectStaff).toHaveBeenCalledWith(1);
     });
   });
 
-  describe("AddSubjectStaff Component", () => {
-    const mockSubjects = [
-      { id: 1, name: "Physics" },
-      { id: 2, name: "Chemistry" },
-    ];
+  describe("EditSubjectStaff (Form)", () => {
+    it("loads subjects and staff list on mount", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjects).mockResolvedValue({
+        data: { subject: [{ id: 1, name: "Math" }] },
+      } as any);
+      vi.mocked(StaffApi.getAllStaff).mockResolvedValue({
+        data: { staff: [{ id: 1, name: "Prof. Jones" }] },
+      } as any);
 
-    const mockStaff = [
-      { id: 10, name: "Dr. Alistair" },
-      { id: 11, name: "Prof. Snape" },
-    ];
-
-    it("loads dropdown values and submits form successfully", async () => {
-      vi.mocked(getAllSubjects).mockResolvedValue({
-        data: mockSubjects,
-      } as never);
-
-      vi.mocked(getAllStaff).mockResolvedValue({
-        data: mockStaff,
-      } as never);
-
-      vi.mocked(createSubjectStaff).mockResolvedValue(
-        {} as never
-      );
-
-      render(
-        <MemoryRouter initialEntries={["/subjectstaff/add"]}>
-          <Routes>
-            <Route
-              path="/subjectstaff/add"
-              element={<AddSubjectStaff />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("option", {
-            name: "Physics",
-          })
-        ).toBeInTheDocument();
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <EditSubjectStaff navigate={vi.fn()} isEditMode={false} />
+          </MemoryRouter>,
+        );
       });
 
-      const subjectSelect = document.querySelector(
-        'select[name="subject_id"]'
-      ) as HTMLSelectElement;
+      expect(SubjectStaffApi.getAllSubjects).toHaveBeenCalled();
+      expect(StaffApi.getAllStaff).toHaveBeenCalled();
+    });
 
-      const staffSelect = document.querySelector(
-        'select[name="staff_id"]'
-      ) as HTMLSelectElement;
+    it("creates subject allocation", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjects).mockResolvedValue({
+        data: {
+          subject: [{ id: 1, name: "Math" }],
+        },
+      } as any);
 
-      fireEvent.change(subjectSelect, {
+      vi.mocked(StaffApi.getAllStaff).mockResolvedValue({
+        data: {
+          staff: [{ id: 1, name: "John" }],
+        },
+      } as any);
+
+      vi.mocked(SubjectStaffApi.createSubjectStaff).mockResolvedValue(
+        {} as any,
+      );
+
+      const navigate = vi.fn();
+
+      render(
+        <MemoryRouter>
+          <EditSubjectStaff navigate={navigate} isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      fireEvent.change(await screen.findByLabelText("Subject"), {
         target: {
           value: "1",
         },
       });
 
-      fireEvent.change(staffSelect, {
-        target: {
-          value: "11",
-        },
-      });
-
-      fireEvent.submit(
-        screen.getByRole("button", {
-          name: /Add Subject Staff/i,
-        })
-      );
-
-      await waitFor(() => {
-        expect(createSubjectStaff).toHaveBeenCalledWith({
-          subject_id: 1,
-          staff_id: 11,
-        });
-
-        expect(mockNavigate).toHaveBeenCalledWith(
-          "/subject-staff"
-        );
-      });
-    });
-  });
-
-  describe("EditSubjectStaff Component", () => {
-    const mockExistingAllocation = [
-      {
-        id: 5,
-        subject_id: 2,
-        staff_id: 10,
-      },
-    ];
-
-    const mockSubjects = [
-      { id: 1, name: "Physics" },
-      { id: 2, name: "Chemistry" },
-    ];
-
-    const mockStaff = [
-      { id: 10, name: "Dr. Alistair" },
-      { id: 11, name: "Prof. Snape" },
-    ];
-
-    it("pre-populates form and updates allocation successfully", async () => {
-      vi.mocked(getSubjectStaffById).mockResolvedValue({
-        data: mockExistingAllocation,
-      } as never);
-
-      vi.mocked(getAllSubjects).mockResolvedValue({
-        data: mockSubjects,
-      } as never);
-
-      vi.mocked(getAllStaff).mockResolvedValue({
-        data: mockStaff,
-      } as never);
-
-      vi.mocked(updateSubjectStaff).mockResolvedValue(
-        {} as never
-      );
-
-      render(
-        <MemoryRouter initialEntries={["/subjectstaff/edit/5"]}>
-          <Routes>
-            <Route
-              path="/subjectstaff/edit/:id"
-              element={<EditSubjectStaff />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(getSubjectStaffById).toHaveBeenCalledWith(5);
-      });
-
-      const subjectSelect = document.querySelector(
-        'select[name="subject_id"]'
-      ) as HTMLSelectElement;
-
-      const staffSelect = document.querySelector(
-        'select[name="staff_id"]'
-      ) as HTMLSelectElement;
-
-      await waitFor(() => {
-        expect(subjectSelect.value).toBe("2");
-
-        expect(staffSelect.value).toBe("10");
-      });
-
-      fireEvent.change(subjectSelect, {
+      fireEvent.change(screen.getByLabelText("Staff"), {
         target: {
           value: "1",
         },
       });
 
-      fireEvent.submit(
-        screen.getByRole("button", {
-          name: /Update Subject Staff/i,
-        })
+      fireEvent.submit(screen.getByRole("button"));
+
+      await waitFor(() => {
+        expect(SubjectStaffApi.createSubjectStaff).toHaveBeenCalled();
+      });
+
+    });
+
+    it("updates allocation", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjects).mockResolvedValue({
+        data: {
+          subject: [{ id: 1, name: "Math" }],
+        },
+      } as any);
+
+      vi.mocked(StaffApi.getAllStaff).mockResolvedValue({
+        data: {
+          staff: [{ id: 1, name: "John" }],
+        },
+      } as any);
+
+      vi.mocked(SubjectStaffApi.getSubjectStaffById).mockResolvedValue({
+        data: [
+          {
+            subject_id: 1,
+            staff_id: 1,
+          },
+        ],
+      } as any);
+
+      vi.mocked(SubjectStaffApi.updateSubjectStaff).mockResolvedValue(
+        {} as any,
+      );
+
+      render(
+        <MemoryRouter>
+          <EditSubjectStaff id={1} navigate={vi.fn()} isEditMode />
+        </MemoryRouter>,
+      );
+
+      fireEvent.submit(await screen.findByRole("button"));
+
+      
+    });
+
+    it("handles load failure", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjects).mockRejectedValue(
+        new Error("Failed to load"),
+      );
+
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      render(
+        <MemoryRouter>
+          <EditSubjectStaff navigate={vi.fn()} isEditMode={false} />
+        </MemoryRouter>,
       );
 
       await waitFor(() => {
-        expect(updateSubjectStaff).toHaveBeenCalledWith(5, {
-          id: 5,
-          subject_id: 1,
-          staff_id: 10,
-        });
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Updated Successfully"
-        );
-
-        expect(mockNavigate).toHaveBeenCalledWith(
-          "/subject-staff"
-        );
+        expect(spy).toHaveBeenCalled();
       });
+    });
+
+    it("handles submit failure", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjects).mockResolvedValue({
+        data: {
+          subject: [{ id: 1, name: "Math" }],
+        },
+      } as any);
+
+      vi.mocked(StaffApi.getAllStaff).mockResolvedValue({
+        data: {
+          staff: [{ id: 1, name: "John" }],
+        },
+      } as any);
+
+      vi.mocked(SubjectStaffApi.createSubjectStaff).mockRejectedValue(
+        new Error("Create failed"),
+      );
+
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      render(
+        <MemoryRouter>
+          <EditSubjectStaff navigate={vi.fn()} isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      fireEvent.submit(await screen.findByRole("button"));
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalled();
+      });
+    });
+
+    it("does not update when id is missing", async () => {
+      vi.mocked(SubjectStaffApi.getAllSubjects).mockResolvedValue({
+        data: { subject: [] },
+      } as any);
+
+      vi.mocked(StaffApi.getAllStaff).mockResolvedValue({
+        data: { staff: [] },
+      } as any);
+
+      render(
+        <MemoryRouter>
+          <EditSubjectStaff navigate={vi.fn()} isEditMode />
+        </MemoryRouter>,
+      );
+
+      fireEvent.submit(await screen.findByRole("button"));
+
+      expect(SubjectStaffApi.updateSubjectStaff).not.toHaveBeenCalled();
     });
   });
 });

@@ -21,7 +21,7 @@ export const getAssignmentbyId = async(id: number)=>{
 };
 
 export const editAssignment = async(id: number,data: Assignment)=>{
-    return await api.put(`${END_POINT}edit-assignment/${id}`)
+    return await api.put(`${END_POINT}edit-assignment/${id}`,data)
 };
 
 export const getStudentAssignments = async() =>{

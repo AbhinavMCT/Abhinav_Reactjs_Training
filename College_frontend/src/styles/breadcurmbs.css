@@ -1,18 +1,62 @@
-.breadcrumb-container {
-  padding: 10px 0;
-  font-size: 14px;
-  margin-bottom: 20px;
+.breadcrumbs-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 18px 0 25px;
 }
 
-.breadcrumb-container a {
+.breadcrumbs {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 18px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid #2563eb;
+}
+
+.breadcrumb-link {
   text-decoration: none;
-  color: #007bff;
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.25s;
 }
 
-.breadcrumb-container a:hover {
+.breadcrumb-link:hover {
+  color: #1d4ed8;
   text-decoration: underline;
 }
 
-.breadcrumb-container span {
-  color: #555;
+.separator {
+  margin: 0 6px;
+  color: #9ca3af;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.breadcrumb-current {
+  color: #374151;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .breadcrumbs-container {
+    margin: 12px 0 18px;
+  }
+
+  .breadcrumbs {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .breadcrumb-link,
+  .breadcrumb-current {
+    font-size: 14px;
+  }
 }

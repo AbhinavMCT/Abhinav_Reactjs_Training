@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import { getattendencebystudent } from "../../services/AttendenceApi.ts";
-import { Attendence } from "../../types/Datatypes.ts";
+import { useState, useEffect, useCallback } from "react";
+import { getattendencebystudent, allocatedcourse } from "../../services/AttendenceApi.ts";
+import { Attendence, Courselist } from "../../types/Datatypes.ts";
 import CommonTable, { Column } from "../../components/ViewComponent.tsx";
 import "../../styles/attendence/viewattendancestudent.css";
 import Breadcrumbs from "../../components/Breadcrumbs.tsx";
+import { toast } from "react-toastify";
 
 const ViewAttendenceStudents = () => {
   const [formData, setFormData] = useState<Attendence[]>([]);
@@ -15,6 +16,8 @@ const ViewAttendenceStudents = () => {
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   const [reportType, setReportType] = useState("");
+  const [courses, setCourses] = useState<Courselist[]>([]);
+    const [selectedCourse, setSelectedCourse] = useState(0);
 
   const loadData = async () => {
     try {
@@ -26,8 +29,10 @@ const ViewAttendenceStudents = () => {
         reportType,
         month,
         year,
+        selectedCourse
       );
-      setFormData(res.data || []);
+      console.log("API Response:", res.data);
+      setFormData(res.data);
     } catch (error) {
       console.error("Error Fetching Attendance", error);
     } finally {
@@ -37,19 +42,52 @@ const ViewAttendenceStudents = () => {
 
   useEffect(() => {
     loadData();
-  }, [semester, date, status, reportType, month, year]);
+  }, [semester, date, status, reportType, month, year,selectedCourse]);
+
+  const loadCourses = useCallback(async () => {
+  try {
+    const res = await allocatedcourse();
+
+    setCourses(res.data);
+
+    if (res.data.length > 0) {
+      setSelectedCourse(res.data[0].id);
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to load courses");
+  }
+}, []);
+  
+    useEffect(() => {
+      loadCourses();
+    }, [loadCourses]);
 
   const columns: Column<Attendence>[] = [
-    {
-      title: "Semester",
-      key: "semester_name",
-      render: (value) => value,
-    },
-    {
-      title: "Total Working Days",
-      key: "total_working_days",
-    },
-  ];
+  {
+    title: "Semester",
+    key: "semester_name",
+  },
+  {
+    title: "Present Days",
+    key: "present_days",
+    render: (value) => value ?? "-",
+  },
+  {
+    title: "Absent Days",
+    key: "absent_days",
+    render: (value) => value ?? "-",
+  },
+  {
+    title: "Total Working Days",
+    key: "total_working_days",
+  },
+  {
+    title: "Attendance %",
+    key: "attendance_percentage",
+    render: (value) => (value === undefined ? "-" : `${value}%`),
+  },
+];
 
   return (
     <div className="student-management-container">
@@ -75,6 +113,19 @@ const ViewAttendenceStudents = () => {
             <option value="present">Present</option>
             <option value="absent">Absent</option>
           </select>
+
+          <select
+  value={selectedCourse}
+  onChange={(e) => setSelectedCourse(Number(e.target.value))}
+>
+  <option value={0}>Select Course</option>
+
+  {courses.map((course) => (
+    <option key={course.id} value={course.id}>
+      {course.name}
+    </option>
+  ))}
+</select>
 
           <select
             value={reportType}
@@ -156,7 +207,7 @@ const ViewAttendenceStudents = () => {
         {loading ? (
           <p>Loading attendance...</p>
         ) : (
-          <CommonTable data={formData} columns={columns} />
+          <CommonTable data={formData} columns={columns} rowKey="id"/>
         )}
       </div>
     </div>

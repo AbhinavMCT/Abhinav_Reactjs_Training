@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import "../../styles/student/studentManagement.css";
 
@@ -37,6 +37,7 @@ const StaffManagement = () => {
         const response = await getAllStaff(limit, page, search);
 
         setStaff(response.data.staff);
+        console.log("STAFF RESPONSE", response);
         setTotalPages(response.data.totalPages);
         setTotalRecords(response.data.totalRecords);
       } catch (error) {
@@ -78,7 +79,7 @@ const StaffManagement = () => {
     }
   };
 
-  const columns: Column<StudentList>[] = [
+  const columns = useMemo<Column<StudentList>[]>(()=>[
     {
       title: "ID",
       key: "id",
@@ -134,7 +135,7 @@ const StaffManagement = () => {
         </div>
       ),
     },
-  ];
+  ],[]);
 
   return (
     <div className="student-management-container">
@@ -170,7 +171,7 @@ const StaffManagement = () => {
         {loading ? (
           <p>Loading staff...</p>
         ) : (
-          <CommonTable data={staff} columns={columns} />
+          <CommonTable data={staff} columns={columns}  rowKey="id"/>
         )}
         <div className="pagination-controls">
           <Pagination

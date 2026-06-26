@@ -13,6 +13,7 @@ import school3 from "../../assets/college3.png";
 
 const StaffHome = () => {
    const navLinks = [
+    { label: "Student Management", path: "/student-management" },
     { label: "Profile", path: "/staff-home/profile" },
     { label: "Attendece Management", path: "/view-all-attendence" },
     {label: "Marks", path: "/mark-page"},

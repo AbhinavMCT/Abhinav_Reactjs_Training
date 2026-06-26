@@ -73,11 +73,9 @@ const CourseForm = ({
                 : "Select Department"}
             </option>
 
-            {departments.map((dep) => (
-              <option key={dep.id} value={dep.id}>
-                {dep.name}
-              </option>
-            ))}
+            {departments?.map((dep) => (
+  <option key={dep.id} value={dep.id}>{dep.name}</option>
+))}
           </select>
 
           {errors.dep_id && (

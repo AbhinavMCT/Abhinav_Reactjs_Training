@@ -1,5 +1,4 @@
 import { ProfileData } from "../types/Datatypes.ts";
-import Breadcrumbs from "./Breadcrumbs.tsx";
 
 type Props = {
   title: string;

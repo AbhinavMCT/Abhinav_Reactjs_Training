@@ -10,43 +10,40 @@ export type Column<T> = {
 type Props<T> = {
   data: T[];
   columns: Column<T>[];
+  rowKey: keyof T; 
 };
 
 
-const CommonTable = <T,>({
+const CommonTable = <T extends Record<string, any>>({
   data,
   columns,
+  rowKey,
 }: Props<T>) => {
   return (
     <table>
       <thead>
-  <tr>
-    {(columns || []).map((column) => (
-      <th key={column.title}>
-        {column.title}
-      </th>
-    ))}
-  </tr>
-</thead>
+        <tr>
+          {(columns || []).map((column) => (
+            <th key={String(column.key)}>
+              {column.title}
+            </th>
+          ))}
+        </tr>
+      </thead>
 
-<tbody>
-  {(data || []).map((record, index) => (
-    <tr key={index}>
-      {columns.map((column) => (
-        <td key={column.title}>
-          {column.render
-            ? column.render(
-                record[column.key],
-                record
-              )
-            : String(
-                record[column.key] ?? ""
-              )}
-        </td>
-      ))}
-    </tr>
-  ))}
-</tbody>
+      <tbody>
+        {(data || []).map((record) => (
+          <tr key={String(record[rowKey])}>
+            {columns.map((column) => (
+              <td key={String(column.key)}>
+                {column.render
+                  ? column.render(record[column.key], record)
+                  : String(record[column.key] ?? "")}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
     </table>
   );
 };

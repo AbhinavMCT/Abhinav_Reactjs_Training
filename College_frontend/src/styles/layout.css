@@ -4,7 +4,6 @@
   background: #f8fafc;
 }
 
-/* SIDEBAR */
 
 .sidebar {
   width: 280px;
@@ -13,37 +12,29 @@
     #0f172a 0%,
     #1e293b 100%
   );
-
-  color: white;
+  color: #ffffff;
   padding: 25px 20px;
-
   display: flex;
   flex-direction: column;
-
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-
   transition: all 0.3s ease;
 }
 
 .sidebar h2 {
   text-align: center;
   margin-bottom: 40px;
-
   font-size: 1.5rem;
   font-weight: 700;
-
+  color: #ffffff;
   padding-bottom: 15px;
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* MENU */
 
 .sidebar ul {
   list-style: none;
   padding: 0;
   margin: 0;
-
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -54,41 +45,36 @@
 }
 
 .nav-link {
-  color: #cbd5e1;
-  text-decoration: none;
-
   display: flex;
   align-items: center;
-
   padding: 14px 18px;
-
   border-radius: 12px;
 
-  transition: all 0.3s ease;
-
+  text-decoration: none;
   font-size: 15px;
   font-weight: 500;
+
+  color: #e2e8f0; 
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-
-  color: white;
-
+  background: #9a3412;
+  color: #ffffff;
   transform: translateX(5px);
 }
 
 .nav-link.active {
-  background: #2563eb;
-
-  color: white;
-
+  background: #1d4ed8; 
+  color: #ffffff;
   font-weight: 600;
-
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4);
 }
 
-/* MAIN CONTENT */
 
 .main-content {
   flex: 1;
@@ -100,7 +86,6 @@
   padding: 30px;
 }
 
-/* LOGOUT */
 
 .logout-container {
   margin-top: auto;
@@ -114,21 +99,21 @@
   border: none;
   border-radius: 10px;
 
-  background: #dc2626;
-  color: white;
-
-  cursor: pointer;
+  background: #b91c1c;
+  color: #ffffff;
 
   font-weight: 600;
+  cursor: pointer;
 
-  transition: 0.3s;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
 }
 
 .logout-container button:hover {
-  background: #b91c1c;
+  background: #991b1b;
 }
 
-/* HAMBURGER */
 
 .menu-toggle {
   display: none;
@@ -146,16 +131,17 @@
   border-radius: 10px;
 
   background: #1e293b;
-  color: white;
-
-  cursor: pointer;
+  color: #ffffff;
 
   font-size: 22px;
+  cursor: pointer;
 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* MOBILE */
+.menu-toggle:hover {
+  background: #0f172a;
+}
 
 @media (max-width: 768px) {
   .menu-toggle {
@@ -166,9 +152,8 @@
 
   .sidebar {
     position: fixed;
-
-    left: -300px;
     top: 0;
+    left: -300px;
 
     height: 100vh;
 

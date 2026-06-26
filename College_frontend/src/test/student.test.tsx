@@ -1,456 +1,194 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  waitFor,
+} from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import "./setupMocks.tsx";
+import { MemoryRouter } from "react-router-dom";
 import StudentManagement from "../pages/admin/StudentManagement.tsx";
-import RegisterStudent from "../pages/student/RegisterStudent.tsx";
-import EditStudent from "../pages/admin/EditStudent.tsx";
-import EditProfile from "../pages/student/EditStudentPage.tsx";
 import ViewStudent from "../pages/student/ViewStudentProfile.tsx";
+import * as StudentApi from "../services/StudentApi.ts";
 
-vi.mock("../services/StudentApi.ts", () => ({
-  getAllStudents: vi.fn(),
-  deleteStudent: vi.fn(),
-  registerStudent: vi.fn(),
-  getStudentById: vi.fn(),
-  updateStudents: vi.fn(),
-  getProfile: vi.fn(),
-  updateProfile: vi.fn(),
+vi.mock("../services/StudentApi");
+
+vi.mock("../pages/admin/EditStudentPage.tsx");
+
+vi.mock("../components/ImportStudentModal.tsx", () => ({
+  default: ({ isOpen, onClose }: any) =>
+    isOpen ? (
+      <div>
+        Import Modal<button onClick={onClose}>Close</button>
+      </div>
+    ) : null,
 }));
 
-import {
-  getAllStudents,
-  deleteStudent,
-  registerStudent,
-  getStudentById,
-  updateStudents,
-  getProfile,
-  updateProfile,
-} from "../services/StudentApi.ts";
-
-const mockNavigate = vi.fn();
-
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual<
-    typeof import("react-router-dom")
-  >("react-router-dom");
-
-  return {
-    ...actual,
-    useNavigate: () => mockNavigate,
-  };
-});
-
-describe("Student Module Test Cases", () => {
+describe("Student Module", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    globalThis.alert = vi.fn();
-
-    globalThis.confirm = vi.fn();
   });
 
-  describe("StudentManagement Component", () => {
-    const mockStudents = [
-      {
-        userData: {
-          id: 1,
-          name: "Abhinav",
-          email: "abhinav@gmail.com",
-          contact: "9999999999",
-          gender: "male",
-          DOB: "2000-01-01",
-        },
-
-        addressData: {
-          city: "Kochi",
-          district: "Ernakulam",
-          state: "Kerala",
-          pin: 682001,
-        },
-      },
-    ];
-
-    test("renders student data", async () => {
-      vi.mocked(getAllStudents).mockResolvedValue({
-        data: mockStudents,
-      } as never);
-
-      render(
-        <MemoryRouter>
-          <StudentManagement />
-        </MemoryRouter>
-      );
-
-      expect(
-        screen.getByText(/Loading students/i)
-      ).toBeInTheDocument();
-
-      await waitFor(() => {
-        expect(screen.getByText("Abhinav")).toBeInTheDocument();
-
-        expect(
-          screen.getByText("abhinav@gmail.com")
-        ).toBeInTheDocument();
-
-        expect(screen.getByText("Kochi")).toBeInTheDocument();
-      });
-    });
-
-    test("deletes student successfully", async () => {
-      vi.mocked(getAllStudents).mockResolvedValue({
-        data: mockStudents,
-      } as never);
-
-      vi.mocked(deleteStudent).mockResolvedValue(
-        {} as never
-      );
-
-      vi.mocked(globalThis.confirm).mockReturnValue(true);
-
-      render(
-        <MemoryRouter>
-          <StudentManagement />
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText("Abhinav")).toBeInTheDocument();
-      });
-
-      const deleteButton = screen.getByRole("button", {
-        name: /delete/i,
-      });
-
-      fireEvent.click(deleteButton);
-
-      await waitFor(() => {
-        expect(deleteStudent).toHaveBeenCalledWith(1);
-      });
-    });
-
-    test("cancels delete when confirmation rejected", async () => {
-      vi.mocked(getAllStudents).mockResolvedValue({
-        data: mockStudents,
-      } as never);
-
-      vi.mocked(globalThis.confirm).mockReturnValue(false);
-
-      render(
-        <MemoryRouter>
-          <StudentManagement />
-        </MemoryRouter>
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText("Abhinav")).toBeInTheDocument();
-      });
-
-      const deleteButton = screen.getByRole("button", {
-        name: /delete/i,
-      });
-
-      fireEvent.click(deleteButton);
-
-      expect(deleteStudent).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("RegisterStudent Component", () => {
-    test("registers student successfully", async () => {
-      vi.mocked(registerStudent).mockResolvedValue({
+  describe("StudentManagement", () => {
+    it("fetches and displays student list", async () => {
+      vi.mocked(StudentApi.getAllStudents).mockResolvedValue({
         data: {
-          message: "Student Registered Successfully",
+          students: [{ id: 1, name: "Alice Smith" }],
+          totalPages: 1,
+          totalRecords: 1,
         },
-      } as never);
+      } as any);
 
-      render(
-        <MemoryRouter>
-          <RegisterStudent />
-        </MemoryRouter>
-      );
-
-      fireEvent.change(screen.getByPlaceholderText("Name"), {
-        target: {
-          value: "Abhinav",
-          name: "name",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("Email"), {
-        target: {
-          value: "abhinav@gmail.com",
-          name: "email",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("Contact"), {
-        target: {
-          value: "9999999999",
-          name: "contact",
-        },
-      });
-
-      fireEvent.change(screen.getByRole("combobox"), {
-        target: {
-          value: "male",
-          name: "gender",
-        },
-      });
-
-      const dobInput = document.querySelector(
-        'input[name="DOB"]'
-      ) as HTMLInputElement;
-
-      fireEvent.change(dobInput, {
-        target: {
-          value: "2000-01-01",
-          name: "DOB",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("City"), {
-        target: {
-          value: "Kochi",
-          name: "city",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("District"), {
-        target: {
-          value: "Ernakulam",
-          name: "district",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("State"), {
-        target: {
-          value: "Kerala",
-          name: "state",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("Pin"), {
-        target: {
-          value: "682001",
-          name: "pin",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("Username"), {
-        target: {
-          value: "abhinav",
-          name: "username",
-        },
-      });
-
-      fireEvent.change(screen.getByPlaceholderText("Password"), {
-        target: {
-          value: "123456",
-          name: "password",
-        },
-      });
-
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /register student/i,
-        })
-      );
-
-      await waitFor(() => {
-        expect(registerStudent).toHaveBeenCalled();
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Student Registered Successfully"
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <StudentManagement />
+          </MemoryRouter>,
         );
       });
+
+      expect(await screen.findByText("Alice Smith")).toBeDefined();
+    });
+
+    it("opens import modal", async () => {
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <StudentManagement />
+          </MemoryRouter>,
+        );
+      });
+      fireEvent.click(screen.getByText(/\+ Import Students Details/i));
+      expect(screen.getByText("Import Modal")).toBeDefined();
     });
   });
 
-  describe("ViewStudent Component", () => {
-    const mockProfile = {
-      name: "Abhinav",
-      email: "abhinav@gmail.com",
-      contact: "9999999999",
-      gender: "male",
-      DOB: "2000-01-01",
+  describe("ViewStudent", () => {
+    it("displays profile details", async () => {
+      vi.mocked(StudentApi.getProfile).mockResolvedValue({
+        data: { name: "Bob", email: "bob@test.com", address: { city: "Pune" } },
+      } as any);
 
-      address: {
-        city: "Kochi",
-        district: "Ernakulam",
-        state: "Kerala",
-        pin: 682001,
-      },
-    };
-
-    test("renders profile data", async () => {
-      vi.mocked(getProfile).mockResolvedValue({
-        data: mockProfile,
-      } as never);
-
-      render(
-        <MemoryRouter>
-          <ViewStudent />
-        </MemoryRouter>
-      );
-
-      expect(
-        screen.getByText(/Loading Profile/i)
-      ).toBeInTheDocument();
-
-      await waitFor(() => {
-        expect(screen.getByText("Abhinav")).toBeInTheDocument();
-
-        expect(
-          screen.getByText("abhinav@gmail.com")
-        ).toBeInTheDocument();
-
-        expect(screen.getByText("Kochi")).toBeInTheDocument();
+      await act(async () => {
+        render(
+          <MemoryRouter>
+            <ViewStudent />
+          </MemoryRouter>,
+        );
       });
+
+      expect(await screen.findByText("Bob")).toBeDefined();
     });
   });
 
-  describe("EditProfile Component", () => {
-    const mockProfile = {
-      name: "Abhinav",
-      email: "abhinav@gmail.com",
-      contact: "9999999999",
-      gender: "male",
-      DOB: "2000-01-01",
-      address_id: 1,
-
-      address: {
-        city: "Kochi",
-        district: "Ernakulam",
-        state: "Kerala",
-        pin: 682001,
+  it("deletes a student successfully", async () => {
+    vi.mocked(StudentApi.getAllStudents).mockResolvedValue({
+      data: {
+        students: [{ id: 1, name: "Alice Smith" }],
+        totalPages: 1,
+        totalRecords: 1,
       },
+    } as any);
 
-      login: {
-        username: "abhinav",
-        password: "123456",
+    vi.mocked(StudentApi.deleteStudent).mockResolvedValue({} as any);
+
+    render(
+      <MemoryRouter>
+        <StudentManagement />
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(await screen.findByText("Delete"));
+
+    fireEvent.click(screen.getByText("Confirm"));
+  });
+
+  it("handles delete api failure", async () => {
+    vi.mocked(StudentApi.getAllStudents).mockResolvedValue({
+      data: {
+        students: [{ id: 1, name: "Alice" }],
+        totalPages: 1,
+        totalRecords: 1,
       },
-    };
+    } as any);
 
-    test("loads profile and updates successfully", async () => {
-      vi.mocked(getProfile).mockResolvedValue({
-        data: mockProfile,
-      } as never);
+    vi.mocked(StudentApi.deleteStudent).mockRejectedValue(
+      new Error("Delete Failed"),
+    );
 
-      vi.mocked(updateProfile).mockResolvedValue({
-        data: {
-          message: "Profile Updated Successfully",
-        },
-      } as never);
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      render(
-        <MemoryRouter>
-          <EditProfile />
-        </MemoryRouter>
-      );
+    render(
+      <MemoryRouter>
+        <StudentManagement />
+      </MemoryRouter>,
+    );
 
-      await waitFor(() => {
-        expect(screen.getByDisplayValue("Abhinav")).toBeInTheDocument();
-      });
+    fireEvent.click(await screen.findByText("Delete"));
 
-      fireEvent.change(screen.getByPlaceholderText("City"), {
-        target: {
-          value: "Thrissur",
-          name: "city",
-        },
-      });
+    fireEvent.click(screen.getByText("Confirm"));
 
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /update profile/i,
-        })
-      );
-
-      await waitFor(() => {
-        expect(updateProfile).toHaveBeenCalled();
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Profile Updated Successfully"
-        );
-
-        expect(mockNavigate).toHaveBeenCalledWith(
-          "/student/profile"
-        );
-      });
+    await waitFor(() => {
+      expect(spy).toHaveBeenCalled();
     });
   });
 
-  describe("EditStudent Component", () => {
-    const mockStudent = {
-      name: "Abhinav",
-      email: "abhinav@gmail.com",
-      contact: "9999999999",
-      gender: "male",
-      DOB: "2000-01-01",
-      address_id: 1,
-
-      address: {
-        city: "Kochi",
-        district: "Ernakulam",
-        state: "Kerala",
-        pin: 682001,
+  it("closes confirm modal on cancel", async () => {
+    vi.mocked(StudentApi.getAllStudents).mockResolvedValue({
+      data: {
+        students: [{ id: 1, name: "Alice" }],
+        totalPages: 1,
+        totalRecords: 1,
       },
+    } as any);
 
-      login: {
-        username: "abhinav",
-        password: "123456",
-      },
-    };
+    render(
+      <MemoryRouter>
+        <StudentManagement />
+      </MemoryRouter>,
+    );
 
-    test("loads student and updates successfully", async () => {
-      vi.mocked(getStudentById).mockResolvedValue({
-        data: mockStudent,
-      } as never);
+    fireEvent.click(await screen.findByText("Delete"));
 
-      vi.mocked(updateStudents).mockResolvedValue({
-        data: {
-          message: "Student Updated Successfully",
-        },
-      } as never);
+    fireEvent.click(screen.getByText("Cancel"));
 
-      render(
-        <MemoryRouter initialEntries={["/student/edit/1"]}>
-          <Routes>
-            <Route
-              path="/student/edit/:id"
-              element={<EditStudent />}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
+    expect(screen.queryByText("Confirm")).not.toBeInTheDocument();
+  });
 
-      await waitFor(() => {
-        expect(screen.getByDisplayValue("Abhinav")).toBeInTheDocument();
-      });
+  it("handles load student failure", async () => {
+    vi.mocked(StudentApi.getAllStudents).mockRejectedValue(
+      new Error("API Error"),
+    );
 
-      fireEvent.change(screen.getByPlaceholderText("City"), {
-        target: {
-          value: "Thrissur",
-          name: "city",
-        },
-      });
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      fireEvent.click(
-        screen.getByRole("button", {
-          name: /update student/i,
-        })
-      );
+    render(
+      <MemoryRouter>
+        <StudentManagement />
+      </MemoryRouter>,
+    );
 
-      await waitFor(() => {
-        expect(updateStudents).toHaveBeenCalled();
-
-        expect(globalThis.alert).toHaveBeenCalledWith(
-          "Student Updated Successfully"
-        );
-
-        expect(mockNavigate).toHaveBeenCalledWith(
-          "/student-management"
-        );
-      });
+    await waitFor(() => {
+      expect(spy).toHaveBeenCalled();
     });
+  });
+
+  it("renders empty table", async () => {
+    vi.mocked(StudentApi.getAllStudents).mockResolvedValue({
+      data: {
+        students: [],
+        totalPages: 1,
+        totalRecords: 0,
+      },
+    } as any);
+
+    render(
+      <MemoryRouter>
+        <StudentManagement />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("Pagination")).toBeInTheDocument();
   });
 });

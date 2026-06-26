@@ -11,7 +11,6 @@ import {
 import { Department } from "../../types/Datatypes.ts";
 import { toast } from "react-toastify";
 import withCrudPage from "../hoc/withCrudPage.tsx";
-import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 
 
 type DepartmentPageProps = {
@@ -94,7 +93,14 @@ const DepartmentPage = ({
         const response = await getDepartmentById(Number(id));
         console.log(response);
 
-        setFormData(response[0]);
+        setFormData(
+  response.data?.[0] ?? {
+    id: 0,
+    department_name: "",
+    office_location: "",
+    established_year: new Date().getFullYear(),
+  }
+);
       } catch (error) {
         console.error("Error fetching department:", error);
       }

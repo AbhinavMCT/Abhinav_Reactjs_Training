@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  deleteDepartment,
-  getDepartments,
-} from "../../services/DepartmentApi.ts";
+import {deleteDepartment,getDepartments,} from "../../services/DepartmentApi.ts";
 import { Department } from "../../types/Datatypes.ts";
 import { Link } from "react-router-dom";
 
@@ -81,7 +78,7 @@ const DepartmentManagement = () => {
     );
   }
 
-  const columns: Column<Department>[] = [
+  const columns : Column<Department>[] = [
     {
       title: "ID",
       key: "id",
@@ -143,7 +140,7 @@ const DepartmentManagement = () => {
       </div>
 
       <div className="table-viewport-card">
-        <CommonTable data={departments} columns={columns} />
+        <CommonTable data={departments} columns={columns}  rowKey="id"/>
         <div className="pagination-controls">
           <Pagination
             page={page}

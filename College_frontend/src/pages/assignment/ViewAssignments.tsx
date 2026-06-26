@@ -10,7 +10,6 @@ import CommonSearch from "../../components/CommonSearch.tsx";
 import CommonTable, { Column } from "../../components/ViewComponent.tsx";
 import "../../styles/assignment/viewassignments.css";
 
-
 const ViewAssignments = () => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,6 +77,14 @@ const ViewAssignments = () => {
     if (e.target.files?.[0]) setFile(e.target.files[0]);
   };
 
+  // FIX: drag handlers only live here — no duplicate on the label
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => setDragOver(false);
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
@@ -127,22 +134,10 @@ const ViewAssignments = () => {
   );
 
   const columns: Column<Assignment>[] = [
-    {
-      title: "Assignment Name",
-      key: "assignment_name",
-    },
-    {
-      title: "Description",
-      key: "description",
-    },
-    {
-      title: "Subject",
-      key: "subject_name",
-    },
-    {
-      title: "Staff",
-      key: "staff_name",
-    },
+    { title: "Assignment Name", key: "assignment_name" },
+    { title: "Description", key: "description" },
+    { title: "Subject", key: "subject_name" },
+    { title: "Staff", key: "staff_name" },
     {
       title: "Start Date",
       key: "start_date",
@@ -155,9 +150,9 @@ const ViewAssignments = () => {
     },
     {
       title: "Status",
-      key: "status",
+      key: "end_date", // FIX: was "status" — getStatusBadge needs end_date as first arg
       render: (value, row) => {
-        const badge = getStatusBadge(value as string, (row as Assignment).id);
+        const badge = getStatusBadge(value as string, row.id);
         return <span className={badge.className}>{badge.label}</span>;
       },
     },
@@ -165,25 +160,31 @@ const ViewAssignments = () => {
       title: "Action",
       key: "id",
       render: (value, row) => {
-        const isSubmitted = (value as number) in submittedMap;
-        const submittedStatus = submittedMap[value as number];
+        const isSubmitted = value in submittedMap;
+        const submittedStatus = submittedMap[value];
+        let buttonText = "Submit Assignment";
+
+        if (isSubmitted) {
+          if (submittedStatus === "LATE") {
+            buttonText = "Submitted Late";
+          } else {
+            buttonText = "Submitted";
+          }
+        }
+
         return (
           <button
             className="create-btn"
-            onClick={() =>
-              !isSubmitted && setSelectedAssignment(row as Assignment)
-            }
+            onClick={() => {
+              if (!isSubmitted) setSelectedAssignment(row);
+            }}
             disabled={isSubmitted}
             style={{
               opacity: isSubmitted ? 0.5 : 1,
               cursor: isSubmitted ? "not-allowed" : "pointer",
             }}
           >
-            {isSubmitted
-              ? submittedStatus === "LATE"
-                ? "Submitted Late"
-                : "Submitted"
-              : "Submit"}
+            {buttonText}
           </button>
         );
       },
@@ -209,124 +210,132 @@ const ViewAssignments = () => {
         {loading ? (
           <p>Loading Assignments...</p>
         ) : (
-          <CommonTable data={filteredAssignments} columns={columns} />
+          <CommonTable
+            data={filteredAssignments}
+            columns={columns}
+            rowKey="id"
+          />
         )}
       </div>
 
       {selectedAssignment && (
-  <div className="popup-sheet">
-    <div className="popup-sheet__backdrop" onClick={closeModal} />
+        <div className="popup-sheet">
+          <button
+            type="button"
+            className="popup-sheet__backdrop"
+            onClick={closeModal}
+            aria-label="Close dialog"
+          />
 
-    <div className="popup-sheet__panel">
-      {/* Handle bar */}
-      <div className="popup-sheet__handle" />
+          <div className="popup-sheet__panel">
+            <div className="popup-sheet__handle" />
 
-      {/* Header */}
-      <div className="popup-sheet__header">
-        <div className="popup-sheet__header-info">
-          <span className="popup-sheet__label">Submitting</span>
-          <h3 className="popup-sheet__title">
-            {selectedAssignment.assignment_name}
-          </h3>
-        </div>
-        <button className="popup-sheet__close" onClick={closeModal}>✕</button>
-      </div>
-
-      {/* Meta row */}
-      <div className="popup-sheet__meta">
-        <div className="popup-sheet__meta-item">
-          <span className="popup-sheet__meta-label">Subject</span>
-          <span className="popup-sheet__meta-value">
-            {selectedAssignment.subject_name}
-          </span>
-        </div>
-        <div className="popup-sheet__meta-divider" />
-        <div className="popup-sheet__meta-item">
-          <span className="popup-sheet__meta-label">Due</span>
-          <span className="popup-sheet__meta-value">
-            {formatDate(selectedAssignment.end_date)}
-          </span>
-        </div>
-        <div className="popup-sheet__meta-divider" />
-        <div className="popup-sheet__meta-item">
-          <span className="popup-sheet__meta-label">Status</span>
-          <span
-            className={
-              getStatusBadge(
-                selectedAssignment.end_date,
-                selectedAssignment.id,
-              ).className
-            }
-          >
-            {getStatusBadge(selectedAssignment.end_date, selectedAssignment.id).label}
-          </span>
-        </div>
-      </div>
-
-      {/* Dropzone */}
-      <div
-        className={dropzoneClass}
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".pdf,.doc,.docx,.zip"
-          onChange={handleFileChange}
-          style={{ display: "none" }}
-        />
-        {file ? (
-          <div className="va-dropzone__file">
-            <span className="va-dropzone__file-icon">📄</span>
-            <div>
-              <p className="va-dropzone__file-name">{file.name}</p>
-              <p className="va-dropzone__file-size">
-                {(file.size / 1024).toFixed(1)} KB
-              </p>
+            <div className="popup-sheet__header">
+              <div className="popup-sheet__header-info">
+                <span className="popup-sheet__label">Submitting</span>
+                <h3 className="popup-sheet__title">
+                  {selectedAssignment.assignment_name}
+                </h3>
+              </div>
+              <button className="popup-sheet__close" onClick={closeModal}>
+                ✕
+              </button>
             </div>
-            <button
-              className="va-dropzone__remove"
-              onClick={(e) => { e.stopPropagation(); setFile(null); }}
-            >
-              ✕
-            </button>
-          </div>
-        ) : (
-          <div className="va-dropzone__prompt">
-            <span className="va-dropzone__icon">📁</span>
-            <p className="va-dropzone__text">Drag & drop your file here</p>
-            <p className="va-dropzone__hint">
-              or click to browse — PDF, DOC, DOCX, ZIP
-            </p>
-          </div>
-        )}
-      </div>
 
-      {/* Actions */}
-      <div className="popup-sheet__actions">
-        <button className="popup-sheet__cancel" onClick={closeModal}>
-          Cancel
-        </button>
-        <button
-          className="popup-sheet__confirm"
-          onClick={handleSubmit}
-          disabled={!file || submitting}
-        >
-          {submitting ? (
-            <>
-              <span className="popup-sheet__spinner" /> Submitting…
-            </>
-          ) : (
-            "Submit Assignment"
-          )}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+            <div className="popup-sheet__meta">
+              <div className="popup-sheet__meta-item">
+                <span className="popup-sheet__meta-label">Subject</span>
+                <span className="popup-sheet__meta-value">
+                  {selectedAssignment.subject_name}
+                </span>
+              </div>
+              <div className="popup-sheet__meta-divider" />
+              <div className="popup-sheet__meta-item">
+                <span className="popup-sheet__meta-label">Due</span>
+                <span className="popup-sheet__meta-value">
+                  {formatDate(selectedAssignment.end_date)}
+                </span>
+              </div>
+              <div className="popup-sheet__meta-divider" />
+              <div className="popup-sheet__meta-item">
+                <span className="popup-sheet__meta-label">Status</span>
+                <span
+                  className={
+                    getStatusBadge(
+                      selectedAssignment.end_date,
+                      selectedAssignment.id,
+                    ).className
+                  }
+                >
+                  {
+                    getStatusBadge(
+                      selectedAssignment.end_date,
+                      selectedAssignment.id,
+                    ).label
+                  }
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className={dropzoneClass}
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <input
+                ref={fileInputRef}
+                id="assignment-upload"
+                type="file"
+                accept=".pdf,.doc,.docx,.zip"
+                hidden
+                onChange={handleFileChange}
+              />
+
+              {file ? (
+                <div className="va-dropzone__prompt">
+                  <span className="va-dropzone__icon">✅</span>
+                  <p className="va-dropzone__text">{file.name}</p>
+                  <p className="va-dropzone__hint">
+                    Press Enter or click to choose another file
+                  </p>
+                </div>
+              ) : (
+                <div className="va-dropzone__prompt">
+                  <span className="va-dropzone__icon">📁</span>
+                  <p className="va-dropzone__text">
+                    Drag & Drop your file here
+                  </p>
+                  <p className="va-dropzone__hint">
+                    Press Enter or click to browse — PDF, DOC, DOCX, ZIP
+                  </p>
+                </div>
+              )}
+            </button>
+
+            <div className="popup-sheet__actions">
+              <button className="popup-sheet__cancel" onClick={closeModal}>
+                Cancel
+              </button>
+              <button
+                className="popup-sheet__confirm"
+                onClick={handleSubmit}
+                disabled={!file || submitting}
+              >
+                {submitting ? (
+                  <>
+                    <span className="popup-sheet__spinner" /> Submitting…
+                  </>
+                ) : (
+                  "Submit Assignment"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -3,9 +3,6 @@ import api from "../interceptor.ts";
 
 const DEPARTMENT_ENDPOINT = "/department/";
 
-
-
-
 export const getDepartments = async (limit: number, page: number, search: string) => {
   const response = await api.get(`${DEPARTMENT_ENDPOINT}get-departments?limit=${limit}&page=${page}&search=${search}`,);
   return response.data;

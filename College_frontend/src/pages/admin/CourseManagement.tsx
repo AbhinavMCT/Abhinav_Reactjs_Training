@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -70,33 +70,39 @@ const CourseManagement = () => {
     }
   };
 
-  const columns: Column<CoursePayload>[] = [
-    {
-      title: "ID",
-      key: "id",
-    },
-    {
-      title: "Course Name",
-      key: "name",
-    },
-    {
-      title: "Department Name",
-      key: "department_name",
-    },
-    {
-      title: "Actions",
-      key: "id",
-      render: (value) => (
-        <div className="action-buttons">
-          <Link to={`/course/edit/${value}`} className="edit-btn">
-            Edit
-          </Link>
+  const columns = useMemo<Column<CoursePayload>[]>(() => [
+  {
+    title: "ID",
+    key: "id",
+  },
+  {
+    title: "Course Name",
+    key: "name",
+  },
+  {
+    title: "Department Name",
+    key: "department_name",
+  },
+  {
+    title: "Actions",
+    key: "id",
+    render: (value) => (
+      <div className="action-buttons">
+        <Link
+          to={`/course-management/edit/${value}`}
+          className="edit-btn"
+        >
+          Edit
+        </Link>
 
-          <DeleteButton id={Number(value)} onDelete={handleDelete} />
-        </div>
-      ),
-    },
-  ];
+        <DeleteButton
+          id={Number(value)}
+          onDelete={handleDelete}
+        />
+      </div>
+    ),
+  },
+], []);
 
   return (
     <div className="student-management-container">
@@ -113,7 +119,7 @@ const CourseManagement = () => {
           </div>
 
           <div className="buttons">
-            <Link to="/course/add" className="create-btn">
+            <Link to="/course-management/add" className="create-btn">
           + Create Course
         </Link>
           </div>
@@ -124,7 +130,7 @@ const CourseManagement = () => {
         {loading ? (
           <p>Loading courses...</p>
         ) : (
-          <CommonTable data={courses} columns={columns} />
+          <CommonTable data={courses} columns={columns} rowKey="id" />
         )}
       </div>
       <div className="pagination-controls">

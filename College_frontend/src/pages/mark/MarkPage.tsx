@@ -50,7 +50,7 @@ const MarkPage = ({id, navigate, isEditMode}: pageprops) => {
         ]);
 
         setStudents(studentData.data.students);
-        setSubjects(subjectData.data.subject);
+        setSubjects(subjectData.data);
         setExams(examData.data.exam);
       } catch {
         toast.error("Failed to load data");
@@ -177,8 +177,10 @@ const MarkPage = ({id, navigate, isEditMode}: pageprops) => {
       exams={exams}
       handleChange={handleChange}
       handleSubmit={handleSubmit}
-      buttonText="Save Mark"
-      title="Add Mark"
+      buttonText={
+          isEditMode ? "Edit Mark": "Add Mark"
+        }
+        title = {isEditMode ? "Edit Mark" : "Add Mark"}
       errors={errors}
     />
   );

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllSubjects, deleteSubject } from "../../services/SubjectApi.ts";
 import { SubjectPayload } from "../../types/Datatypes.ts";
@@ -19,7 +19,7 @@ const SubjectManagement = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState(5);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [search, setSearch] = useState("");
@@ -67,37 +67,24 @@ const SubjectManagement = () => {
     }
   };
 
-  const columns: Column<SubjectPayload>[] = [
-    {
-      title: "ID",
-      key: "id",
-    },
-    {
-      title: "Name",
-      key: "name",
-    },
-    {
-      title: "Type",
-      key: "type",
-    },
-    {
-      title: "Course_name",
-      key: "course_name",
-    },
+  const columns = useMemo<Column<SubjectPayload>[]>(() => {  
+  return [
+    { title: "ID", key: "id" },
+    { title: "Name", key: "name" },
+    { title: "Type", key: "type" },
+    { title: "Course_name", key: "course_name" },
     {
       title: "Actions",
       key: "id",
       render: (value) => (
         <div className="action-buttons">
-          <Link to={`/subject/edit/${value}`} className="edit-btn">
-            Edit
-          </Link>
-
+          <Link to={`/subject-management/edit/${value}`} className="edit-btn">Edit</Link>
           <DeleteButton id={Number(value)} onDelete={handleDelete} />
         </div>
       ),
     },
   ];
+}, []); 
 
   return (
     <div className="student-management-container">
@@ -114,7 +101,7 @@ const SubjectManagement = () => {
           </div>
 
           <div className="buttons">
-            <Link to="/subject/add" className="create-btn">
+            <Link to="/subject-management/add" className="create-btn">
           + Create Subject
         </Link>
           </div>
@@ -125,7 +112,7 @@ const SubjectManagement = () => {
         {loading ? (
           <p>Loading subjects...</p>
         ) : (
-          <CommonTable data={subjects} columns={columns} />
+          <CommonTable data={subjects} columns={columns}  rowKey="id"/>
         )}
         <div className="pagination-controls">
           <Pagination
