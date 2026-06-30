@@ -21,11 +21,11 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(window, "localStorage", {
+Object.defineProperty(globalThis, "localStorage", {
   value: localStorageMock,
 });
 
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(globalThis, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,
@@ -39,6 +39,6 @@ Object.defineProperty(window, "matchMedia", {
   })),
 });
 
-global.alert = vi.fn();
+globalThis.alert = vi.fn();
 
-global.confirm = vi.fn();
+globalThis.confirm = vi.fn();

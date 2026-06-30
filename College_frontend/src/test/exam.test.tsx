@@ -16,7 +16,6 @@ import * as ExamApi from "../services/ExamApi.ts";
 
 vi.mock("../services/ExamApi.ts");
 
-
 describe("Exam Module", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -188,6 +187,132 @@ describe("Exam Module", () => {
             name: /add exam/i,
           })
           .closest("form")!,
+      );
+
+      await waitFor(() => {
+        expect(ExamApi.createExam).toHaveBeenCalled();
+      });
+    });
+
+    it("shows validation errors", async () => {
+      render(
+        <MemoryRouter>
+          <Exampage />
+        </MemoryRouter>,
+      );
+
+      fireEvent.submit(
+        screen.getByRole("button", { name: /add exam/i }).closest("form")!,
+      );
+
+      expect(
+        await screen.findByText(/Exam name is required/i),
+      ).toBeInTheDocument();
+
+      expect(screen.getByText(/Please select a course/i)).toBeInTheDocument();
+    });
+
+    it("shows exam name length validation", async () => {
+      render(
+        <MemoryRouter>
+          <Exampage />
+        </MemoryRouter>,
+      );
+
+      fireEvent.change(screen.getByLabelText(/Exam Name/i), {
+        target: { value: "AB" },
+      });
+
+      fireEvent.submit(
+        screen.getByRole("button", { name: /add exam/i }).closest("form")!,
+      );
+
+      expect(
+        await screen.findByText(/at least 3 characters/i),
+      ).toBeInTheDocument();
+    });
+
+    it("rejects past exam date", async () => {
+      render(
+        <MemoryRouter>
+          <Exampage />
+        </MemoryRouter>,
+      );
+
+      fireEvent.change(screen.getByLabelText(/Exam Date/i), {
+        target: {
+          value: "2020-01-01",
+        },
+      });
+
+      fireEvent.submit(
+        screen.getByRole("button", { name: /add exam/i }).closest("form")!,
+      );
+
+      expect(
+        await screen.findByText(/cannot be in the past/i),
+      ).toBeInTheDocument();
+    });
+
+    it("handles course loading failure", async () => {
+      vi.mocked(ExamApi.getallCourse).mockRejectedValue(
+        new Error("Course Error"),
+      );
+
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      render(
+        <MemoryRouter>
+          <Exampage />
+        </MemoryRouter>,
+      );
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalled();
+      });
+
+      spy.mockRestore();
+    });
+
+    it("handles create exam failure", async () => {
+      vi.mocked(ExamApi.createExam).mockRejectedValue(
+        new Error("Create Error"),
+      );
+
+      render(
+        <MemoryRouter>
+          <Exampage />
+        </MemoryRouter>,
+      );
+
+      await screen.findByRole("option", { name: "BCA" });
+
+      fireEvent.change(screen.getByLabelText(/Exam Name/i), {
+        target: { value: "Midterm" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Exam Type/i), {
+        target: { value: "Internal" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Semester/i), {
+        target: { value: "1" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Exam Date/i), {
+        target: { value: "2030-01-01" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Total Mark/i), {
+        target: { value: "100" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Course/i), {
+        target: { value: "1" },
+      });
+
+      fireEvent.submit(
+        screen.getByRole("button", { name: /add exam/i }).closest("form")!,
       );
 
       await waitFor(() => {

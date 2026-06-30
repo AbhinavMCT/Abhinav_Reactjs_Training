@@ -1,6 +1,12 @@
-import {render,screen,fireEvent,act,waitFor,} from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  waitFor,
+} from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import "./setupMocks.tsx"
+import "./setupMocks.tsx";
 import { MemoryRouter } from "react-router-dom";
 import DepartmentManagement from "../pages/admin/DepartmentManagement.tsx";
 import DepartmentPage from "../pages/department/DepartmentPage.tsx";
@@ -17,10 +23,7 @@ vi.mock("../interceptor", () => ({
   },
 }));
 
-
 describe("Department Module", () => {
-  
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -133,8 +136,140 @@ describe("Department Module", () => {
         expect(DepartmentApi.createDepartment).toHaveBeenCalled();
       });
     });
+
+
+    it("handles create failure", async () => {
+      vi.mocked(DepartmentApi.createDepartment).mockRejectedValue(
+        new Error("Failed"),
+      );
+
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      render(
+        <MemoryRouter>
+          <DepartmentPage navigate={vi.fn()} isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      fireEvent.change(screen.getByLabelText(/Department Name/i), {
+        target: { value: "Physics" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Department Type/i), {
+        target: { value: "Academic" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Office Location/i), {
+        target: { value: "Block A" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Established Year/i), {
+        target: { value: "2020" },
+      });
+
+      fireEvent.submit(
+        screen
+          .getByRole("button", {
+            name: /add department/i,
+          })
+          .closest("form")!,
+      );
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalled();
+      });
+
+      spy.mockRestore();
+    });
+
+    it("handles create failure", async () => {
+      vi.mocked(DepartmentApi.createDepartment).mockRejectedValue(
+        new Error("Failed"),
+      );
+
+      const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      render(
+        <MemoryRouter>
+          <DepartmentPage navigate={vi.fn()} isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      fireEvent.change(screen.getByLabelText(/Department Name/i), {
+        target: { value: "Physics" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Department Type/i), {
+        target: { value: "Academic" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Office Location/i), {
+        target: { value: "Block A" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Established Year/i), {
+        target: { value: "2020" },
+      });
+
+      fireEvent.submit(
+        screen
+          .getByRole("button", {
+            name: /add department/i,
+          })
+          .closest("form")!,
+      );
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalled();
+      });
+
+      spy.mockRestore();
+    });
+
+    it("validates invalid department values", async () => {
+      render(
+        <MemoryRouter>
+          <DepartmentPage navigate={vi.fn()} isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      fireEvent.change(screen.getByLabelText(/Department Name/i), {
+        target: { value: "CS" }, // less than 3 chars
+      });
+
+      fireEvent.change(screen.getByLabelText(/Department Type/i), {
+        target: { value: "" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Office Location/i), {
+        target: { value: "" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Established Year/i), {
+        target: { value: "1800" },
+      });
+
+      fireEvent.submit(
+        screen
+          .getByRole("button", {
+            name: /add department/i,
+          })
+          .closest("form")!,
+      );
+
+      expect(
+        await screen.findByText(/at least 3 characters/i),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByText(/Department type is required/i),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByText(/Office location is required/i),
+      ).toBeInTheDocument();
+
+      expect(screen.getByText(/Year must be between/i)).toBeInTheDocument();
+    });
   });
-
-
 });
-

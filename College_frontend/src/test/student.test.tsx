@@ -102,6 +102,8 @@ describe("Student Module", () => {
     fireEvent.click(await screen.findByText("Delete"));
 
     fireEvent.click(screen.getByText("Confirm"));
+
+    expect(StudentApi.deleteStudent).toHaveBeenCalled();
   });
 
   it("handles delete api failure", async () => {

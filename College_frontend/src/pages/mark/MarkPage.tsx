@@ -5,9 +5,6 @@ import {getAllSubjects,createMark,getAllStudents,getAllExams, getMarkbyId, updat
 import { toast } from "react-toastify";
 import withCrudPage from "../hoc/withCrudPage.tsx";
 
-
-
-
 const MarkPage = ({id, navigate, isEditMode}: pageprops) => {
 
   const [formData, setFormData] = useState<Marks>({

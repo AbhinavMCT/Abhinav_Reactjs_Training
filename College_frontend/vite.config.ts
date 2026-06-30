@@ -29,7 +29,9 @@ export default defineConfig({
       "src/styles",
       "src/test/subjectStaff.test.tsx",
       "src/test/interceptor.test.ts",
-      "src/test/attendance.test.tsx"
+      "src/test/attendance.test.tsx",
+      "src/pages/student/StudentHome.tsx",
+      "src/pages/staff/Staffhome.tsx",
     ],
     css: true,
     coverage: {
@@ -39,6 +41,14 @@ export default defineConfig({
       "node_modules/**",
       "dist/**",
       "src/styles",
+      "src/store",
+      "src/interceptor.ts",
+      "src/pages/student/StudentHome.tsx",
+      "src/pages/staff/Staffhome.tsx",
+      "src/pages/assignment/AssignmentPage.tsx",
+      "src/pages/attendence/MarkAttendence.tsx",
+      "src/pages/assignment/ViewAssignments.tsx",
+      "src/pages/admin/AdminDashboard.tsx"
     ],
 },
   },

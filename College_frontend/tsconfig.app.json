@@ -36,5 +36,5 @@
     "noFallthroughCasesInSwitch": true
   },
 
-  "include": ["src"]
+  "include": ["src", "coverage", "coverage", "coverage"]
 }

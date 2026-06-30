@@ -326,5 +326,101 @@ describe("Mark Module", () => {
 
       expect(screen.getByText(/Loading Marks/i)).toBeInTheDocument();
     });
+
+    it("shows validation errors", async () => {
+      vi.mocked(MarkApi.getAllStudents).mockResolvedValue({
+        data: { students: [] },
+      } as any);
+
+      vi.mocked(MarkApi.getAllSubjects).mockResolvedValue({
+        data: [],
+      } as any);
+
+      vi.mocked(MarkApi.getAllExams).mockResolvedValue({
+        data: { exam: [] },
+      } as any);
+
+      render(
+        <MemoryRouter>
+          <MarkPage isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /add mark/i }));
+
+      expect(
+        await screen.findByText(/Please select a student/i),
+      ).toBeInTheDocument();
+
+      expect(screen.getByText(/Please select a subject/i)).toBeInTheDocument();
+
+      expect(screen.getByText(/Please select an exam/i)).toBeInTheDocument();
+
+      expect(screen.getByText(/greater than 0/i)).toBeInTheDocument();
+    });
+
+    it("rejects mark greater than total mark", async () => {
+      vi.mocked(MarkApi.getAllStudents).mockResolvedValue({
+        data: { students: [{ id: 1, name: "John" }] },
+      } as any);
+
+      vi.mocked(MarkApi.getAllSubjects).mockResolvedValue({
+        data: [{ id: 1, name: "Math" }],
+      } as any);
+
+      vi.mocked(MarkApi.getAllExams).mockResolvedValue({
+        data: {
+          exam: [
+            {
+              id: 1,
+              name: "Mid",
+              total_mark: 100,
+            },
+          ],
+        },
+      } as any);
+
+      render(
+        <MemoryRouter>
+          <MarkPage isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      await screen.findByText("John");
+
+      fireEvent.change(screen.getByLabelText(/Student/i), {
+        target: { value: "1" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Subject/i), {
+        target: { value: "1" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Exam/i), {
+        target: { value: "1" },
+      });
+
+      fireEvent.change(screen.getByLabelText(/Mark Obtained/i), {
+        target: { value: "150" },
+      });
+
+      fireEvent.click(screen.getByRole("button", { name: /add mark/i }));
+
+      expect(await screen.findByText(/cannot exceed 100/i)).toBeInTheDocument();
+    });
+
+    it("handles dropdown loading failure", async () => {
+      vi.mocked(MarkApi.getAllStudents).mockRejectedValue(new Error("failed"));
+
+      render(
+        <MemoryRouter>
+          <MarkPage isEditMode={false} />
+        </MemoryRouter>,
+      );
+
+      await waitFor(() => {
+        expect(MarkApi.getAllStudents).toHaveBeenCalled();
+      });
+    });
   });
 });

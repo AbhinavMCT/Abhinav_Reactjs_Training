@@ -44,11 +44,15 @@ describe("Login Component", () => {
         <MemoryRouter>
           <Login />
         </MemoryRouter>
-      </Provider>
+      </Provider>,
     );
 
-    fireEvent.change(screen.getByLabelText(/Username:/i), { target: { value: "admin" } });
-    fireEvent.change(screen.getByLabelText(/Password:/i), { target: { value: "pass123" } });
+    fireEvent.change(screen.getByLabelText(/Username:/i), {
+      target: { value: "admin" },
+    });
+    fireEvent.change(screen.getByLabelText(/Password:/i), {
+      target: { value: "pass123" },
+    });
     fireEvent.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -67,14 +71,53 @@ describe("Login Component", () => {
         <MemoryRouter>
           <Login />
         </MemoryRouter>
-      </Provider>
+      </Provider>,
     );
 
-    fireEvent.change(screen.getByLabelText(/Username:/i), { target: { value: "wrong" } });
-    fireEvent.change(screen.getByLabelText(/Password:/i), { target: { value: "wrong" } });
+    fireEvent.change(screen.getByLabelText(/Username:/i), {
+      target: { value: "wrong" },
+    });
+    fireEvent.change(screen.getByLabelText(/Password:/i), {
+      target: { value: "wrong" },
+    });
     fireEvent.click(screen.getByRole("button", { name: /submit/i }));
 
     const errorMsg = await screen.findByText(/Invalid credentials/i);
     expect(errorMsg).toBeDefined();
   });
+
+  it("shows error when token decoding fails", async () => {
+    vi.mocked(LoginApi.loginUser).mockResolvedValue({
+      data: {
+        accessToken: "token",
+        refreshToken: "refresh",
+      },
+    } as any);
+
+    const { decodeToken } = await import("../utils/Jwt.ts");
+    vi.mocked(decodeToken).mockReturnValue(null);
+
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <Login />
+        </MemoryRouter>
+      </Provider>,
+    );
+
+    fireEvent.change(screen.getByLabelText(/Username/i), {
+      target: { value: "admin" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: "123" },
+    });
+
+    fireEvent.click(screen.getByRole("button"));
+
+    expect(
+      await screen.findByText(/Invalid token received/i),
+    ).toBeInTheDocument();
+  });
+
 });

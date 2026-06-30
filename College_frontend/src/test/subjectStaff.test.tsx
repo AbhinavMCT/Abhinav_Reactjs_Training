@@ -207,7 +207,7 @@ describe("SubjectStaff Module", () => {
       );
 
       fireEvent.submit(await screen.findByRole("button"));
-
+      expect(SubjectStaffApi.updateSubjectStaff).toHaveBeenCalled();
       
     });
 

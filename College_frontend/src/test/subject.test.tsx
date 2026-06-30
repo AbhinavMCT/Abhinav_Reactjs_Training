@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import "./setupMocks.tsx";
 import { MemoryRouter } from "react-router-dom";
@@ -122,5 +122,64 @@ describe("Subject Module", () => {
 
       expect(SubjectApi.createSubject).toHaveBeenCalled();
     });
+
+    it("handles course loading failure", async () => {
+  vi.mocked(SubjectApi.getAllCourses).mockRejectedValue(
+    new Error("Failed")
+  );
+
+  const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  render(
+    <MemoryRouter>
+      <AddSubject navigate={vi.fn()} isEditMode={false} />
+    </MemoryRouter>
+  );
+
+  await waitFor(() => {
+    expect(spy).toHaveBeenCalled();
+  });
+});
+
+it("handles create failure", async () => {
+  vi.mocked(SubjectApi.getAllCourses).mockResolvedValue({
+    data: { course: [{ id: 1, name: "BCA" }] },
+  } as any);
+
+  vi.mocked(SubjectApi.createSubject).mockRejectedValue(
+    new Error("Failed")
+  );
+
+  const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+  render(
+    <MemoryRouter>
+      <AddSubject navigate={vi.fn()} isEditMode={false} />
+    </MemoryRouter>
+  );
+
+  fireEvent.change(screen.getByLabelText(/Subject Name/i), {
+    target: { value: "Math" },
+  });
+
+  fireEvent.change(screen.getByLabelText(/Course/i), {
+    target: { value: "1" },
+  });
+
+  fireEvent.change(screen.getByLabelText(/Type/i), {
+    target: { value: "Core" },
+  });
+
+  fireEvent.click(
+    screen.getByRole("button", {
+      name: /create subject/i,
+    })
+  );
+
+  await waitFor(() => {
+    expect(spy).toHaveBeenCalled();
+  });
+});
+
   });
 });
