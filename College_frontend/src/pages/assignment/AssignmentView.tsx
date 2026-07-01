@@ -106,7 +106,7 @@ const AssignmentView = () => {
     },
     {
       title: "Assignment Name",
-      key: "assignment_name",
+      key: "Assignment_name",
     },
     {
       title: "Description",
@@ -133,18 +133,24 @@ const AssignmentView = () => {
       key: "status",
     },
     {
-      title: "Actions",
-      key: "id",
-      render: (value) => (
-        <div className="action-buttons">
-          <Link to={`/assignment-view/edit/${value}`} className="edit-btn">
-            Edit
-          </Link>
+  title: "Actions",
+  key: "id",
+  render: (_, row) => (
+    <div className="action-buttons">
+      <Link
+        to={`/assignment-view/edit/${row.id}`}
+        className="edit-btn"
+      >
+        Edit
+      </Link>
 
-          <DeleteButton id={Number(value)} onDelete={handleDelete} />
-        </div>
-      ),
-    },
+      <DeleteButton
+        id={row.id}
+        onDelete={handleDelete}
+      />
+    </div>
+  ),
+}
   ];
 
   return (
@@ -191,7 +197,7 @@ const AssignmentView = () => {
         {loading ? (
           <p>Loading Assignments...</p>
         ) : (
-          <CommonTable data={assignment} columns={columns} />
+          <CommonTable data={assignment} columns={columns} rowKey="id"/>
         )}
 
         <Pagination

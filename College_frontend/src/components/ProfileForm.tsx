@@ -1,4 +1,5 @@
 import { ProfileData } from "../types/Datatypes.ts";
+import Breadcrumbs from "./Breadcrumbs.tsx";
 
 type Props = {
   title: string;
@@ -38,6 +39,7 @@ const ProfileForm = ({
   return (
     <div className="register-container">
       <form className="student-form" onSubmit={handleSubmit}>
+      <Breadcrumbs />
         <h2>{title}</h2>
 
         <div className="error-control">

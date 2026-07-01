@@ -21,6 +21,47 @@ const AddSubject = ({id,navigate,isEditMode,}:pageprops ) => {
     course_id: 0,
   });
 
+  const [errors, setErrors] = useState({
+  name: "",
+  type: "",
+  course_id: "",
+});
+
+const validate = () => {
+  const newErrors = {
+    name: "",
+    type: "",
+    course_id: "",
+  };
+
+  let isValid = true;
+
+  if (!formData.name.trim()) {
+    newErrors.name = "Subject name is required";
+    isValid = false;
+  } else if (formData.name.trim().length < 3) {
+    newErrors.name = "Minimum 3 characters required";
+    isValid = false;
+  } else if (!/^[A-Za-z ]+$/.test(formData.name.trim())) {
+    newErrors.name = "Only letters and spaces are allowed";
+    isValid = false;
+  }
+
+  if (!formData.type) {
+    newErrors.type = "Please select subject type";
+    isValid = false;
+  }
+
+  if (!formData.course_id) {
+    newErrors.course_id = "Please select a course";
+    isValid = false;
+  }
+
+  setErrors(newErrors);
+
+  return isValid;
+};
+
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -71,6 +112,11 @@ const AddSubject = ({id,navigate,isEditMode,}:pageprops ) => {
           ? Number(e.target.value)
           : e.target.value,
     });
+
+    setErrors({
+    ...errors,
+    [e.target.name]: "",
+  });
   };
 
   const handleSubmit = async (
@@ -78,6 +124,7 @@ const AddSubject = ({id,navigate,isEditMode,}:pageprops ) => {
   ) => {
 
     e.preventDefault();
+    if (!validate()) return;
 
     try {
 
@@ -106,6 +153,7 @@ const AddSubject = ({id,navigate,isEditMode,}:pageprops ) => {
       handleChange={handleChange}
       handleSubmit={handleSubmit}
       buttonText={isEditMode ? "Update Subject" : "Create Subject"}
+      errors={errors}
     />
   );
 };

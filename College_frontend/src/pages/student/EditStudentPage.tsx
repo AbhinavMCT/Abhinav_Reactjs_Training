@@ -105,11 +105,12 @@ const EditProfile = ({ id, navigate, isEditMode }: pageprops) => {
       if (isProfilePage) {
         await updateProfile(payload);
         toast.success("Updated SuccessFully");
+      navigate("/student-home/profile");
       } else {
         await updateStudents(Number(id), payload);
         toast.success("Edited Successfully");
-      }
       navigate("/student-management");
+      }
     } catch (error) {
       console.error("Update Failed:", error);
     } finally {

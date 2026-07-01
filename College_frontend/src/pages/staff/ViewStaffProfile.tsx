@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import { getstaffProfile } from "../../services/StaffApi.ts";
 import { ProfileData } from "../../types/Datatypes.ts";
-
-import "../../styles/student/viewStudent.css";
+import "../../styles/staff/viewprofilestaff.css";
+import Breadcrumbs from "../../components/Breadcrumbs.tsx";
 
 const ViewStaff = () => {
   const navigate = useNavigate();
@@ -31,6 +31,7 @@ const ViewStaff = () => {
     <div className="student-profile-container">
       {profile ? (
         <div className="student-profile-card">
+          <Breadcrumbs />
           <div className="profile-banner">
             <div className="profile-left">
               <div className="profile-image">
@@ -56,14 +57,14 @@ const ViewStaff = () => {
             </div>
 
             <button
-  onClick={() => {
-    console.log("Navigating...");
-    navigate("/staff-home/edit-profile");
-  }}
-  className="edit-btn"
->
-  Edit Profile
-</button>
+              className="edit-btn"
+              onClick={() => {
+                console.log("Navigating...");
+                navigate("/staff-home/edit-profile");
+              }}
+            >
+              Edit Profile
+            </button>
           </div>
 
           <div className="profile-section">

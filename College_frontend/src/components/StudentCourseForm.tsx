@@ -10,6 +10,10 @@ type props = {
     handleSubmit: (e: React.SubmitEvent<HTMLFormElement>)=> void;
     buttonText: string;
     title: string;
+    errors: {
+    student_id: string;
+    course_id: string;
+  };
 }
 
 const StudentCourseForm = ({
@@ -19,7 +23,8 @@ const StudentCourseForm = ({
     handleChange,
     handleSubmit,
     buttonText,
-    title
+    title,
+    errors,
 }: props)=>{
 
     const navigate = useNavigate();
@@ -41,7 +46,7 @@ const StudentCourseForm = ({
             name="student_id"
             value={formData.student_id}
             onChange={handleChange}
-            required
+            className={errors.student_id ? "input-error" : ""}
           >
             <option value="">Choose Student</option>
 
@@ -51,6 +56,7 @@ const StudentCourseForm = ({
               </option>
             ))}
           </select>
+          {errors.student_id && <span className="error-text">{errors.student_id}</span>}
         </div>
 
         <div className="form-group">
@@ -61,7 +67,7 @@ const StudentCourseForm = ({
             name="course_id"
             value={formData.course_id}
             onChange={handleChange}
-            required
+            className={errors.course_id ? "input-error" : ""}
           >
             <option value="">Choose Course</option>
 
@@ -71,6 +77,7 @@ const StudentCourseForm = ({
               </option>
             ))}
           </select>
+          {errors.course_id && <span className="error-text">{errors.course_id}</span>}
         </div>
 
         <div className="form-actions">

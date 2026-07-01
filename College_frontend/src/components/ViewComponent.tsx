@@ -1,6 +1,7 @@
 export type Column<T> = {
   title: string;
   key: keyof T;
+  id?: string; 
   render?: (
     value: any,
     record: T
@@ -22,28 +23,28 @@ const CommonTable = <T extends Record<string, any>>({
   return (
     <table>
       <thead>
-        <tr>
-          {(columns || []).map((column) => (
-            <th key={String(column.key)}>
-              {column.title}
-            </th>
-          ))}
-        </tr>
-      </thead>
+  <tr>
+    {columns.map((column, index) => (
+      <th key={column.id ?? `${String(column.key)}-${index}`}>
+        {column.title}
+      </th>
+    ))}
+  </tr>
+</thead>
 
-      <tbody>
-        {(data || []).map((record) => (
-          <tr key={String(record[rowKey])}>
-            {columns.map((column) => (
-              <td key={String(column.key)}>
-                {column.render
-                  ? column.render(record[column.key], record)
-                  : String(record[column.key] ?? "")}
-              </td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
+<tbody>
+  {data.map((record) => (
+    <tr key={String(record[rowKey])}>
+      {columns.map((column, index) => (
+        <td key={column.id ?? `${String(column.key)}-${index}`}>
+          {column.render
+            ? column.render(record[column.key], record)
+            : String(record[column.key] ?? "")}
+        </td>
+      ))}
+    </tr>
+  ))}
+</tbody>
     </table>
   );
 };

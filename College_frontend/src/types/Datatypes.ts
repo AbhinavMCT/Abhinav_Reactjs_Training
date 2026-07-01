@@ -263,7 +263,7 @@ export interface Examlist {
 
 export interface Assignment{
   id: number,
-  assignment_name: string,
+  Assignment_name: string,
   description: string,
   start_date: string,
   end_date: string,

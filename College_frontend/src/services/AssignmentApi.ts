@@ -9,7 +9,7 @@ export const getAllAssignments = async({page,limit,search,status,startDate,endDa
 };
 
 export const deleteAssignment = async(id: number)=>{
-    return await api.delete(`${END_POINT}/delete-assignment/${id}`)
+    return await api.delete(`${END_POINT}delete-assignment/${id}`)
 };
 
 export const createAssignment = async(data: Assignment) =>{

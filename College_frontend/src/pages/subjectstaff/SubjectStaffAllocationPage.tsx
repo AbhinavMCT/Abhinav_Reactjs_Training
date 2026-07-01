@@ -16,6 +16,34 @@ console.log("button =", isEditMode ? "Edit" : "Add");
     staff_id: 0,
   });
 
+  const [errors, setErrors] = useState({
+  staff_id: "",
+  subject_id: "",
+});
+
+const validate = () => {
+  const newErrors = {
+    staff_id: "",
+    subject_id: "",
+  };
+
+  let isValid = true;
+
+  if (!formData.staff_id) {
+    newErrors.staff_id = "Please select a staff member";
+    isValid = false;
+  }
+
+  if (!formData.subject_id) {
+    newErrors.subject_id = "Please select a subject";
+    isValid = false;
+  }
+
+  setErrors(newErrors);
+
+  return isValid;
+};
+
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [staffList, setStaffList] = useState<StaffItem[]>([]);
 
@@ -62,10 +90,17 @@ console.log("button =", isEditMode ? "Edit" : "Add");
       [name]:
         name === "staff_id" || name === "subject_id" ? Number(value) : value,
     }));
+
+    setErrors((prev) => ({
+    ...prev,
+    [name]: "",
+  }));
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
   e.preventDefault();
+
+  if (!validate()) return;
 
   try {
     if (isEditMode) {
@@ -104,6 +139,7 @@ console.log("button =", isEditMode ? "Edit" : "Add");
     handleSubmit={handleSubmit}
     buttonText={isEditMode? "edit":"add"}
     title={isEditMode? "Edit Allocation":"Add Allocation"}
+    errors={errors}
     />
   );
 };

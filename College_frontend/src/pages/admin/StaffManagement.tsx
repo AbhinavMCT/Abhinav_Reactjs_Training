@@ -127,7 +127,7 @@ const StaffManagement = () => {
       key: "id",
       render: (value) => (
         <div className="action-buttons">
-          <Link to={`/staff/edit/${value}`} className="edit-btn">
+          <Link to={`/staff-management/edit/${value}`} className="edit-btn">
             Edit
           </Link>
 

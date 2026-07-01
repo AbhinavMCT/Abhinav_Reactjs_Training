@@ -13,9 +13,6 @@
   position: relative;
 }
 
-
-
-
 .register-container::before,
 .register-container::after {
   content: "";
@@ -40,8 +37,6 @@
   bottom: -100px;
   right: -100px;
 }
-
-
 
 .student-form {
   position: relative;
@@ -101,7 +96,6 @@ row-gap: 38px;
 }
 
 
-
 .section-title {
   grid-column: 1 / -1;
 
@@ -117,7 +111,6 @@ row-gap: 38px;
 
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
-
 
 
 .student-form input,
@@ -140,20 +133,16 @@ row-gap: 38px;
 }
 
 
-
 .student-form input::placeholder {
   color: #94a3b8;
   font-size: 14px;
 }
-
-
 
 .student-form input:hover,
 .student-form select:hover {
   border-color: #93c5fd;
   background: #ffffff;
 }
-
 
 
 .student-form input:focus,
@@ -167,8 +156,6 @@ row-gap: 38px;
 
   transform: translateY(-1px);
 }
-
-
 
 .student-form button {
   grid-column: 1 / -1;
@@ -210,29 +197,25 @@ row-gap: 38px;
 }
 
 .error-control label {
-  font-size: 14px;
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-size: 15px;
   font-weight: 600;
-  color: #333;
-  margin-top: -30px;
-  position: absolute;
+  color: #334155;
+  margin-bottom: 8px;
 }
 
 .error-text {
-  position: absolute;
-
-  top: 41px;
+  position: relative;
+  top: 10px;
   left: 4px;
-
   color: #ef4444;
-
   font-size: 12px;
-
   font-weight: 600;
-
-
   padding: 0 4px;
-
   z-index: 2;
+  text-align: left;
 }
 
 

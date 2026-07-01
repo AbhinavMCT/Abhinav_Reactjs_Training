@@ -195,7 +195,7 @@ const MarkView = () => {
           <CommonSearch
             search={search}
             setSearch={setSearch}
-            placeholder="Search Marks..."
+            placeholder="Search Student..."
           />
 
           

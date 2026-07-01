@@ -1,47 +1,54 @@
 .mark-container {
   min-height: calc(100vh - 80px);
-  padding: 20px;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  padding: clamp(15px, 3vw, 35px);
   background: #f8fafc;
+  box-sizing: border-box;
 }
+
 
 .mark-card {
   width: 100%;
   max-width: 950px;
-  background: #ffffff;
+  background: #fff;
+
   border-radius: 18px;
-  padding: 2rem;
-  margin-top: 20px;
+
+  padding: clamp(20px, 4vw, 40px);
+
   box-shadow:
-    0 10px 25px rgba(0,0,0,0.08),
-    0 2px 10px rgba(0,0,0,0.05);
+    0 10px 25px rgba(0, 0, 0, 0.08),
+    0 2px 10px rgba(0, 0, 0, 0.05);
+
   border: 1px solid #e5e7eb;
 }
 
+
 .mark-header {
-  text-align: left;
   margin-bottom: 2rem;
-  border-bottom: 1px solid #e5e7eb;
   padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .mark-header h2 {
-  font-size: 2rem;
-  color: #1e3a8a;
   margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  color: #1e3a8a;
   font-weight: 700;
 }
 
 .mark-header p {
-  margin-top: 5px;
+  margin-top: 8px;
   color: #64748b;
-  font-size: 14px;
+  font-size: clamp(13px, 2vw, 15px);
 }
+
 
 .mark-form {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
 }
 
@@ -60,84 +67,169 @@
 .form-group input,
 .form-group select {
   width: 100%;
+  box-sizing: border-box;
+
   padding: 0.9rem 1rem;
+
   border: 1px solid #d1d5db;
   border-radius: 10px;
+
   background: #fff;
+
   font-size: 15px;
+
   transition: all 0.25s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
+  outline: none;
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
-}
 
-.full-width {
-  grid-column: span 2;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
 }
 
 .form-group input[readonly] {
   background: #f3f4f6;
   color: #2563eb;
   font-weight: 600;
-  cursor: not-allowed;
 }
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
 
 .error {
+  margin-top: 6px;
   color: #dc2626;
   font-size: 12px;
-  margin-top: 5px;
+  font-weight: 500;
 }
 
+
 .button-group {
-  grid-column: span 2;
+  grid-column: 1 / -1;
+
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
+  gap: 14px;
+
   margin-top: 10px;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 12px 26px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .btn-submit {
   min-width: 180px;
+  border: none;
+
+  color: #fff;
+
   background: linear-gradient(
     135deg,
     #2563eb,
     #1d4ed8
   );
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-weight: 600;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
 }
 
 .btn-cancel {
   min-width: 140px;
-  background: white;
+
+  background: #fff;
+
   border: 1px solid #d1d5db;
+
   color: #374151;
-  padding: 12px 24px;
-  border-radius: 10px;
 }
 
+.btn-cancel:hover {
+  background: #f3f4f6;
+}
+
+
+@media (max-width: 992px) {
+
+  .mark-card {
+    max-width: 800px;
+  }
+
+  .mark-form {
+    gap: 1.25rem;
+  }
+
+}
+
+
 @media (max-width: 768px) {
+
+  .mark-card {
+    border-radius: 14px;
+    padding: 24px;
+  }
+
   .mark-form {
     grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .full-width,
+  .button-group {
+    grid-column: span 1;
   }
 
   .button-group {
-    grid-column: span 1;
-    flex-direction: column;
+    flex-direction: column-reverse;
+    gap: 12px;
   }
 
   .btn-submit,
   .btn-cancel {
     width: 100%;
+    min-width: 100%;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  .mark-container {
+    padding: 12px;
   }
 
   .mark-card {
-    padding: 25px;
+    padding: 18px;
+    border-radius: 12px;
   }
+
+  .mark-header h2 {
+    font-size: 1.45rem;
+  }
+
+  .mark-header p {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 13px 14px;
+    font-size: 14px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
 }

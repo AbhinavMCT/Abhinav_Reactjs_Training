@@ -77,7 +77,6 @@ const ViewAssignments = () => {
     if (e.target.files?.[0]) setFile(e.target.files[0]);
   };
 
-  // FIX: drag handlers only live here — no duplicate on the label
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(true);
@@ -128,13 +127,13 @@ const ViewAssignments = () => {
 
   const filteredAssignments = assignments.filter(
     (a) =>
-      a.assignment_name?.toLowerCase().includes(search.toLowerCase()) ||
+      a.Assignment_name?.toLowerCase().includes(search.toLowerCase()) ||
       a.subject_name?.toLowerCase().includes(search.toLowerCase()) ||
       a.staff_name?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const columns: Column<Assignment>[] = [
-    { title: "Assignment Name", key: "assignment_name" },
+    { title: "Assignment Name", key: "Assignment_name" },
     { title: "Description", key: "description" },
     { title: "Subject", key: "subject_name" },
     { title: "Staff", key: "staff_name" },
@@ -150,7 +149,7 @@ const ViewAssignments = () => {
     },
     {
       title: "Status",
-      key: "end_date", // FIX: was "status" — getStatusBadge needs end_date as first arg
+      key: "end_date", 
       render: (value, row) => {
         const badge = getStatusBadge(value as string, row.id);
         return <span className={badge.className}>{badge.label}</span>;
@@ -234,7 +233,7 @@ const ViewAssignments = () => {
               <div className="popup-sheet__header-info">
                 <span className="popup-sheet__label">Submitting</span>
                 <h3 className="popup-sheet__title">
-                  {selectedAssignment.assignment_name}
+                  {selectedAssignment.Assignment_name}
                 </h3>
               </div>
               <button className="popup-sheet__close" onClick={closeModal}>

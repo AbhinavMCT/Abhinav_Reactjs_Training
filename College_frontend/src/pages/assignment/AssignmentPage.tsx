@@ -23,7 +23,7 @@ type AssignmentProps = {
 const AssignmentPage = ({ id, navigate, isEditMode }: AssignmentProps) => {
   const [assignment, setAssignment] = useState<Assignment>({
     id: 0,
-    assignment_name: "",
+    Assignment_name: "",
     description: "",
     start_date: "",
     end_date: "",
@@ -31,7 +31,7 @@ const AssignmentPage = ({ id, navigate, isEditMode }: AssignmentProps) => {
   });
 
   const [errors, setErrors] = useState({
-    assignment_name: "",
+    Assignment_name: "",
     description: "",
     subject_id: "",
     start_date: "",
@@ -42,7 +42,7 @@ const AssignmentPage = ({ id, navigate, isEditMode }: AssignmentProps) => {
 
   const validateForm = () => {
     const newErrors = {
-      assignment_name: "",
+      Assignment_name: "",
       description: "",
       subject_id: "",
       start_date: "",
@@ -51,11 +51,11 @@ const AssignmentPage = ({ id, navigate, isEditMode }: AssignmentProps) => {
 
     let isValid = true;
 
-    if (!assignment.assignment_name.trim()) {
-      newErrors.assignment_name = "Assignment name is required";
+    if (!assignment.Assignment_name.trim()) {
+      newErrors.Assignment_name = "Assignment name is required";
       isValid = false;
-    } else if (assignment.assignment_name.trim().length < 3) {
-      newErrors.assignment_name = "Minimum 3 characters required";
+    } else if (assignment.Assignment_name.trim().length < 3) {
+      newErrors.Assignment_name = "Minimum 3 characters required";
       isValid = false;
     }
 
@@ -119,7 +119,17 @@ const AssignmentPage = ({ id, navigate, isEditMode }: AssignmentProps) => {
       try {
         const res = await getAssignmentbyId(Number(id));
         console.log(res.data[0]);
-        setAssignment(res.data[0]);
+        const assignmentData = res.data[0];
+
+        setAssignment({
+          ...assignmentData,
+          start_date: assignmentData.start_date
+            ? assignmentData.start_date.split("T")[0]
+            : "",
+          end_date: assignmentData.end_date
+            ? assignmentData.end_date.split("T")[0]
+            : "",
+        });
       } catch (error) {
         console.error(error);
 
@@ -147,12 +157,11 @@ const AssignmentPage = ({ id, navigate, isEditMode }: AssignmentProps) => {
     if (!validateForm()) return;
 
     try {
-        
       if (isEditMode) {
         if (!id) {
-        toast.error("Invalid allocation ID");
-        return;
-      }
+          toast.error("Invalid allocation ID");
+          return;
+        }
 
         await editAssignment(Number(id), assignment);
 

@@ -108,14 +108,16 @@ const StaffPage = ({ id, navigate, isEditMode }: pageprops) => {
         await updateProfile(payload);
 
         toast.success("Profile Updated Successfully");
+        navigate("/staff-home/profile");
 
       } else {
         await updateStaff(Number(id), payload);
 
         toast.success("Staff Updated Successfully");
+        navigate("/staff-management");
 
       }
-        navigate("/staff-management");
+        
     } catch (error) {
       console.error("Update Failed:", error);
 

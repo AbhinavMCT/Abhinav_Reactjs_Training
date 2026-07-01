@@ -10,7 +10,7 @@ type Props = {
   ) => void;
   handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   errors: {
-    assignment_name: string;
+    Assignment_name: string;
     description: string;
     subject_id: string;
     start_date: string;
@@ -37,17 +37,17 @@ const AssignmentForm = ({
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="assignment_name">Assignment Name:</label>
+            <label htmlFor="Assignment_name">Assignment Name:</label>
             <input
               type="text"
-              name="assignment_name"
-              value={assignment.assignment_name}
+              name="Assignment_name"
+              value={assignment.Assignment_name}
               onChange={handleChange}
               required
             />
 
-            {errors.assignment_name && (
-              <span className="error-text">{errors.assignment_name}</span>
+            {errors.Assignment_name && (
+              <span className="error-text">{errors.Assignment_name}</span>
             )}
           </div>
 
@@ -71,6 +71,7 @@ const AssignmentForm = ({
             <label htmlFor="subject_id">Subject:</label>
 
             <select
+              id="subject_id"
               name="subject_id"
               value={assignment.subject_id}
               onChange={handleChange}
@@ -95,6 +96,7 @@ const AssignmentForm = ({
               <label htmlFor="start_date">Start Date</label>
 
               <input
+                id="start_date"
                 type="date"
                 name="start_date"
                 value={assignment.start_date}
@@ -111,6 +113,7 @@ const AssignmentForm = ({
               <label htmlFor="end_date">End Date</label>
 
               <input
+                id="end_date"
                 type="date"
                 name="end_date"
                 value={assignment.end_date}
